@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { HiArrowNarrowRight } from "react-icons/hi";
+import Link from "next/link";
+import { GoDotFill } from "react-icons/go";
 
 export default function SidebarMenu() {
     const [open, setOpen] = useState(false);
@@ -11,9 +13,9 @@ export default function SidebarMenu() {
             {/* MENU BUTTON (top right) */}
             <button
                 onClick={() => setOpen(true)}
-                className="flex w-[285px] justify-between p-[22px] border-t absolute cursor-pointer right-0 items-center gap-3 text-white"
+                className="flex md:w-[285px] w-[auto] md:justify-between justify-end md:p-[22px] p-0 md:border-t border-0 lg:absolute relative cursor-pointer right-0 items-center gap-3 text-white"
             >
-                <span className="text-sm tracking-widest">MENU</span>
+                <span className="text-sm tracking-widest md:block hidden">MENU</span>
                 <span className="grid grid-cols-3 gap-1">
                     {[...Array(9)].map((_, i) => (
                         <span key={i} className="w-1 h-1 bg-white rounded-full"></span>
@@ -40,25 +42,24 @@ export default function SidebarMenu() {
                 <div className="p-[50px]">
                     <button
                         onClick={() => setOpen(false)}
-                        className=" cursor-pointer flex items-center gap-[10px] text-[#25716E] text-[18px]"
+                        className=" cursor-pointer flex items-center gap-[10px] text-primary font-semibold text-lg"
                     >
                         CLOSE <span className="text-[24px]"><HiArrowNarrowRight /></span>
                     </button>
 
                     {/* CONTENT */}
                     <div className="h-full mt-[140px] flex flex-col justify-center  space-y-[30px]">
-                        <h2 className="text-[44px] font-light text-[#25716E] leading-[51px]">
+                        <h2 className="text-[44px] text-primary leading-[50px]">
                             My Mind <br /> And Me
                         </h2>
 
-                        <ul className="space-y-[30px] text-primary uppercase text-[18px]">
-                            <li>Twitter</li>
-                            <li>Linkedin</li>
-                            <li>Email</li>
+                        <ul className="space-y-[30px] text-primary font-bold uppercase text-[18px]">
+                            <li><Link href={"#"} className="hover:text-AquaBlue duration-500">Twitter</Link></li>
+                            <li><Link href={"#"} className="hover:text-AquaBlue duration-500">Linkedin</Link></li>
+                            <li><Link href={"#"} className="hover:text-AquaBlue duration-500">Email</Link></li>                            
                         </ul>
-
-                        <button className="mt-6 w-fit px-[26px] py-[12px] cursor-pointer rounded-full bg-[linear-gradient(90deg,#56E1E8_0%,#25716E_90%)] text-white text-[18px]">
-                            • Join Us
+                         <button className=" cursor-pointer max-w-fit flex items-center gap-[10px] text-white rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_90%)] px-[26px] py-[12px] text-lg font-bold text-primary">
+                            <GoDotFill className="h-[12px] w-[12px]"/> Join Us
                         </button>
                     </div>
                 </div>
