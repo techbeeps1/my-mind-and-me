@@ -1,5 +1,5 @@
 "use client";
-import WrapperBanner from "@/app/components/WraperBanner";
+import WrapperBanner from "@/components/WraperBanner";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";

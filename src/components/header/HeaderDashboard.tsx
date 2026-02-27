@@ -83,14 +83,14 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
           )}
         </button>
         <div className="w-1/2 relative lg:block hidden">
-          <input
+          {/* <input
             type="text"
             placeholder="Search"
             className="w-full rounded-[10px] placeholder:text-primary font-semibold bg-white text-primary px-6 py-3.75 outline-none"
           />
           <button className="absolute top-1/2 right-6 z-1 cursor-pointer text-primary -translate-y-1/2 transform ">
             <FiSearch className=" h-5 w-5  " />
-          </button>
+          </button> */}
         </div>
         <div className="lg:hidden ">
           {/* Logo */}

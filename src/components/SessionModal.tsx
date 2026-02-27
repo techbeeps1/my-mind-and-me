@@ -15,7 +15,6 @@ export default function SessionModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
 
-      {/* Overlay */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
@@ -48,7 +47,7 @@ export default function SessionModal({
         </h2>
 
         <p className="text-center text-[#535862] leading-5 text-sm mb-6">
-          We're glad to have you onboard. Here are some quick tips to get you up and running.
+          We`re glad to have you onboard. Here are some quick tips to get you up and running.
         </p>
 
         {/* Button */}

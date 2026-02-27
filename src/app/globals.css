@@ -38,3 +38,31 @@ body {
 }
 
 
+@keyframes enter {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+
+.animate-enter {
+  animation: enter 0.3s ease-out;
+}
+
+
+
+.toast-progress {
+  width: 100%;
+  animation: progress linear forwards;
+}
+
+@keyframes progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}

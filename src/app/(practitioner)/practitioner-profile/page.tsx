@@ -1,6 +1,6 @@
 "use client";
 
-import WrapperBanner from "@/app/components/WraperBanner";
+import WrapperBanner from "@/components/WraperBanner";
 import { FaRegUser } from "react-icons/fa6";
 import { ChangeEvent, useState } from "react";
 import Image from "next/image";

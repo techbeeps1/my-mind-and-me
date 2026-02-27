@@ -1,6 +1,6 @@
 "use client";
 
-import WrapperBanner from "@/app/components/WraperBanner";
+import WrapperBanner from "@/components/WraperBanner";
 import Image from "next/image";
 import { FaRegUser, FaPhone } from "react-icons/fa6";
 import { SlCalender } from "react-icons/sl";

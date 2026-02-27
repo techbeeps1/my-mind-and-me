@@ -1,12 +1,12 @@
 "use client";
-import WrapperBanner from "@/app/components/WraperBanner";
+import WrapperBanner from "@/components/WraperBanner";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { LuEye } from "react-icons/lu";
-import SessionModal from "@/app/components/SessionModal";
-import SidebarDashBoard from "@/app/components/SidebarDashBoard";
+import SessionModal from "@/components/SessionModal";
+import SidebarDashBoard from "@/components/SidebarDashBoard";
 
 // data/patients.ts
 export type PatientStatus = "Active" | "Inactive";

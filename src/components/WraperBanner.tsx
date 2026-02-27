@@ -1,6 +1,6 @@
-import Image from "next/image";
+
 import { ReactNode } from "react";
-import SidebarDashBoard from "../components/SidebarDashBoard";
+import SidebarDashBoard from "./SidebarDashBoard";
 
 import { useState } from "react";
 import HeaderDashboard from "./header/HeaderDashboard";

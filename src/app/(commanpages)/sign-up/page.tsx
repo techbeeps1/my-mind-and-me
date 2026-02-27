@@ -3,7 +3,7 @@ import { url } from "inspector";
 import Image from "next/image";
 import Link from "next/link";
 import { GoPlus, GoEyeClosed, GoEye } from "react-icons/go";
-import SidebarMenu from "../../components/Sidebar";
+import SidebarMenu from "../../../components/Sidebar";
 import { HiOutlineUserCircle } from "react-icons/hi2";
 import { CiLock } from "react-icons/ci";
 import { useState } from "react";

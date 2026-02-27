@@ -58,9 +58,14 @@ export default function SidebarMenu() {
                             <li><Link href={"#"} className="hover:text-AquaBlue duration-500">Linkedin</Link></li>
                             <li><Link href={"#"} className="hover:text-AquaBlue duration-500">Email</Link></li>                            
                         </ul>
-                         <button className=" cursor-pointer max-w-fit flex items-center gap-[10px] text-white rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_90%)] px-[26px] py-[12px] text-lg font-bold text-primary">
+                        <div className="flex gap-5">
+                           <Link href="login" className=" cursor-pointer max-w-fit flex items-center gap-[10px] text-white rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_90%)] px-[26px] py-[12px] text-lg font-bold text-primary">
+                            <GoDotFill className="h-[12px] w-[12px]"/> Login
+                        </Link>
+                         <Link href="sign-up" className=" cursor-pointer max-w-fit flex items-center gap-[10px] text-white rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_90%)] px-[26px] py-[12px] text-lg font-bold text-primary">
                             <GoDotFill className="h-[12px] w-[12px]"/> Join Us
-                        </button>
+                        </Link>
+                        </div>
                     </div>
                 </div>
             </aside>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito_Sans  } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 
 export const metadata: Metadata = {
@@ -23,6 +24,10 @@ export default function RootLayout({
         className={` antialiased`}
       >
         {children}
+        <Toaster
+  position="top-right"
+
+/>
       </body>
     </html>
   );

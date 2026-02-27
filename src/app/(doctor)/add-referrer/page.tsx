@@ -1,6 +1,6 @@
 "use client";
 
-import WrapperBanner from "@/app/components/WraperBanner";
+import WrapperBanner from "@/components/WraperBanner";
 import { useState } from "react";
 export default function AddReferrer() {
   const [userRole, setUserRole] = useState("");
