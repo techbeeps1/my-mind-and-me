@@ -5,7 +5,9 @@ import Image from "next/image";
 import { FaRegUser, FaPhone } from "react-icons/fa6";
 import { SlCalender } from "react-icons/sl";
 import { GoDotFill } from "react-icons/go";
+import { useState } from "react";
 export default function DoctorProfile() {
+  const [isEdit, setisEdit] = useState(true);
   return (
     <>
       <WrapperBanner>
@@ -30,9 +32,21 @@ export default function DoctorProfile() {
                     <div className="lg:text-base md:text-sm text-xs text-[#C6C6C6]">Receptionist</div>
                   </div>
                 </div>
-                <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
-                  <GoDotFill className="md:h-3 md:w-3 h-2 w-2" /> Edit
-                </button>
+        
+                  {isEdit ? ( <button onClick={() => setisEdit(false)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <GoDotFill className="md:h-3 md:w-3 h-2 w-2" /> Edit
+                  </button>):(
+        <div className="flex gap-2">
+
+    <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <GoDotFill className="md:h-3 md:w-3 h-2 w-2" /> Save
+                  </button>
+                  <button onClick={() => setisEdit(true)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <GoDotFill className="md:h-3 md:w-3 h-2 w-2" /> Cancel
+                  </button>
+                </div>
+                  )}
+              
               </div>
               <div className="flex md:flex-row flex-col md:gap-5 gap-3.75 justify-between mb-5">
                 <div className="w-full">
@@ -43,6 +57,7 @@ export default function DoctorProfile() {
                   <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                     <FaRegUser className="h-[15px] w-[15px] text-primary" />
                     <input
+                      readOnly={isEdit}
                       type="text"
                       placeholder="Full Name"
                       className="w-full text-primary text-sm placeholder:text-primary leading-[20px] bg-transparent  outline-none text-sm"
@@ -57,6 +72,7 @@ export default function DoctorProfile() {
                   <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                     <FaPhone className="h-[15px] w-[15px] text-primary" />
                     <input
+                      readOnly={isEdit}
                       type="tel"
                       placeholder="Phone"
                       className="w-full text-primary text-sm placeholder:text-primary leading-[20px] bg-transparent  outline-none text-sm"
@@ -70,7 +86,7 @@ export default function DoctorProfile() {
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
                     Gender
                   </label>
-                  <select className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
+                  <select disabled={isEdit} className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
                     <option>Male</option>
                     <option>Female</option>
                   </select>
@@ -78,10 +94,11 @@ export default function DoctorProfile() {
                 {/* Phone */}
                 <div className="w-full">
                   <label className="block text-sm font-semibold leading-[24px] text-primary mb-[8px]">
-                    Phone
+                    DOB
                   </label>
                   <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                     <input
+                      readOnly={isEdit}
                       type="DOB"
                       placeholder="DD/MM/YYYY"
                       className="w-full text-primary text-sm placeholder:text-primary leading-[20px] bg-transparent  outline-none text-sm"
@@ -100,16 +117,18 @@ export default function DoctorProfile() {
                       License number <span className="text-red-500">*</span>
                     </label>
                     <input
+                      readOnly={isEdit}
                       type="text"
                       placeholder="License number"
                       className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none "
                     />
-                  </div>                  
+                  </div>
                   <div className="w-full">
                     <label className="text-sm font-semibold block leading-6 text-primary mb-2">
                       Registration <span className="text-red-500">*</span>
                     </label>
                     <input
+                      readOnly={isEdit}
                       type="text"
                       placeholder="Registration"
                       className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
@@ -128,28 +147,30 @@ export default function DoctorProfile() {
                     </label>
                     <input
                       type="text"
+                      readOnly={isEdit}
                       placeholder="Clinic name"
                       className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none "
                     />
-                  </div>                  
+                  </div>
                   <div className="w-full">
                     <label className="text-sm font-semibold block leading-6 text-primary mb-2">
                       Phone
                     </label>
                     <input
+                      readOnly={isEdit}
                       type="text"
                       placeholder="Phone"
                       className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
                     />
                   </div>
-                  <div className="w-full md:col-span-2">                    
-                   <label className="text-sm font-semibold block leading-6 text-primary mb-2">
+                  <div className="w-full md:col-span-2">
+                    <label className="text-sm font-semibold block leading-6 text-primary mb-2">
                       Address
                     </label>
-                  <textarea
-                    className="w-full resize-none text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
-                    placeholder="Address"
-                  />
+                    <textarea readOnly={isEdit}
+                      className="w-full resize-none text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
+                      placeholder="Address"
+                    />
                   </div>
                 </div>
               </div>
@@ -158,14 +179,26 @@ export default function DoctorProfile() {
                   Special Interest
                 </h2>
                 <div className="md:w-[50%] ">
-                    <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                      Psychiatry
-                    </label>
-                    <select className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
-                      <option>Psychiatry</option>
-                    </select>
-                  </div>                
+                  <label className="text-sm block font-semibold leading-6 text-primary mb-2">
+                    Psychiatry
+                  </label>
+                  <select disabled={isEdit} className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
+                    <option>Psychiatry</option>
+                  </select>
+                </div>
               </div>
+
+                       {!isEdit && (
+        <div className="flex gap-2 mt-10">
+    <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <GoDotFill className="md:h-3 md:w-3 h-2 w-2" /> Save
+                  </button>
+                  <button onClick={() => setisEdit(true)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <GoDotFill className="md:h-3 md:w-3 h-2 w-2" /> Cancel
+                  </button>
+                </div>
+                  )}
+
             </div>
           </div>
         </div>

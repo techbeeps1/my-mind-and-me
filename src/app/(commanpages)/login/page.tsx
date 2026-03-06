@@ -124,7 +124,7 @@ const [errors, setErrors] = useState<FormErrors>({});
               <div>
                 <div className="flex justify-between mb-1">
                   <label className="text-sm">Password</label>
-                  <Link href="#" className="text-sm font-bold hover:underline">
+                  <Link href="/forgot-password" className="text-sm font-bold hover:underline">
                     Forgot Password?
                   </Link>
                 </div>
@@ -160,6 +160,13 @@ const [errors, setErrors] = useState<FormErrors>({});
               >
                 {loading ? "Logging in..." : "Log In"}
               </button>
+                {/* Footer */}
+              <p className="text-center text-sm text-primary leading-[14px] mt-[30px]">
+                Do not have an account?{" "}
+                <Link href="/sign-up" className="text-[#1F625F] font-bold hover:underline">
+                 Sign Up
+                </Link>
+              </p>
             </div>
           </div>
         </div>

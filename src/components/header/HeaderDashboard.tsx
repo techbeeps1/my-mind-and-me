@@ -202,13 +202,13 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
                 </div>
                 <ul className="space-y-3.75 md:text-[15px] md:p-0 p-5 text-sm text-black font-semibold">
                   <li className="cursor-pointer duration-300 hover:text-primary ">
-                    Profile
+                   <Link href="/doctor-profile">Profile</Link> 
                   </li>
                   <li className="cursor-pointer duration-300 hover:text-primary ">
-                    Change password
+                  <Link href="/change-password">Change password </Link>
                   </li>
                   <li className="cursor-pointer duration-300 hover:text-primary ">
-                    Log Out
+                 <Link href="/logout">Log Out</Link>   
                   </li>
                 </ul>
               </div>

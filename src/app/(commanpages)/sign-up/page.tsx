@@ -155,8 +155,8 @@ export default function Home() {
 
               {/* Footer */}
               <p className="text-center text-sm text-primary leading-[14px] mt-[30px]">
-                Do not have an account?{" "}
-                <Link href="#" className="text-[#1F625F] font-bold hover:underline">
+                Already have an account?{" "}
+                <Link href="/login" className="text-[#1F625F] font-bold hover:underline">
                   Log In
                 </Link>
               </p>
