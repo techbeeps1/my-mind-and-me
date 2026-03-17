@@ -4,6 +4,7 @@ import WrapperBanner from "@/components/WraperBanner";
 import { FaRegUser } from "react-icons/fa6";
 import { ChangeEvent, useState } from "react";
 import Image from "next/image";
+import { FiUpload } from "react-icons/fi";
 
 /* =========================
    Types
@@ -63,11 +64,11 @@ export default function PractitionerProfile() {
     fileKey: FileKey;
   }) => (
     <div>
-      <label className="block text-sm font-medium text-teal-800 mb-2">
+      <label className="block text-sm font-semibold text-primary mb-2">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
-      <label className="relative flex flex-col items-center  justify-center border-2 border-dashed border-teal-300 rounded-lg p-6 bg-teal-50 text-center cursor-pointer hover:bg-teal-100 transition">
+      <label className="relative flex flex-col items-center  justify-center border-2 border-dashed border-primary/33 rounded-lg p-3.75 bg-primary/8 text-center cursor-pointer hover:border-primary duration-300 ">
         <input
           type="file"
           accept="image/png, image/jpeg"
@@ -86,8 +87,15 @@ export default function PractitionerProfile() {
           </div>
         ) : (
           <>
-            <p className="text-teal-700 font-medium">Click to upload</p>
-            <p className="text-sm text-gray-500">JPG or PNG</p>
+            <div className="flex gap-3.75 items-start">
+              <div className="bg-primary p-2.5 rounded-md border-2 border-primary/50">
+                <FiUpload className="text-white text-[20px]" />
+              </div>
+              <div>
+                <p className="text-primary font-medium ">Click to upload</p>
+                <p className="text-[15px] text-primary/50">JPG, PNG or PDF</p>
+              </div>
+            </div>
           </>
         )}
       </label>
@@ -103,76 +111,80 @@ export default function PractitionerProfile() {
           </h2>
 
           <div className="w-245 max-w-full mx-auto md:mb-11.25 mb-7.5 px-5">
-          <div className="space-y-6">
-  <h3 className="text-[22px] font-bold text-primary text-center">
-    Personal Info
-  </h3>
+            <div className="space-y-6">
+              <h3 className="text-[22px] font-bold text-primary text-center">
+                Personal Info
+              </h3>
 
-  {/* Full Name */}
-  <label className="block text-sm font-semibold leading-6 text-primary mb-2">
-    Full Name
-  </label>
-  <div className="flex items-center gap-[12px] bg-primary/8 rounded-md px-4 py-2.5 ">
-    <FaRegUser className="h-4 w-4 text-primary" />
-    <input
-      type="text"
-      placeholder="Full Name"
-      required
-      className="w-full text-primary text-sm placeholder:text-primary bg-transparent outline-none"
-    />
-  </div>
+              {/* Full Name */}
+              <label className="block text-sm font-semibold leading-6 text-primary mb-2">
+                Full Name
+              </label>
+              <div className="flex items-center gap-[12px] bg-primary/8 rounded-md px-4 py-2.5 ">
+                <FaRegUser className="h-4 w-4 text-primary" />
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  required
+                  className="w-full text-primary text-sm placeholder:text-primary bg-transparent outline-none"
+                />
+              </div>
 
-  {/* Qualifications */}
-  <label className="block text-sm font-semibold leading-6 text-primary mb-2">
-    Qualifications
-  </label>
-  <div className="flex items-center gap-[12px] bg-primary/8 rounded-md px-4 py-2.5 ">
-    <FaRegUser className="h-4 w-4 text-primary" />
-    <input
-      type="text"
-      placeholder="Qualifications"
-      required
-      className="w-full text-primary text-sm placeholder:text-primary bg-transparent outline-none"
-    />
-  </div>
+              {/* Qualifications */}
+              <label className="block text-sm font-semibold leading-6 text-primary mb-2">
+                Qualifications
+              </label>
+              <div className="flex items-center gap-[12px] bg-primary/8 rounded-md px-4 py-2.5 ">
+                <FaRegUser className="h-4 w-4 text-primary" />
+                <input
+                  type="text"
+                  placeholder="Qualifications"
+                  required
+                  className="w-full text-primary text-sm placeholder:text-primary bg-transparent outline-none"
+                />
+              </div>
 
-  {/* License number */}
-  <label className="block text-sm font-semibold leading-6 text-primary mb-2">
-    License number
-  </label>
-  <div className="flex items-center gap-[12px] bg-primary/8 rounded-md px-4 py-2.5">
-    <FaRegUser className="h-4 w-4 text-primary" />
-    <input
-      type="text"
-      placeholder="License number"
-      required
-      className="w-full text-primary text-sm placeholder:text-primary bg-transparent outline-none"
-    />
-  </div>
-</div>
+              {/* License number */}
+              <label className="block text-sm font-semibold leading-6 text-primary mb-2">
+                License number
+              </label>
+              <div className="flex items-center gap-[12px] bg-primary/8 rounded-md px-4 py-2.5">
+                <FaRegUser className="h-4 w-4 text-primary" />
+                <input
+                  type="text"
+                  placeholder="License number"
+                  required
+                  className="w-full text-primary text-sm placeholder:text-primary bg-transparent outline-none"
+                />
+              </div>
+            </div>
 
             {/* Verification Section */}
             <h3 className="text-xl font-semibold text-teal-800 text-center mt-6 mb-8">
               Verification Document
             </h3>
+            <div className="max-w-135 mx-auto">              
+                <div className="space-y-8">
+                  <div className="flex items-center justify-between w-full gap-10">
+                    <div className="w-full">
+                    <UploadBox label="HPCSA / SACSS" required fileKey="hpcsa" />
+                    </div>
+                    <div className="w-full">
+                      <label className="block text-sm font-semibold text-primary mb-2">
+                        expiry date <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full bg-gray-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2"
+                      />
+                    </div>
+                  </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-8">
-                <UploadBox label="HPCSA / SACSS" required fileKey="hpcsa" />
-                <UploadBox label="BHF" fileKey="bhf" />
-                <UploadBox label="MPS" fileKey="mps" />
-                <UploadBox label="CPD" fileKey="cpd" />
-              </div>
-
-              <div className="space-y-8">
-                {[1, 2, 3, 4].map((_, i) => (
-                  <input
-                    key={i}
-                    type="date"
-                    className="w-full bg-gray-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  />
-                ))}
-              </div>
+                  <UploadBox label="BHF" fileKey="bhf" />
+                  <UploadBox label="MPS" fileKey="mps" />
+                  <UploadBox label="CPD" fileKey="cpd" />
+                </div>
+             
             </div>
 
             {/* Submit */}
