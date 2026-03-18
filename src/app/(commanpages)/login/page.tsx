@@ -8,7 +8,7 @@ import { CiLock } from "react-icons/ci";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { login } from "@/services/api";
+import { authApiPath } from "@/services/api";
 import {toastTBS} from "@/lib/toast";
 
 
@@ -26,7 +26,6 @@ type FormErrors = {
 const [errors, setErrors] = useState<FormErrors>({});
   const router = useRouter();
 
-  // ✅ Validation Function
   function validate() {
    const newErrors: FormErrors = {};
 
@@ -46,27 +45,39 @@ const [errors, setErrors] = useState<FormErrors>({});
     return Object.keys(newErrors).length === 0;
   }
 
-  // ✅ Submit Function
+
   async function submitlogin() {
     if (!validate()) return;
 
     try {
       setLoading(true);
 
-      const data = await login({email, password});
+  
+        const res = await fetch(`${authApiPath}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
 
-      if (data?.token) {
-        localStorage.setItem("adminToken", data.token);
+      
+        if(res.ok){
+        const data = await res.json();
+      if (data.id) {
+        localStorage.setItem("MMMDT", JSON.stringify(data));
       }
-
-     toastTBS.success("Login successful 🎉");
-
+     toastTBS.success("Login successful");
       setTimeout(() => {
-        router.push("/dashboard");
+        router.replace("/dashboard");
       }, 1000);
-
+    }else{
+      const errorData = await res.json();
+      throw new Error(errorData.detail || "Login failed");
+    }
     } catch (err) {
        if (err instanceof Error) {
+        console.error("Login error:", err);
     toastTBS.error(err.message || "Login failed");
   } else {
     toastTBS.error("Something went wrong");
@@ -74,7 +85,11 @@ const [errors, setErrors] = useState<FormErrors>({});
     
      
     } finally {
-      setLoading(false);
+
+       setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+      
     }
   }
 

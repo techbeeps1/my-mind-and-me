@@ -3,12 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HiOutlineUserCircle } from "react-icons/hi2";
-import { CiLock } from "react-icons/ci";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 //import { sendResetLink } from "@/services/api"; // Assuming a reset password function is available
 import { toastTBS } from "@/lib/toast";
+import { sendResetLink } from "@/services/api";
 
 export default function ForgotPass() {
   const [email, setEmail] = useState("");
@@ -41,8 +42,8 @@ export default function ForgotPass() {
     try {
       setLoading(true);
 
-      //const data = await sendResetLink({ email }); // Assuming this function sends a reset link
-
+      const data = await sendResetLink(email); // Assuming this function sends a reset link
+       console.log("Reset Link Response:", data); // Log the response for debugging
       toastTBS.success("Password reset link sent successfully 🎉");
 
       setTimeout(() => {

@@ -11,20 +11,27 @@ export async function POST(req: Request) {
 
   const data = await res.json();
 
+  if(data.detail){
+    const response = NextResponse.json(data,{ status: 401 });
+      return response;
+  }
   const response = NextResponse.json(data.user);
-  
   if(data.user.role !== "admin"){
-  response.cookies.set("ATMMM", data.access_token, {
+  response.cookies.set("MMMAT", data.access_token, {
     httpOnly: true,
     secure: true,
     path: "/",
   });
-  response.cookies.set("RTMMM", data.refresh_token, {
+  response.cookies.set("MMMRT", data.refresh_token, {
     httpOnly: true,
     secure: true,
     path: "/",
   });
-
+  response.cookies.set("MMMDT",JSON.stringify( data.user), {
+    httpOnly: true,
+    secure: true,
+    path: "/",
+  });
 }
 
   return response;
