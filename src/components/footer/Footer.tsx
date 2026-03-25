@@ -2,8 +2,32 @@
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
 import Image from "next/image";
+import gsap from "gsap";
+import SplitType from "split-type";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef } from "react";
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Footer() {
+  const textRef = useRef<HTMLHeadingElement | null>(null);
+  useEffect(() => {
+    if (!textRef.current) return;
+    const split = new SplitType(textRef.current, {
+      types: "chars,words",
+    });
+    gsap.from(split.chars, {
+      y: 10,
+      opacity: 0,
+      stagger: 0.05,
+      duration: 0.6,
+    ease: "power2.out",
+    scrollTrigger: {
+      trigger: textRef.current,
+      start: "top 80%", // when element enters viewport
+     toggleActions: "play none none none" // play only once
+    },
+    });
+  }, []);
   return (
     <>
       <footer className="w-full bg-[linear-gradient(62deg,var(--color-primary)_20%,var(--color-MintGreen)_100%)] pt-22.5 pb-12.5">
@@ -11,17 +35,17 @@ export default function Footer() {
           {/* Left content */}
           <div className="w-191.25 max-w-full md:flex gap-31.25 md:order-first order-last">
             <div className="flex flex-col justify-center">
-              <h2 className="lg:text-[80px] md:text-[60px] text-[45px] md:text-end text-start text-white lg:leading-26.25 md:leading:[70px] leading-15">
+              <h2 ref={textRef} className="lg:text-[80px] md:text-[60px] text-[45px] md:text-end text-start text-white lg:leading-26.25 md:leading:[70px] leading-15">
                 Empower <br />
                 Your Mental <br />
                 Health Journey
               </h2>
               <div className="flex justify-end md:gap-7.5 gap-5 md:mt-12.5 mt-7.5">
                 <button className=" cursor-pointer flex items-center md:gap-2.5 gap-1.5 text-white rounded-full bg-[linear-gradient(90deg,var(--color-primary)_0%,var(--color-MintGreen)_100%)] px-6.5 py-3 lg:text-lg md:text-base text-sm font-bold">
-                 <GoDotFill className="h-3 w-3"/> Join Us
+                  <GoDotFill className="h-3 w-3" /> Join Us
                 </button>
                 <button className=" cursor-pointer hover:bg-primary hover:text-white duration-500 lg:text-lg md:text-base text-sm flex items-center md:gap-2.5 gap-1.5 font-bold rounded-full bg-white px-6.5 py-3  text-primary">
-                  <GoDotFill className="h-3 w-3"/> Start Your Journey
+                  <GoDotFill className="h-3 w-3" /> Start Your Journey
                 </button>
               </div>
             </div>
@@ -51,13 +75,19 @@ export default function Footer() {
               />
               <ul className="p-0 lg:text-lg md:text-base text-sm md:leading-11.75 leading-10 font-bold mt-7.5 text-white">
                 <li>
-                  <Link href="#" className="hover:text-primary duration-500">Twitter</Link>
+                  <Link href="#" className="hover:text-primary duration-500">
+                    Twitter
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="hover:text-primary duration-500">Linkedin</Link>
+                  <Link href="#" className="hover:text-primary duration-500">
+                    Linkedin
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="hover:text-primary duration-500">Email</Link>
+                  <Link href="#" className="hover:text-primary duration-500">
+                    Email
+                  </Link>
                 </li>
               </ul>
             </div>
