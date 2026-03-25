@@ -1,5 +1,5 @@
-// "use client";
-
+// "use client"; 
+//test
 // import { useEffect, useRef } from "react";
 // import gsap from "gsap";
 // import SplitType from "split-type";
