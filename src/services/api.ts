@@ -19,6 +19,55 @@ export const prApiPath = "/api/practitioner";
 export const imagePath = "http://54.89.179.53:8000/image/"; 
 
 
+// practitioner UpdateBankDetails
+export async function addInsurance( data:any ) {
+  const res = await fetch(`${paApiPath}/insurance`, {
+    method: "POST",
+    body: data,
+    headers: {
+       "Content-Type": "application/json",
+    },  
+  });
+  if (!res.ok) { throw new Error("Failed to add insurance");}
+  return await res.json();
+}
+
+
+// patient medical-history
+export async function Getmedicalhistory(UserId:string) {
+  const res = await fetch(`${paApiPath}/medical-history/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch patient medical history");
+  return res.json();
+}
+
+// patient Insurance
+export async function GetInsuranceData(UserId:string) {
+  const res = await fetch(`${paApiPath}/insurance/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch patient insurance data");
+  return res.json();
+}
+
+
+// patient profile edit
+export async function patientProfileEdit( data:any ) {
+  const res = await fetch(`${PATIENT_END}/profile`, {
+    method: "POST",
+    body: data,
+  });
+  if (!res.ok) { throw new Error("Failed to edit patient profile");}
+  return await res.json();
+}
+ 
+
+
+// patient profiles
+export async function patientProfile(UserId:string) {
+  const res = await fetch(`${paApiPath}/profile/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch patient profile");
+  return res.json();
+}
+
+
 // practitioner update Bio
 export async function UpdatepractitionerBio( data:any ) {
   const res = await fetch(`${prApiPath}/bio/update`, {

@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 
 import { LuEye } from "react-icons/lu";
 
-import {  GetverificationDOcs } from "@/services/api";
+import {  GetverificationDOcs, imagePath } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
 import VerifyDocsUpload from "@/components/comman/VerifyDocsUpload";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import Link from "next/link";
 export type PatientStatus = "Active" | "Inactive";
 
 export interface VeriDocstype {
@@ -145,9 +146,9 @@ if (uploadModal) {
                         </td>
 
                         <td className="px-4 py-4 flex items-center gap-2.5 justify-end">
-                          <button className="px-1.25 flex justify-center items-center h-8.75 w-8.75 bg-primary rounded-sm border border-primary/25 text-white cursor-pointer">
+                          <Link target="_blank" href={imagePath+"document_verification/"+item.file} className="px-1.25 flex justify-center items-center h-8.75 w-8.75 bg-primary rounded-sm border border-primary/25 text-white cursor-pointer">
                             <LuEye className="h-5 w-5" />
-                          </button>
+                          </Link>
 
                           <button onClick={()=>setUploadModal(true)} className="px-1.25 flex justify-center items-center h-8.75  bg-primary rounded-sm border border-primary/25 text-white cursor-pointer">
                           Resubmit  

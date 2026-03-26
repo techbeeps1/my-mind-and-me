@@ -1,55 +1,75 @@
 "use client";
 import WrapperBanner from "@/components/WraperBanner";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import SessionModal from "@/components/SessionModal";
+import {  Getmedicalhistory } from "@/services/api";
+import LoadingSpin from "@/components/LoadingSpin";
 export interface Patient {
   id: number;
-  name: string;
-  avatar: string;
-  date: string;
-  time: string;
-  referral: string;
+  created_at: string;
+  diagnosis: string;
+  doctor_id: string;
+  medications: string;
+  notes: string;
+  patient_id: string;
+  patient_name: string;
+  doctor_name: string;
+  treatment_plan: string;
+  updated_at: string;
   
 }
 
-export const patients: Patient[] = [
-  {
-    id: 1,
-    name: "Alexa Rawles",
-    avatar: "https://i.pravatar.cc/40?img=47",
-    date: "2028-09-20",
-    time: "09:00 AM",
-    referral: "Dr. Paul Carter",
-   
-  },
-  {
-    id: 2,
-    name: "Alexa Rawles",
-    avatar: "https://i.pravatar.cc/40?img=47",
-    date: "2028-09-20",
-    time: "09:00 AM",
-    referral: "Dr. Paul Carter",
-   
-  },
-];
+
 
 export default function MedicalHistory() {
   const [search, setSearch] = useState("");
+  const [landing, setLanding] = useState(true);
+  const [patientsMedicalHistory, setPatientsMedicalHistory] = useState<Patient[]>([]);
 
+  const [MMMUserData] = useState(() => {
+    if (typeof window === "undefined") return null;
+    const data = localStorage.getItem("MMMDT");
+    return data ? JSON.parse(data) : null;
+  });
 
   const filteredData = useMemo(() => {
-    return patients.filter((item) => {
+    return patientsMedicalHistory.filter((item) => {
       const matchesSearch =
-        item.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.referral.toLowerCase().includes(search.toLowerCase());
+        item.diagnosis.toLowerCase().includes(search.toLowerCase()) ||
+        item.treatment_plan.toLowerCase().includes(search.toLowerCase()) ||
+        item.medications.toLowerCase().includes(search.toLowerCase()) ||
+        item.notes.toLowerCase().includes(search.toLowerCase()) ||
+        item.patient_name.toLowerCase().includes(search.toLowerCase());
 
-      
-
+  
       return matchesSearch;
     });
-  }, [search]);
+  }, [search, patientsMedicalHistory]);
   const [openModal, setOpenModal] = useState(false);
+
+
+      useEffect(() => {
+       Getmedicalhistory(MMMUserData?.id)
+         .then((data) => {
+           setLanding(false);
+           console.log("Patient Profile Data:", data);
+           setPatientsMedicalHistory(data.data);
+         })
+         .catch((err) => {
+           console.error(err);
+         });
+     }, [MMMUserData?.id]);
+   
+ if (landing) {
+    return (
+      <WrapperBanner>
+        <div className="flex-1 flex justify-center items-center h-[70vh]">
+          <LoadingSpin />
+        </div>
+      </WrapperBanner>
+    );
+  }
   return (
     <>
       <WrapperBanner>
@@ -116,28 +136,26 @@ export default function MedicalHistory() {
                     {filteredData.map((item) => (
                       <tr key={item.id}>
                         <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          Text
+                          {item.diagnosis}
                         </td>
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          Text
+                          {item.treatment_plan}
                         </td>
 
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          Text
+                          {item.medications}
                         </td>
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
-                          <div>2028-09-20</div>
-                          <div className="text-xs text-primary/54">
-                            09:00 AM
-                          </div>                         
+                          <div>{item.created_at}</div>
+                                                
                         </td>
 
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
-                          Alexa Rawles
+                          {item.doctor_name}
                         </td>
                         <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          Text
+                          {item.notes}
                         </td>
                       </tr>
                     ))}

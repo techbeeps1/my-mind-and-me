@@ -22,17 +22,17 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
   ];
   const menu1 = [
     { name: "Dashboard", path: "/dashboard" },
-    { name: "Profile", path: "/patient-profile" },
+  
     { name: "Medical History", path: "/medical-history" },
     { name: "Insurance", path: "/insurance" },
+      { name: "Profile", path: "/patient-profile" },
   ];
   const menu2 = [
     { name: "Dashboard", path: "/dashboard" },
-    
-    
     { name: "Verification Status", path: "/verification-status" },
     { name: "Bank Details", path: "/bank-details" },
-    { name: "Profile", path: "/practitioner-profile" }
+    { name: "Profile", path: "/practitioner-profile" },
+    { name: "Bio", path: "/bio" }
     ,
   ];
   const menu = MMMUserData?.role === "referrer" ? menu0 : MMMUserData?.role === "patient" ? menu1 : menu2;

@@ -7,8 +7,9 @@ import { GoDotFill } from "react-icons/go";
 import { useEffect, useState } from "react";
 import {
   imagePath,
-  referralProfile,
-  referralProfileEdit,
+  patientProfile,
+  patientProfileEdit,
+
 } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
@@ -31,7 +32,7 @@ export default function DoctorProfile() {
     phone: string;
     gender: string;
     dob: string;
-    BloodGroup: string ;
+    blood_group: string ;
     profile_image: string | null;
   };
   const [formData, setFormData] = useState<FormDataType>({
@@ -40,7 +41,7 @@ export default function DoctorProfile() {
     phone: "",
     gender: "",
     dob: "",
-    BloodGroup: "",
+    blood_group: "",
     profile_image: "/profile-img.png",
   });
 
@@ -73,19 +74,62 @@ export default function DoctorProfile() {
   }, [preview]);
 
   useEffect(() => {
-    referralProfile(MMMUserData?.id)
+    patientProfile(MMMUserData?.id)
       .then((data) => {
         setLanding(false);
-        //setFormData(data.data);
-        //setPreview(imagePath + data.data.profile_image || "/profile-img.png");
+        setFormData(data.data);
+        setPreview(imagePath + data.data.profile_image || "/profile-img.png");
       })
       .catch((err) => {
         console.error(err);
       });
   }, [MMMUserData?.id]);
 
+
+  const validateForm = (data: FormDataType): string => {
+  let errors: string = "";
+
+  if (!data.full_name.trim()) {
+    errors = "Full name is required";
+    return errors;
+  }
+
+  if (!data.phone.trim()) {
+    errors = "Phone number is required";
+    return errors;
+  } else if (!/^[1-9]\d{9}$/.test(data.phone)) {
+    errors = "Enter valid 10 digit phone number";
+    return errors;
+  }
+
+  if (!data.gender) {
+    errors = "Gender is required";
+    return errors;
+  }
+
+  if (!data.dob) {
+    errors = "Date of birth is required";
+    return errors;
+  }
+
+  if (!data.blood_group.trim()) {
+    errors = "Blood group is required";
+    return errors;
+  }
+
+
+
+  return "";
+};
+
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+      const validationErrors = validateForm(formData);
+  if (validationErrors) { 
+  toastTBS.error(validationErrors)
+  return;
+  }
     const data = new FormData();
 
     Object.keys(formData).forEach((key) => {
@@ -107,7 +151,7 @@ export default function DoctorProfile() {
     if (landingData) return;
     setLandingData(true);
     try {
-      const res = await referralProfileEdit(data);
+      const res = await patientProfileEdit(data);
       if (res.status) {
         toastTBS.success("Profile updated successfully");
         setisEdit(true);
@@ -279,8 +323,8 @@ export default function DoctorProfile() {
                       Blood Group
                     </label>
                     <select
-                      name="BloodGroup"
-                      value={formData.BloodGroup}
+                      name="blood_group"
+                      value={formData.blood_group}
                       onChange={handleChange}
                       disabled={isEdit}
                       className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/8 outline-none"
@@ -296,23 +340,7 @@ export default function DoctorProfile() {
                       <option value="O−">O−</option>
                     </select>
                   </div>
-                {!isEdit && (
-                  <div className="flex gap-2 mt-10">
-                    <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
-                      {landingData ? (
-                        <LoadingSpin width={2} height={11} />
-                      ) : (
-                        "Save"
-                      )}
-                    </button>
-                    <button
-                      onClick={() => setisEdit(true)}
-                      className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
+          
               </div>
             </form>
           </div>

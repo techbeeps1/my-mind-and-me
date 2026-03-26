@@ -1,50 +1,98 @@
 "use client";
 import WrapperBanner from "@/components/WraperBanner";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import SessionModal from "@/components/SessionModal";
+import { GetInsuranceData } from "@/services/api";
+import LoadingSpin from "@/components/LoadingSpin";
+import { IoMdArrowRoundBack } from "react-icons/io";
+
+import AddInsurance from "@/components/comman/AddInsurance";
 export interface Patient {
   id: number;
-  name: string;
-  avatar: string;
-  date: string;
-  time: string;
-  referral: string;
+  insurance_name: string;
+  notes: string;
+  full_name: string;
+  policy_number: string;
+  end_date: string;
+  start_date: string;
+  created_at: string;
+  coverage_details: string;
+  patient_id:string;
   
 }
 
-export const patients: Patient[] = [
-  {
-    id: 1,
-    name: "Alexa Rawles",
-    avatar: "https://i.pravatar.cc/40?img=47",
-    date: "2028-09-20",
-    time: "09:00 AM",
-    referral: "Dr. Paul Carter",
-   
-  },
-  {
-    id: 2,
-    name: "Alexa Rawles",
-    avatar: "https://i.pravatar.cc/40?img=47",
-    date: "2028-09-20",
-    time: "09:00 AM",
-    referral: "Dr. Paul Carter",
-   
-  },
-];
+
 
 export default function Insurance() {
+  const [landing, setLanding] = useState(true);
+  const [patients, setPatients] = useState<Patient[]>([]);
+   const [uploadModal, setUploadModal] = useState(false);
+  const [MMMUserData] = useState(() => {
+    if (typeof window === "undefined") return null;
+    const data = localStorage.getItem("MMMDT");
+    return data ? JSON.parse(data) : null;
+  });
+
+
+
+
   const [search, setSearch] = useState("");
-  const filteredData = useMemo(() => {
-    return patients.filter((item) => {
-      const matchesSearch =
-        item.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.referral.toLowerCase().includes(search.toLowerCase());
-      return matchesSearch;
-    });
-  }, [search]);
-  const [openModal, setOpenModal] = useState(false);
+
+const filteredData = useMemo(() => {
+  return patients.filter((item) => {
+    const matchesSearch =
+
+      item.insurance_name.toLowerCase().includes(search.toLowerCase()) ||
+      item.policy_number.toLowerCase().includes(search.toLowerCase()) ||
+      item.coverage_details.toLowerCase().includes(search.toLowerCase()) ||
+      item.notes.toLowerCase().includes(search.toLowerCase());
+       
+    return matchesSearch;
+  });
+}, [search, patients]);
+
+
+
+     useEffect(() => {
+     GetInsuranceData(MMMUserData?.id)
+       .then((data) => {
+         setLanding(false);
+         console.log("Patient Profile Data:", data);
+         setPatients(data.data);
+       })
+       .catch((err) => {
+         console.error(err);
+       });
+   }, [MMMUserData?.id,uploadModal]);
+ 
+ if (landing) {
+    return (
+      <WrapperBanner>
+        <div className="flex-1 flex justify-center items-center h-[70vh]">
+          <LoadingSpin />
+        </div>
+      </WrapperBanner>
+    );
+  }
+
+if (uploadModal) {
+  return (
+       <WrapperBanner>
+    <div className="relative">
+          
+        <button onClick={() => setUploadModal(false)} className="px-2 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition absolute top-10 left-10 text-2xl font-bold">
+          <IoMdArrowRoundBack />
+        </button>
+
+        <AddInsurance />
+    
+  </div>
+    </WrapperBanner>
+  );
+}
+
+
   return (
     <>
       <WrapperBanner>
@@ -53,6 +101,7 @@ export default function Insurance() {
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
               Insurance
             </h2>
+              
             <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl ">
               {/* Search & Filter */}
               <div className="flex justify-between flex-wrap  mb-5">
@@ -68,6 +117,9 @@ export default function Insurance() {
                     <FiSearch className=" h-5 w-5  " />
                   </button>
                 </div>
+                  <button onClick={() => setUploadModal(true)} className="px-4 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition">
+        Add New Insurance
+      </button>
               </div>
 
               {/* Table */}
@@ -87,6 +139,9 @@ export default function Insurance() {
                       <th className="px-4 py-3 text-left bg-primary/8 ">
                         Notes
                       </th>
+                       <th className="px-4 py-3 text-left bg-primary/8">
+                        Date
+                      </th> 
                       <th className="px-4 py-3 text-left bg-primary/8">
                        Expiry date
                       </th>                      
@@ -108,26 +163,26 @@ export default function Insurance() {
                     {filteredData.map((item) => (
                       <tr key={item.id}>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">                         
-                          Alexa Rawles
-                        </td>
+                          {item.insurance_name}                        </td>
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          123456
+                          {item.policy_number}
                         </td>
 
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          Text
+                          {item.coverage_details}
                         </td>
                          <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          Text
+                          {item.notes}
                         </td>
 
                        <td className="px-4 py-4 text-sm text-primary font-semibold">
-                          <div>2028-09-20</div>
-                          <div className="text-xs text-primary/54">
-                            09:00 AM
-                          </div>                         
-                        </td>                     
+                          {item.start_date}            
+                        </td>
+                           <td className="px-4 py-4 text-sm text-primary font-semibold">
+                          {item.end_date}
+                         
+                        </td>                       
                       </tr>
                     ))}
                   </tbody>
@@ -136,7 +191,7 @@ export default function Insurance() {
             </div>
           </div>
         </div>
-        <SessionModal isOpen={openModal} onClose={() => setOpenModal(false)} />
+      
       </WrapperBanner>
     </>
   );
