@@ -19,6 +19,47 @@ export const prApiPath = "/api/practitioner";
 export const imagePath = "http://54.89.179.53:8000/image/"; 
 
 
+// practitioner update Bio
+export async function UpdatepractitionerBio( data:any ) {
+  const res = await fetch(`${prApiPath}/bio/update`, {
+    method: "POST",
+    body: data,
+    headers: {
+       "Content-Type": "application/json",
+    },  
+  });
+  if (!res.ok) { throw new Error("Failed to edit practitioner profile");}
+  return await res.json();
+}
+
+
+// Practitioner Bio
+export async function GetpractitionerBio(UserId:string) {
+  const res = await fetch(`${prApiPath}/bio/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch practitioner bio");
+  return res.json();
+}
+
+ 
+// practitioner UpdateBankDetails
+export async function UpdateBankDetails( data:any ) {
+  const res = await fetch(`${prApiPath}/bank_details/update`, {
+    method: "POST",
+    body: data,
+    headers: {
+       "Content-Type": "application/json",
+    },  
+  });
+  if (!res.ok) { throw new Error("Failed to edit practitioner profile");}
+  return await res.json();
+}
+
+// Practitioner Bank Details
+export async function GetBankDetails(UserId:string) {
+  const res = await fetch(`${prApiPath}/bank-details/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch practitioner bank details");
+  return res.json();
+}
 
 // Practitioner profiles
 export async function GetverificationDOcs(UserId:string) {
@@ -31,7 +72,7 @@ export async function GetverificationDOcs(UserId:string) {
 
 // practitioner profile edit
 export async function PractitionerProfileEdit( data:any ) {
-  const res = await fetch(`${PRACTITIONER_END}/profile`, {
+  const res = await fetch(`${prApiPath}/profile`, {
     method: "POST",
     body: data,
   });

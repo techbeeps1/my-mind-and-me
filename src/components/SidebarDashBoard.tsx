@@ -27,8 +27,11 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
   const menu2 = [
     { name: "Dashboard", path: "/dashboard" },
     
-    { name: "Profile", path: "/practitioner-profile" },
+    
     { name: "Verification Status", path: "/verification-status" },
+    { name: "Bank Details", path: "/bank-details" },
+    { name: "Profile", path: "/practitioner-profile" }
+    ,
   ];
   const menu = MMMUserData?.role === "referrer" ? menu0 : MMMUserData?.role === "patient" ? menu1 : menu2;
     return (
