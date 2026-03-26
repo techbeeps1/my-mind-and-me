@@ -34,18 +34,13 @@ export const patients: Patient[] = [
   },
 ];
 
-export default function MedicalHistory() {
+export default function Insurance() {
   const [search, setSearch] = useState("");
-
-
   const filteredData = useMemo(() => {
     return patients.filter((item) => {
       const matchesSearch =
         item.name.toLowerCase().includes(search.toLowerCase()) ||
         item.referral.toLowerCase().includes(search.toLowerCase());
-
-      
-
       return matchesSearch;
     });
   }, [search]);
@@ -56,7 +51,7 @@ export default function MedicalHistory() {
         <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
           <div className="max-w-337.5 w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
-              Medical History
+              Insurance
             </h2>
             <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl ">
               {/* Search & Filter */}
@@ -81,23 +76,20 @@ export default function MedicalHistory() {
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
                       <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">
-                        Diagnosis
+                        Insurance name
                       </th>                      
                       <th className="px-4 py-3 text-left bg-primary/8">
-                        Treatment Plan
+                        Policy Number
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8">
-                        Medications
+                        Coverage Details
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 ">
-                        Date
-                      </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
-                        Doctor Name
-                      </th>
-                      <th className="px-4 py-3 text-left  bg-primary/8 rounded-tr-lg">
                         Notes
                       </th>
+                      <th className="px-4 py-3 text-left bg-primary/8">
+                       Expiry date
+                      </th>                      
                     </tr>
                   </thead>
 
@@ -115,30 +107,27 @@ export default function MedicalHistory() {
 
                     {filteredData.map((item) => (
                       <tr key={item.id}>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          Text
+                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">                         
+                          Alexa Rawles
                         </td>
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          Text
+                          123456
                         </td>
 
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
                           Text
                         </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                          Text
+                        </td>
+
+                       <td className="px-4 py-4 text-sm text-primary font-semibold">
                           <div>2028-09-20</div>
                           <div className="text-xs text-primary/54">
                             09:00 AM
                           </div>                         
-                        </td>
-
-                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
-                          Alexa Rawles
-                        </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          Text
-                        </td>
+                        </td>                     
                       </tr>
                     ))}
                   </tbody>
