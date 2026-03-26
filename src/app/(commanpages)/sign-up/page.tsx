@@ -301,9 +301,10 @@ export default function Home() {
                       !formData.email ||
                       !formData.phone ||
                       !formData.password ||
+                      !formData.confirmPassword||
                       !userRole
                     }
-                    className="disabled w-full py-[12px] duration-400 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold text-lg leading-[24px] hover:opacity-90 transition"
+                    className={`w-full py-[12px] duration-400 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold text-lg leading-[24px]  transition ${(!isAgreed || !formData.name || !formData.email || !formData.phone || !formData.password || !formData.confirmPassword || !userRole) ? "opacity-50 cursor-not-allowed": "cursor-pointer hover:opacity-90 "}`}
                   >
                     Sign up
                   </button>

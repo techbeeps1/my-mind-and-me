@@ -5,7 +5,14 @@ import Image from "next/image";
 import { FaRegUser, FaPhone } from "react-icons/fa6";
 import { SlCalender } from "react-icons/sl";
 import { GoDotFill } from "react-icons/go";
+import { useState } from "react";
 export default function DoctorProfile() {
+    const [MMMUserData] = useState(() => {
+        if (typeof window === "undefined") return null;
+        const data = localStorage.getItem("MMMDT");
+        return data ? JSON.parse(data) : null;
+      });
+  
   return (
     <>
       <WrapperBanner>
@@ -27,8 +34,8 @@ export default function DoctorProfile() {
                   />
                   <div className="lg:text-lg md:text-base text-sm text-primary">
                     <div className="font-semibold">Ashley Lars</div>
-                    <div className="lg:text-base md:text-sm text-xs text-[#C6C6C6]">
-                      Receptionist
+                    <div className="lg:text-base md:text-sm text-xs text-[#C6C6C6] capitalize">
+                      {MMMUserData?.role??''}
                     </div>
                   </div>
                 </div>

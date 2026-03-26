@@ -1,4 +1,4 @@
-import {  buyerAPI } from "@/app/utils/api";
+import {  REF_END } from "@/services/api";
 import { NextRequest, NextResponse } from "next/server";
 
 // ---------- GET ----------
@@ -62,7 +62,7 @@ async function handle(
 
     const apiPath = path.join("/");
 
-    const token = request.cookies.get("ATXAT")?.value;
+    const token = request.cookies.get("MMMAT")?.value;
 
     if (!token) {
       return NextResponse.json(
@@ -75,7 +75,7 @@ async function handle(
     headers.delete("host");
     headers.delete("content-length");
     headers.set("Authorization", `Bearer ${token}`);
-    const url = `${buyerAPI}/${apiPath}${search}`;
+    const url = `${REF_END}/${apiPath}${search}`;
 
     interface NodeRequestInit extends RequestInit {
       duplex?: "half";

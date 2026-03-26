@@ -1,61 +1,85 @@
 "use client";
+import LoadingSpin from "@/components/LoadingSpin";
 import WrapperBanner from "@/components/WraperBanner";
-import Image from "next/image";
-import { useMemo, useState } from "react";
+import { GetReferralHistory } from "@/services/api";
+
+import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
-// data/patients.ts
+
+
+
 export type PatientStatus = "Active" | "Inactive";
 
 export interface Patient {
-  id: number;
-  name: string;
-  avatar: string;
-  date: string;
-  time: string;
-  referral: string;
-  status: PatientStatus;
+  id: string;                   
+  doctor_id: string;           
+  patient_id: string;           
+  therapist_id: string;         
+  urgency_level: string;  
+  preferred_modality: string;  
+  clinical_presentation: string; 
+  chief_complaint: string;       
+  additional_requirements: string;
+  status: string;         
+  created_at: string;          
+  updated_at: string;           
+  patient_name: string;         
+  therapist_name: string;        
+  referred_by_name: string;      
 }
 
-export const patients: Patient[] = [
-  {
-    id: 1,
-    name: "Alexa Rawles",
-    avatar: "https://i.pravatar.cc/40?img=47",
-    date: "2028-09-20",
-    time: "09:00 AM",
-    referral: "Dr. Paul Carter",
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Alexa Rawles",
-    avatar: "https://i.pravatar.cc/40?img=47",
-    date: "2028-09-20",
-    time: "09:00 AM",
-    referral: "Dr. Paul Carter",
-    status: "Inactive",
-  },
-];
+
 
 export default function ReferralHistory() {
   const [search, setSearch] = useState("");
+  const [landing, setLanding] = useState(true);
+  const[patients, setPatients] = useState<Patient[]>([]);
+  const [MMMUserData] = useState(() => {
+    if (typeof window === "undefined") return null;
+    const data = localStorage.getItem("MMMDT");
+    return data ? JSON.parse(data) : null;
+  });
+
   const [statusFilter, setStatusFilter] = useState<PatientStatus | "All">(
     "All",
   );
 
-  const filteredData = useMemo(() => {
-    return patients.filter((item) => {
-      const matchesSearch =
-        item.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.referral.toLowerCase().includes(search.toLowerCase());
+  useEffect(() => {
 
-      const matchesStatus =
-        statusFilter === "All" || item.status === statusFilter;
+    GetReferralHistory(MMMUserData?.id).then((data) => {
 
-      return matchesSearch && matchesStatus;
-    });
-  }, [search, statusFilter]);
+         setLanding(false);
+        setPatients(data.data);
+        
+    }).catch((error) => {     
+       console.error("Error fetching referral history:", error);
+    })
+  }, [MMMUserData?.id]);
+
+
+const filteredData = useMemo(() => {
+  return patients.filter((item) => {
+    const matchesSearch =
+      item.patient_name.toLowerCase().includes(search.toLowerCase()) ||
+      item.referred_by_name.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "All" || item.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+}, [search, statusFilter, patients]);
+
+ if (landing) {
+    return (
+      <WrapperBanner>   
+        <div className="flex-1 flex justify-center items-center h-[70vh]">
+           <LoadingSpin />
+        </div>
+      </WrapperBanner>
+    );
+  }
   return (
     <>
       <WrapperBanner>
@@ -88,6 +112,7 @@ export default function ReferralHistory() {
                   className="text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/8 outline-none"
                 >
                   <option value="All">All Status</option>
+                  <option value="pending">Pending</option>
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
@@ -121,24 +146,24 @@ export default function ReferralHistory() {
                       <tr key={item.id}>
                         <td className="px-4 py-4 flex items-center gap-3">
                           <img
-                            src={item.avatar}
-                            alt={item.name}
+                            src={item.profile ?? "https://i.pravatar.cc/40?img=47"}
+                            alt={item.patient_name}
                             className="w-9 h-9 rounded-full"
                           />
                           <span className="font-bold text-sm leading-9 text-primary">
-                            {item.name}
+                            {item.patient_name}
                           </span>
                         </td>
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
-                          <div>{item.date}</div>
+                          <div>{item.created_at}</div>
                           <div className="text-xs text-primary/54">
-                            {item.time}
+                            {item.created_at}
                           </div>
                         </td>
 
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.referral}
+                          {item.referred_by_name}
                         </td>
 
                         <td className="px-4 py-4 text-right">
@@ -147,8 +172,8 @@ export default function ReferralHistory() {
                               Active
                             </span>
                           ) : (
-                            <span className="px-4.25 py-1.25 text-sm font-semibold text-[#B80600] bg-[#B80600]/8 rounded-[3px]">
-                              Inactive
+                            <span className="px-4.25 py-1.25 text-sm font-semibold text-[#B80600] bg-[#B80600]/8 rounded-[3px] capitalize">
+                              {item.status}
                             </span>
                           )}
                         </td>

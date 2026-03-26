@@ -1,4 +1,4 @@
-import {  BACKEND } from "@/services/api";
+import {  PRACTITIONER_END } from "@/services/api";
 import { NextRequest, NextResponse } from "next/server";
 
 // ---------- GET ----------
@@ -75,13 +75,13 @@ async function handle(
     headers.delete("host");
     headers.delete("content-length");
     headers.set("Authorization", `Bearer ${token}`);
-    const url = `${BACKEND}/${apiPath}${search}`;
+    const url = `${PRACTITIONER_END}/${apiPath}${search}`;
 
     interface NodeRequestInit extends RequestInit {
       duplex?: "half";
     }
   const bodydata = request.method !== "GET" && request.method !== "HEAD" ? request.body : undefined;
-  console.log(url)
+
     const apiRes = await fetch(url, {
     
       method: request.method,
@@ -100,7 +100,7 @@ async function handle(
       );
     }
 
-
+  
     const data = await apiRes.json();
  
     return NextResponse.json(data, {

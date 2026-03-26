@@ -40,15 +40,21 @@ export default function ForgotPass() {
     if (!validate()) return;
 
     try {
+      if(loading) return; 
       setLoading(true);
-
+       
       const data = await sendResetLink(email); // Assuming this function sends a reset link
-       console.log("Reset Link Response:", data); // Log the response for debugging
-      toastTBS.success("Password reset link sent successfully 🎉");
-
-      setTimeout(() => {
+       console.log("Reset Link Response:", data); 
+       if(data.success) {
+          toastTBS.success(data.message || "Reset link sent successfully");
+            setTimeout(() => {
         router.push("/login"); // Redirect to login page after sending reset link
       }, 1000);
+       }else{
+          toastTBS.error(data.message || "Failed to send reset link");
+       }
+      
+  
     } catch (err) {
       if (err instanceof Error) {
         toastTBS.error(err.message || "Error sending reset link");
@@ -56,6 +62,9 @@ export default function ForgotPass() {
         toastTBS.error("Something went wrong");
       }
     } finally {
+       setTimeout(() => {
+            setLoading(false);
+      }, 1000);
       setLoading(false);
     }
   }

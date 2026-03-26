@@ -3,16 +3,34 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
+   const [MMMUserData] = useState(() => {
+      if (typeof window === "undefined") return null;
+      const data = localStorage.getItem("MMMDT");
+      return data ? JSON.parse(data) : null;
+    });
+  
   const pathname = usePathname(); // current URL
  console.log(pathname)
-   const menu = [
+   const menu0 = [
     { name: "Dashboard", path: "/dashboard" },
     { name: "Add Referrer ", path: "/add-referrer" },
     { name: "Referral History", path: "/referral-history" },
-    { name: "Profile", path: "/doctor-profile" },
+    { name: "Profile", path: "/referrer-profile" },
   ];
+  const menu1 = [
+    { name: "Dashboard", path: "/dashboard" },
+    { name: "Profile", path: "/patient-profile" },
+  ];
+  const menu2 = [
+    { name: "Dashboard", path: "/dashboard" },
+    
+    { name: "Profile", path: "/practitioner-profile" },
+    { name: "Verification Status", path: "/verification-status" },
+  ];
+  const menu = MMMUserData?.role === "referrer" ? menu0 : MMMUserData?.role === "patient" ? menu1 : menu2;
     return (
         <>
           <div className={`w-85  lg:mt-0 md:mt-25 mt-22.5 fixed left-0 h-full top-0 z-2 max-w-full bg-[linear-gradient(50deg,var(--color-AquaBlue)_-95%,var(--color-white)_100%)]  py-5 transform transition-all duration-500 ease-in-out  ${ishide?'w-0 lg:w-85 invisible lg:visible -translate-x-full lg:translate-x-0 ':' translate-x-0 visible lg:w-85'}`}>

@@ -1,18 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { HiArrowNarrowRight } from "react-icons/hi";
 import Link from "next/link";
-import { GoDotFill } from "react-icons/go";
 import Image from "next/image";
-import { FiSearch } from "react-icons/fi";
 import { IoNotifications, IoClose } from "react-icons/io5";
 import { RiMenu2Fill } from "react-icons/ri";
+import { MdMarkEmailUnread } from "react-icons/md";
 type HeaderDashboardProps = {
   menutrigger: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
   const [open, setOpen] = useState(true);
+     const [MMMUserData] = useState(() => {
+      if (typeof window === "undefined") return null;
+      const data = localStorage.getItem("MMMDT");
+      return data ? JSON.parse(data) : null;
+    });
+
+
+     const profileUrl = MMMUserData?.role === "referrer" ? "/referrer-profile" : MMMUserData?.role === "patient" ? "/patient-profile" : "/practitioner-profile";
   // 🔁 state variable renamed
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
@@ -68,7 +74,7 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
 
   return (
     <>
-      <header className=" flex items-center justify-between bg-primary lg:px-8 lg:py-10 p-5 sticky top-0 w-full">
+      <header className=" flex items-center justify-between bg-primary lg:px-8 lg:py-10 p-5 sticky top-0 w-full z-10">
         <button
           onClick={() => {
             setOpen(!open);
@@ -165,9 +171,9 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
 
               {/* Name & Role */}
               <div className="text-white md:block hidden">
-                <p className="md:text-lg text-sm  font-semibold">Ashley Lars</p>
-                <p className="md:text-base text-xs text-[#C6C6C6]">
-                  Receptionist
+                <p className="md:text-lg text-sm  font-semibold">{MMMUserData?.user_name}</p>
+                <p className="md:text-base text-xs text-[#C6C6C6] capitalize">
+                  {MMMUserData?.role??''}
                 </p>
               </div>
 
@@ -194,15 +200,15 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
               <div className="absolute right-0 md-w-auto w-45 mt-2.5 bg-gray-100 rounded-[10px] shadow-xl md:py-5 md:px-6.25  z-50">
                 <div className="text-primary md:hidden p-5 pb-2.5 border-b-2  border-primary ">
                   <p className="md:text-lg text-sm  font-semibold">
-                    Ashley Lars
+                    {MMMUserData?.user_name}
                   </p>
-                  <p className="md:text-base text-xs text-[#747474]">
-                    Receptionist
+                  <p className="md:text-base text-xs text-[#747474] capitalize">
+                    {MMMUserData?.role??''}
                   </p>
                 </div>
                 <ul className="space-y-3.75 md:text-[15px] md:p-0 p-5 text-sm text-black font-semibold">
                   <li className="cursor-pointer duration-300 hover:text-primary ">
-                   <Link href="/doctor-profile">Profile</Link> 
+                   <Link href={profileUrl}>Profile</Link> 
                   </li>
                   <li className="cursor-pointer duration-300 hover:text-primary ">
                   <Link href="/change-password">Change password </Link>
