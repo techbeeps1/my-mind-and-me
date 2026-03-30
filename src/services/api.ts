@@ -6,12 +6,14 @@ export const AUTH_END  = "http://54.89.179.53:8001/v1/auth";
 export const REF_END = "http://54.89.179.53:8002/v1/referrer";
 export const PATIENT_END = "http://54.89.179.53:8003/v1/patient";
 export const PRACTITIONER_END = "http://54.89.179.53:8004/v1/practitioner";
+export const BOOKING_END = "http://54.89.179.53:8006/v1/booking";
 
 export const adminApiPath = "/api/admin";
 export const authApiPath = "/api/auth";
 export const refApiPath = "/api/referrer";
 export const paApiPath = "/api/patient";
 export const prApiPath = "/api/practitioner";
+export const bookingApiPath = "/api/booking";
 // API paths for LOCAL
 
 
