@@ -30,6 +30,8 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
   const menu2 = [
     { name: "Dashboard", path: "/dashboard" },
     { name: "Schedule", path: "/schedule" },
+    { name: "Booking History", path: "/booking-history" },
+    { name: "patients-progress", path: "/booking-history" },
     { name: "Verification Status", path: "/verification-status" },
     { name: "Bank Details", path: "/bank-details" },
     { name: "Profile", path: "/practitioner-profile" },
