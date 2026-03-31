@@ -21,11 +21,13 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
     { name: "Profile", path: "/referrer-profile" },
   ];
   const menu1 = [
-    { name: "Dashboard", path: "/dashboard" },
-  
+    { name: "Dashboard", path: "/dashboard" },  
+    { name: "Book a Appointment", path: "/book-a-appointment" },
+    { name: "Booking History", path: "/booking-history" },
+    { name: "Progress", path: "/progress"},
     { name: "Medical History", path: "/medical-history" },
     { name: "Insurance", path: "/insurance" },
-      { name: "Profile", path: "/patient-profile" },
+    { name: "Profile", path: "/patient-profile" },
   ];
   const menu2 = [
     { name: "Dashboard", path: "/dashboard" },

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import WraperBanner from "@/components/WraperBanner";
 import GoogleOauth from "@/components/google/GoogleOauth";
-import {  IoMdArrowRoundBack, IoMdLogOut } from "react-icons/io";
+import { IoMdArrowRoundBack, IoMdLogOut } from "react-icons/io";
 import { CiSettings } from "react-icons/ci";
 import { FaRegCalendarTimes } from "react-icons/fa";
 import BookingSettingsPage from "@/components/comman/BookingSettingsPage";
@@ -16,7 +16,7 @@ const bookedDates = [
 
 const blockedDates = ["2026-03-15", "2026-03-20"];
 
-const offweekDays = [0, 6]; 
+const offweekDays = [0, 6];
 
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 2));
@@ -50,73 +50,74 @@ export default function Calendar() {
   const monthName = currentDate.toLocaleString("default", { month: "long" });
   const [open, setOpen] = useState(false);
 
-
-if(manageSlots) return(
-    <WraperBanner>
-       <div className="relative">
-                
-              <button onClick={() => setManageSlots(false)} className="px-2 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition absolute top-12 left-10 text-2xl font-bold">
-                <IoMdArrowRoundBack />
-              </button>
-              </div>
-  <BookingSettingsPage  />
-  </WraperBanner>
-) 
-
-
+  if (manageSlots)
+    return (
+      <WraperBanner>
+        <div className="relative">
+          <button
+            onClick={() => setManageSlots(false)}
+            className="px-2 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white shadow-lg hover:scale-105 transition absolute top-12 left-10 text-2xl font-bold"
+          >
+            <IoMdArrowRoundBack />
+          </button>
+        </div>
+        <BookingSettingsPage />
+      </WraperBanner>
+    );
 
   if (!isLoggedIn) {
     return (
       <WraperBanner>
         <GoogleOauth />
       </WraperBanner>
-
-
-    )
+    );
   }
 
   return (
     <WraperBanner>
       <div className="max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
         {/* create this as dropdown and add the functionality to manage the slot and disconnect google calendar
-          */}
+         */}
 
-    <div className="flex justify-end mb-4">
-      <div className="relative inline-block text-left">
-
-        {/* Trigger Button */}
-        <button
-          onClick={() => setOpen(!open)}
-          className="cursor-pointer  flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
-        >
-        Manage  <CiSettings className={`text-[25px] transition-transform duration-600 ${
-              open ? "rotate-180" : ""            }`
-            } /> 
-        </button>
-        {open && (
-          <div className="absolute right-0 mt-2 w-75 border border-gray-100 rounded-xl bg-white shadow-xl z-50 overflow-hidden">
-            
+        <div className="flex justify-end mb-4">
+          <div className="relative inline-block text-left">
+            {/* Trigger Button */}
             <button
-              onClick={() => {setManageSlots(true)}}
-              className="cursor-pointer flex items-center gap-2 block w-full text-left px-6 py-2 text-gray-700 hover:bg-teal-100"
+              onClick={() => setOpen(!open)}
+              className="cursor-pointer  flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
             >
-             <FaRegCalendarTimes /> Manage Your Slot
+              Manage{" "}
+              <CiSettings
+                className={`text-[25px] transition-transform duration-600 ${
+                  open ? "rotate-180" : ""
+                }`}
+              />
             </button>
-<div className="bg-gray-100  h-0.5" />
-            <button
-              onClick={() => {setIsLoggedIn(false)}}
-              className="cursor-pointer flex items-center gap-2 block w-full text-left px-6 py-2 text-gray-700 hover:bg-teal-100"
-            >
-             <IoMdLogOut /> Disconnect Google Calendar
-            </button>
-
+            {open && (
+              <div className="absolute right-0 mt-2 w-75 border border-gray-100 rounded-xl bg-white shadow-xl z-50 overflow-hidden">
+                <button
+                  onClick={() => {
+                    setManageSlots(true);
+                  }}
+                  className="cursor-pointer flex items-center gap-2 block w-full text-left px-6 py-2 text-gray-700 hover:bg-teal-100"
+                >
+                  <FaRegCalendarTimes /> Manage Your Slot
+                </button>
+                <div className="bg-gray-100  h-0.5" />
+                <button
+                  onClick={() => {
+                    setIsLoggedIn(false);
+                  }}
+                  className="cursor-pointer flex items-center gap-2 block w-full text-left px-6 py-2 text-gray-700 hover:bg-teal-100"
+                >
+                  <IoMdLogOut /> Disconnect Google Calendar
+                </button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
-     
-        <div className="max-w-4xl mx-auto  rounded-lg overflow-hidden">
+        </div>
 
+        <div className="max-w-4xl mx-auto  rounded-lg overflow-hidden">
           {/* Header */}
           <div className="bg-teal-700 text-white flex justify-between items-center px-6 py-4">
             <button onClick={prevMonth}>❮</button>
@@ -128,25 +129,33 @@ if(manageSlots) return(
 
           {/* Days Name */}
           <div className="grid grid-cols-7 bg-teal-600 text-white text-center text-sm">
-            {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => (
-              <div key={day} className="py-2">{day}</div>
+            {[
+              "Sunday",
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+            ].map((day) => (
+              <div key={day} className="py-2">
+                {day}
+              </div>
             ))}
           </div>
 
           {/* Calendar Grid */}
           <div className="grid grid-cols-7">
             {days.map((day, i) => {
-
-
               const dateStr = day
                 ? `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
                 : "";
 
-              const booking = bookedDates.find(b => b.date === dateStr);
+              const booking = bookedDates.find((b) => b.date === dateStr);
               const isBlocked = blockedDates.includes(dateStr);
-              const isOffweek = offweekDays.includes(new Date(year, month, day || 0).getDay());
-
-              
+              const isOffweek = offweekDays.includes(
+                new Date(year, month, day || 0).getDay(),
+              );
 
               return (
                 <div
@@ -168,7 +177,6 @@ if(manageSlots) return(
               );
             })}
           </div>
-
         </div>
       </div>
       <div className="h-16"></div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { FaRegClock } from "react-icons/fa";
 
 type DaySchedule = {
   enabled: boolean;
@@ -32,9 +33,7 @@ const defaultDay: DaySchedule = {
 
 export default function BookingSettingsPage() {
   const [settings, setSettings] = useState<BookingSettings>({
-    days: Object.fromEntries(
-      daysList.map((d) => [d, { ...defaultDay }])
-    ),
+    days: Object.fromEntries(daysList.map((d) => [d, { ...defaultDay }])),
     slotDuration: 60,
     holidays: [],
   });
@@ -123,25 +122,29 @@ export default function BookingSettingsPage() {
   };
 
   return (
-         <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
-          <div className="max-w-337.5 w-full bg-white rounded-[10px] shadow-xl h-fit ">
-            <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-6 py-3 font-semibold md:mb-11.25 mb-7.5">
-              Booking Settings
-              <p className="text-gray-500 text-[12px] p-0 m-0  ">
+    <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
+      <div className="max-w-337.5 w-full bg-white rounded-[10px] shadow-xl h-fit ">
+        <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-6 py-5 font-semibold md:mb-11.25 mb-7.5">
+          Booking Settings
+          <p className="text-gray-500 text-[12px] p-0 m-0  ">
             Configure your availability and appointment slots
           </p>
-            </h2>
-            
-
-        {/* Header */}
-        <div>
-
-          
+        </h2>
+        {/* Submit */}
+        <div className="flex justify-center">
+        <button
+          onClick={handleSubmit}
+          className=" px-4 cursor-pointer py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
+        >
+          Save 
+        </button>
         </div>
+        {/* Header */}
+        <div></div>
 
         {/* Days Card */}
-        <div className="bg-white rounded-2xl shadow p-6 space-y-4">
-          <h2 className="text-lg font-semibold">Availability</h2>
+        <div className="p-6 space-y-4 max-w-175 mx-auto w-full ">
+          <h3 className="text-lg font-bold text-primary">Availability</h3>
 
           {daysList.map((day) => {
             const d = settings.days[day];
@@ -149,14 +152,14 @@ export default function BookingSettingsPage() {
             return (
               <div
                 key={day}
-                className="flex items-center justify-between border rounded-xl p-3 hover:shadow-sm transition"
+                className="flex items-center bg-primary/8 justify-between rounded-xl p-3"
               >
                 <div className="flex items-center gap-4">
                   {/* Toggle */}
                   <button
                     onClick={() => toggleDay(day)}
                     className={`w-10 h-5 flex items-center rounded-full p-1 transition ${
-                      d.enabled ? "bg-blue-600" : "bg-gray-300"
+                      d.enabled ? "bg-primary" : "bg-gray-300"
                     }`}
                   >
                     <div
@@ -171,115 +174,94 @@ export default function BookingSettingsPage() {
 
                 {d.enabled && (
                   <div className="flex items-center gap-2">
-                    <input
-                      type="time"
-                      value={d.start}
-                      onChange={(e) =>
-                        updateTime(day, "start", e.target.value)
-                      }
-                      className="border rounded-lg px-2 py-1"
-                    />
+                    <div className="relative">
+                      <input
+                        type="time"
+                        value={d.start}
+                        onChange={(e) =>
+                          updateTime(day, "start", e.target.value)
+                        }
+                        className="border [&::-webkit-calendar-picker-indicator]:opacity-0 border-primary text-sm text-primary rounded-lg px-2 py-1"
+                      />
+                      <FaRegClock className="w-3.5 h-3.5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
 
-                    <span className="text-gray-400">—</span>
-
-                    <input
-                      type="time"
-                      value={d.end}
-                      onChange={(e) =>
-                        updateTime(day, "end", e.target.value)
-                      }
-                      className="border rounded-lg px-2 py-1"
-                    />
+                    <span className="text-primary text-sm">—</span>
+                    <div className="relative">
+                      <input
+                        type="time"
+                        value={d.end}
+                        onChange={(e) => updateTime(day, "end", e.target.value)}
+                        className="border border-primary [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm text-primary rounded-lg px-2 py-1"
+                      />
+                      <FaRegClock className="w-3.5 h-3.5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
                   </div>
                 )}
               </div>
             );
           })}
         </div>
-
-        {/* Slot Duration */}
-        <div className="bg-white rounded-2xl shadow p-6">
-          <h2 className="text-lg font-semibold mb-3">Slot Duration</h2>
-
-          <select
-            value={settings.slotDuration}
-            onChange={(e) =>
-              setSettings({
-                ...settings,
-                slotDuration: Number(e.target.value),
-              })
-            }
-            className="border rounded-lg px-3 py-2 w-40"
-          >
-            {[15, 30, 45 ,50, 60, 90,120,150,180].map((min) => (
-              <option key={min} value={min}>
-                {min} minutes
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Holidays */}
-        <div className="bg-white rounded-2xl shadow p-6">
-          <h2 className="text-lg font-semibold mb-3">Holidays</h2>
-
-          <div className="flex gap-2">
-            <input
-              type="date"
-              value={holidayInput}
-              onChange={(e) => setHolidayInput(e.target.value)}
-              className="border rounded-lg px-3 py-2"
-            />
-
-            <button
-              onClick={addHoliday}
-              className="bg-black text-white px-4 rounded-lg"
+        <div className="max-w-175 mx-auto w-full">
+          {/* Slot Duration */}
+          <div className="bg-white  p-6 w-full">
+            <h2 className="text-lg font-semibold mb-3">Slot Duration</h2>
+            <select
+              value={settings.slotDuration}
+              onChange={(e) =>
+                setSettings({
+                  ...settings,
+                  slotDuration: Number(e.target.value),
+                })
+              }
+              className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/8 outline-none"
             >
-              Add
-            </button>
+              {[15, 30, 45, 50, 60, 90, 120, 150, 180].map((min) => (
+                <option key={min} value={min}>
+                  {min} minutes
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-4">
-            {settings.holidays.map((d) => (
-              <div
-                key={d}
-                className="bg-gray-100 px-3 py-1 rounded-full flex items-center gap-2"
+          {/* Holidays */}
+          <div className="bg-white p-6 w-full">
+            <h2 className="text-lg font-semibold mb-3">Holidays</h2>
+
+            <div className="flex gap-2">
+              <input
+                type="date"
+                value={holidayInput}
+                onChange={(e) => setHolidayInput(e.target.value)}
+                className=" bg-primary/8 w-full rounded-md px-4 py-2.5  outline-none text-sm text-primary leading-5 placeholder:text-primary"
+              />
+
+              <button
+                onClick={addHoliday}
+                className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-md bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
               >
-                {d}
-                <button
-                  onClick={() => removeHoliday(d)}
-                  className="text-red-500"
+                Add
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2 mt-4">
+              {settings.holidays.map((d) => (
+                <div
+                  key={d}
+                  className="bg-primary/8 px-3 text-primary py-1 rounded-full flex items-center gap-2"
                 >
-                  ✕
-                </button>
-              </div>
-            ))}
+                  {d}
+                  <button
+                    onClick={() => removeHoliday(d)}
+                    className="text-red-500"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-
-        {/* Slot Preview */}
-        <div className="bg-white rounded-2xl shadow p-6">
-          <h2 className="text-lg font-semibold mb-3">Preview Slots</h2>
-
-          <div className="flex flex-wrap gap-2">
-            {previewSlots().map((slot, i) => (
-              <div
-                key={i}
-                className="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-sm"
-              >
-                {slot.start} - {slot.end}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Submit */}
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-lg font-medium transition"
-        >
-          Save & Export JSON
-        </button>
       </div>
     </div>
   );

@@ -239,6 +239,7 @@ export default function DoctorProfileComplete() {
   }
   return (
     <>
+    
       <div className=" bg-cover bg-center bg-no-repeat min-h-screen " style={{ backgroundImage: "url('/banner-bg.jpg')" }}>
         <div className="flex-1 flex justify-center md:p-7.5 px-5 py-7.5">
           <div className="max-w-150 w-full bg-white rounded-[10px] shadow-xl h-fit ">
