@@ -21,6 +21,69 @@ export const bookingApiPath = "/api/booking";
 export const imagePath = "http://54.89.179.53:8000/image/"; 
 
 
+
+// booking history
+export async function GetBookingHistory(UserId:string) {
+  const res = await fetch(`${bookingApiPath}/history/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch booking history");
+  return res.json();
+}
+
+
+// get Slots manage settings
+export async function getSlotManageSettings( UserId:string ) {
+  const res = await fetch(`${bookingApiPath}/view-slots/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch slot manage settings");
+  return res.json();
+} 
+
+
+
+
+// create booking
+export async function createBooking( data:any ) {
+  const res = await fetch(`${bookingApiPath}/create`, {   
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { throw new Error("Failed to send reset link");}
+  return await res.json();
+}
+
+
+// get slots
+export async function getSlots( data:any ) {
+  const res = await fetch(`${bookingApiPath}/slots`, {
+    method: "POST",
+    body: data,
+    headers: {
+       "Content-Type": "application/json",
+    },  
+  });
+  if (!res.ok) { throw new Error("Failed to fetch slots");}
+  return await res.json();
+}
+
+
+// practitioner Slot manage
+export async function slotManageAPI( data:any ) {
+  const res = await fetch(`${bookingApiPath}/manage-slots`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+       "Content-Type": "application/json",
+    },  
+  });
+  if (!res.ok) { throw new Error("Failed to manage slots");}
+  return await res.json();
+}
+
+
+
+
 // practitioner UpdateBankDetails
 export async function addInsurance( data:any ) {
   const res = await fetch(`${paApiPath}/insurance`, {

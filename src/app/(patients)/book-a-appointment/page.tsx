@@ -1,41 +1,54 @@
 "use client";
 
-import Image from "next/image";
-import { FaRegUser, FaPhone } from "react-icons/fa6";
-import { SlCalender } from "react-icons/sl";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import "../../Datepicker.css";
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  imagePath,
-  referralProfile,
-  referralProfileEdit,
+  createBooking,
+  getSlotManageSettings,
+  getSlots
 } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
-import { useRouter } from "next/navigation";
-import { RiImageEditFill } from "react-icons/ri";
 import WrapperBanner from "@/components/WraperBanner";
-const timeSlots = [
-  "10:00 AM - 11:00 AM",
-  "10:10 AM - 11:10 AM",
-  "10:20 AM - 11:20 AM",
-  "10:30 AM - 11:30 AM",
-  "10:40 AM - 11:40 AM",
-  "10:50 AM - 11:50 AM",
-  "11:00 AM - 12:00 PM",
-  "11:10 AM - 12:10 PM",
-  "11:20 AM - 12:20 PM",
-  "11:30 AM - 12:30 PM",
-  "11:40 AM - 12:40 PM",
-  "11:50 AM - 12:50 PM",
-  "12:00 PM - 01:00 PM",
-  "12:10 PM - 01:10 PM",
-  "12:20 PM - 01:20 PM",
-  "12:30 PM - 01:30 PM",
-];
+
+
+type DayName =
+  | "Sunday"
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday";
+
+type DayConfig = {
+  start: string;
+  end: string;
+  fee: string;
+  enabled: boolean;
+};
+
+type FormDataType = {
+  patient_id: string;
+  practitioner_id: string;
+  full_name: string;
+  date: string;
+  slot: string;
+  fee: string;
+};
+type DaysObject = Record<DayName, DayConfig>;
+
+const dayMap: Record<DayName, number> = {
+  Sunday: 0,
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+};
 
 const StepProgress = ({ step }: { step: number }) => {
   const steps = [1, 2, 3];
@@ -76,97 +89,114 @@ const StepProgress = ({ step }: { step: number }) => {
 };
 
 export default function DoctorProfileComplete() {
-  const router = useRouter();
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState("/profile-img.png");
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [bookingCfrm, setBookingCfrm] = useState(false);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [landingData, setLandingData] = useState(false);
-  const [landing, setLanding] = useState(true);
+  const [londing, setLanding] = useState(true);
+  const [offweekDays, setOffweekDays] = useState<number[]>([]);
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
+  const [slotLoading, setSlotLoading] = useState(false);
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
     const data = localStorage.getItem("MMMDT");
     return data ? JSON.parse(data) : null;
   });
-
   const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState<FormDataType>({
+    patient_id: MMMUserData?.id || "",
+    practitioner_id: "",
+    full_name: MMMUserData?.user_name || "",
+    date: new Date().toISOString().split("T")[0],
+    slot: "",
+    fee: "",
+
+  });
+
+  const [dayFees, setDayFees] = useState<Record<DayName, number>>({
+    Sunday: 0,
+    Monday: 0,
+    Tuesday: 0,
+    Wednesday: 0,
+    Thursday: 0,
+    Friday: 0,
+    Saturday: 0,
+  });
+
+  function setFeesFromAPI(days: DaysObject) {
+    const updatedFees: Record<DayName, number> = {
+      Sunday: 0,
+      Monday: 0,
+      Tuesday: 0,
+      Wednesday: 0,
+      Thursday: 0,
+      Friday: 0,
+      Saturday: 0,
+    };
+    (Object.keys(days) as DayName[]).forEach((day) => {
+      updatedFees[day] = Number(days[day].fee);
+    });
+    setDayFees(updatedFees);
+  };
+
+  function getFeeByDate(dateStr: string): number {
+    const date = new Date(dateStr);
+    const dayIndex = date.getDay();
+    const dayMap: DayName[] = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const dayName = dayMap[dayIndex];
+
+    return dayFees[dayName] || 0;
+  };
 
   const validateStep = (step: number, data: FormDataType) => {
     const errors: string[] = [];
-
-    // if (step === 1) {
-    //   if (!data.full_name.trim()) {
-    //     errors.push("Full Name is required");
-    //   } else if (!/^[A-Za-z\s]+$/.test(data.full_name)) {
-    //     errors.push("Full Name should contain only letters and spaces");
-    //   }
-    //   if (!data.phone.trim()) errors.push("Phone number is required");
-    //   else if (!/^[6-9]\d{9}$/.test(data.phone))
-    //     errors.push("Enter valid 10-digit phone number");
-
-    //   if (!data.gender) errors.push("Please select gender");
-    //   if (!data.dob) errors.push("Date of birth is required");
-    // }
-
-    // if (step === 2) {
-    //   if (!data.license_number.trim())
-    //     errors.push("License number is required");
-
-    //   if (!data.registration.trim())
-    //     errors.push("Registration number is required");
-    // }
-
-    // if (step === 3) {
-    //   if (!data.clinic_phone.trim()) errors.push("Clinic phone is required");
-    //   else if (!/^[6-9]\d{9}$/.test(data.clinic_phone))
-    //     errors.push("Enter valid 10-digit phone number");
-
-    //   if (!data.address.trim()) errors.push("Address is required");
-    // }
-
-    // if (step === 4) {
-    //   if (!data.special_interest) errors.push("Please select special interest");
-    // }
-
+    if (step === 1) {
+      if (!data.practitioner_id) {
+        errors.push("Please select a practitioner");
+      }
+    }
+    if (step === 2) {
+      if (!data.date && !selectedDate) {
+        errors.push("Please select a date");
+        return errors;
+      }
+      if (!data.slot && !selectedTime) {
+        errors.push("Please select a time slot");
+        return errors;
+      }
+    }
     return errors;
+  };
+
+
+  const formatDateLocal = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   function nextStep() {
     const errors = validateStep(step, formData);
     if (errors.length > 0) {
-      // show first error OR all errors
       errors.forEach((err) => toastTBS.error(err));
       return;
     }
     setStep((prev) => prev + 1);
+    if (step === 1) {
+      getSlotData(selectedDate ? formatDateLocal(selectedDate) : "")
+      getData();
+    }
   }
-
-  type FormDataType = {
-    user_id: string;
-    full_name: string;
-    phone: string;
-    gender: string;
-    dob: string;
-    license_number: string;
-    registration: string;
-    clinic_name: string;
-    clinic_phone: string;
-    address: string;
-    special_interest: string;
-    profile_image: string | null;
-  };
-  const [formData, setFormData] = useState<FormDataType>({
-    user_id: MMMUserData?.id || "",
-    full_name: "",
-    phone: "",
-    gender: "",
-    dob: "",
-    license_number: "",
-    registration: "",
-    clinic_name: "",
-    clinic_phone: "",
-    address: "",
-    special_interest: "",
-    profile_image: "/profile-img.png",
-  });
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -180,92 +210,122 @@ export default function DoctorProfileComplete() {
     }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setProfileImage(file);
-
-    const imageUrl = URL.createObjectURL(file);
-    setPreview(imageUrl);
+  const handleDateSelect = (date: Date | undefined) => {
+    if (!date) return;
+    setSelectedDate(date);
+    const formatedDate = date ? formatDateLocal(date) : "";
+    const selectedDateStr = selectedDate
+      ? formatDateLocal(selectedDate)
+      : "";
+    if (formatedDate != selectedDateStr) {
+      getSlotData(formatedDate);
+    }
+    setSelectedTime(null);
+    setFormData((prev) => ({
+      ...prev,
+      date: date ? formatDateLocal(date) : "",
+    }));
   };
 
-  useEffect(() => {
-    return () => {
-      if (preview) URL.revokeObjectURL(preview);
-    };
-  }, [preview]);
+  const handleTimeSelect = (slot: string) => {
+    setSelectedTime(slot);
 
-  useEffect(() => {
-    referralProfile(MMMUserData?.id)
+    setFormData((prev) => ({
+      ...prev,
+      slot,
+    }));
+  };
+
+  const getOffWeekDays = (days: DaysObject): number[] => {
+    return (Object.keys(days) as DayName[])
+      .filter((day) => !days[day].enabled)
+      .map((day) => dayMap[day]);
+  };
+
+  function getData() {
+    getSlotManageSettings(formData.practitioner_id)
       .then((data) => {
         setLanding(false);
-        // setFormData(data.data);
-        // setPreview(imagePath + data.data.profile_image || "/profile-img.png");
+        if (data.success) {
+          setBlockedDates(data.holidays)
+          const offweekDays1 = getOffWeekDays(data.days);
+          setOffweekDays(offweekDays1);
+          setFeesFromAPI(data.days);
+        }
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [MMMUserData?.id]);
+  }
+
+  function getSlotData(date: string) {
+
+    const data = JSON.stringify({ date, user_id: formData.practitioner_id });
+    setSlotLoading(true);
+    getSlots(data).then((data) => {
+      if (data.success) {
+        setTimeSlots(data.slots);
+        setFormData((prev) => ({
+          ...prev,
+          fee: getFeeByDate(date).toString(),
+        }));
+
+        setSlotLoading(false);
+      }
+
+    }).catch((err) => {
+      toastTBS.error("Error fetching slots:" + err.message);
+      setSlotLoading(false);
+    });
+
+  }
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = new FormData();
-
-    Object.keys(formData).forEach((key) => {
-      const typedKey = key as keyof FormDataType;
-
-      const value = formData[typedKey];
-
-      if (value !== null) {
-        data.append(typedKey, value as string | Blob);
-      }
-    });
-
-    if (profileImage) {
-      data.append("profile_image", profileImage as Blob);
-    } else {
-      data.delete("profile_image");
-    }
+    console.log("Form Data to be submitted:", formData);
 
     if (landingData) return;
     setLandingData(true);
     try {
-      const res = await referralProfileEdit(data);
-      if (res.status) {
-        toastTBS.success("Profile updated successfully");
+      const res = await createBooking(formData);
+      if (res.success) {
+        toastTBS.success("Booking created successfully");
+        setBookingCfrm(true);
         //router.push("dashboard");
-
         setTimeout(() => {
           setLandingData(false);
         }, 1500);
       } else {
-        toastTBS.error("Failed to update profile");
+        toastTBS.error("Failed to create booking");
         setTimeout(() => {
           setLandingData(false);
         }, 1500);
       }
     } catch (err) {
       console.error(err);
-      toastTBS.error("An error occurred while updating profile");
+      toastTBS.error("An error occurred while creating booking");
     }
   };
 
-  const [selectedDate, setSelectedDate] = useState();
-  const [selectedTime, setSelectedTime] = useState(null);
-
-  if (landing) {
+  if (londing && step === 2) {
     return (
-      <div
-        className=" bg-cover bg-center bg-no-repeat min-h-screen "
-        style={{ backgroundImage: "url('/banner-bg.jpg')" }}
-      >
-        <div className="flex-1 flex justify-center items-center h-[70vh]">
-          <LoadingSpin />
+      <WrapperBanner>
+        <div
+          className=" bg-cover bg-center bg-no-repeat min-h-screen "
+          style={{ backgroundImage: "url('/banner-bg.jpg')" }}
+        >
+          <div className="flex-1 flex justify-center items-center h-[70vh]">
+            <LoadingSpin />
+          </div>
         </div>
-      </div>
+      </WrapperBanner>
     );
   }
+
+
+
+
+
   return (
     <>
       <WrapperBanner>
@@ -285,30 +345,31 @@ export default function DoctorProfileComplete() {
                 <div className=" md:mb-11.25 mb-7.5 px-5">
                   {step === 1 && (
                     <>
-                    <div className="w-full max-w-md mx-auto">
-                      <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
-                        Select Practitioner
-                      </h2>
+                      <div className="w-full max-w-md mx-auto">
+                        <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
+                          Select Practitioner
+                        </h2>
 
-                      <div className="w-full">
-                        <select
-                          name="gender"
-                          value={formData.gender}
-                          onChange={handleChange}
-                          className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
-                        >
-                          <option value="" disabled selected>
-                            Select gender
-                          </option>
-                          <option value="male">patients</option>
-                          <option value="female">Practitioner</option>
-                          <option value="other">Doctor</option>
-                        </select>
-                      </div>
+                        <div className="w-full">
+                          <select
+                            name="practitioner_id"
+                            value={formData.practitioner_id}
+                            onChange={handleChange}
+                            className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
+                          >
+                            <option value="" disabled selected>
+                              Select Practitioner
+                            </option>
+                            <option value="65715c3e-37c3-4f2b-a831-768dd5380e74">patients 1</option>
+                            <option value="65715c3e-37c3-4f2b-a831-768dd5380e74">patients 2</option>
+                          </select>
+                        </div>
                       </div>
                     </>
                   )}
                   {step === 2 && (
+
+
                     <div className="mt-5">
                       <div className="flex flex-col lg:flex-row gap-8 md:p-6 p-0">
                         {/* Calendar Section */}
@@ -320,70 +381,106 @@ export default function DoctorProfileComplete() {
                           <DayPicker
                             mode="single"
                             selected={selectedDate}
-                            onSelect={setSelectedDate}
+                            onSelect={handleDateSelect}
+                            weekStartsOn={1}
+                            disabled={[blockedDates.map(date => new Date(date)),
+                            { dayOfWeek: offweekDays }
+                            ]}
                             className="rounded-md border md:p-5 p-2 w-full"
                           />
                         </div>
+
 
                         {/* Time Slots Section */}
                         <div className="bg-white lg:shadow lg:rounded-xl lg:p-4 w-full lg:w-1/2">
                           <h3 className="text-lg font-semibold mb-3 text-primary">
                             Select preferred time slot
                           </h3>
-
-                          <div className="grid grid-cols-2 gap-3 lg:bg-none bg-primary/8 lg:p-0 p-3.75 lg:rounded-0 rounded-xl">
-                            {timeSlots.map((slot, index) => (
-                              <button
-                                key={index}
-                                onClick={() => setSelectedTime(slot)}
-                                className={` border border-primary text-primary cursor-pointer duration-400 rounded-lg p-2 text-sm font-semibold ${
-                                  selectedTime === slot
+                          {slotLoading ? (
+                            <div className="flex justify-center items-center h-32">
+                              <LoadingSpin color="bg-primary" width={5} height={30} />
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-2 gap-3 lg:bg-none  lg:p-0 p-3.75 lg:rounded-0 rounded-xl">
+                              {timeSlots.map((slot, index) => (
+                                <button
+                                  type="button"
+                                  key={index}
+                                  onClick={() => handleTimeSelect(slot)}
+                                  className={` border border-primary text-primary cursor-pointer duration-400 rounded-lg p-2 text-sm font-semibold ${selectedTime === slot
                                     ? "bg-primary text-white"
-                                    : "hover:bg-primary hover:text-white"
-                                }`}
-                              >
-                                {slot}
-                              </button>
-                            ))}
-                          </div>
+                                    : "bg-primary/8 hover:bg-primary hover:text-white"
+                                    }`}
+                                >
+                                  {slot}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
                   )}
+
+
+
+
                   {step === 3 && (
                     <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6">
-                      {/* Title */}
-                      <h3 className="text-xl font-bold text-primary mb-5">
-                        Booking Summary
-                      </h3>
+
+
+                      {bookingCfrm ? (
+                        <>
+                        <div className="flex justify-center mb-4">
+                          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-100">
+                            <span className="text-green-600 text-3xl font-bold">✓</span>
+                          </div>
+                        </div>
+
+                      
+                      <h2 className="text-2xl font-bold text-primary mb-2 text-center">
+                        Booking Confirmed!
+                      </h2>
+
+                      <p className="text-gray-500 text-sm mb-5 text-center">
+                        Your appointment has been successfully booked.
+                      </p>
+                    </>
+                      ) : (
+
+                        <h3 className="text-xl font-bold text-primary mb-5">
+                          Booking Summary
+                        </h3>
+                      )}
+
 
                       {/* Content */}
                       <div className="space-y-3 text-sm text-gray-600">
                         <div className="flex justify-between">
                           <span>Practitioner Name</span>
                           <span className="font-semibold text-gray-800">
-                            Alexa Rawles
+                            {formData.practitioner_id ? "Dr. John Doe" : "N/A"}
                           </span>
-                        </div>                       
+                        </div>
 
                         <div className="flex justify-between">
                           <span>Date</span>
                           <span className="font-semibold text-gray-800">
-                            14/06/2025
+                            {selectedDate ? selectedDate.toLocaleDateString() : "N/A"}
                           </span>
                         </div>
 
                         <div className="flex justify-between">
                           <span>Time</span>
                           <span className="font-semibold text-gray-800">
-                            10:00 AM - 11:00 AM
+                            {selectedTime || "N/A"}
                           </span>
                         </div>
 
                         <div className="flex justify-between">
                           <span>Appointment Fee</span>
                           <span className="font-semibold text-gray-800">
-                            KES 100
+                            {formData.fee ? `R ${formData.fee}` : "R 0"}
                           </span>
                         </div>
                       </div>
@@ -397,11 +494,12 @@ export default function DoctorProfileComplete() {
                           Amount to Pay
                         </span>
                         <span className="text-lg font-bold text-primary">
-                          KES 2,500
+                          {formData.fee ? `R ${formData.fee}` : "R 0"}
                         </span>
                       </div>
                     </div>
                   )}
+                  {!bookingCfrm && (
                   <div className="flex justify-center mt-10 gap-2">
                     {step > 1 && (
                       <button
@@ -433,6 +531,7 @@ export default function DoctorProfileComplete() {
                       </button>
                     )}
                   </div>
+                  )}
                 </div>
               </form>
             </div>

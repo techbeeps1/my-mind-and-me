@@ -1,11 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import WraperBanner from "@/components/WraperBanner";
 import GoogleOauth from "@/components/google/GoogleOauth";
-import { IoMdArrowRoundBack, IoMdLogOut } from "react-icons/io";
+import { IoMdLogOut } from "react-icons/io";
 import { CiSettings } from "react-icons/ci";
 import { FaRegCalendarTimes } from "react-icons/fa";
 import BookingSettingsPage from "@/components/comman/BookingSettingsPage";
+import { getSlotManageSettings } from "@/services/api";
+import LoadingSpin from "@/components/LoadingSpin";
 
 const bookedDates = [
   { date: "2026-03-09", title: "Session with John" },
@@ -14,19 +16,60 @@ const bookedDates = [
   { date: "2026-03-23", title: "Session with John" },
 ];
 
-const blockedDates = ["2026-03-15", "2026-03-20"];
 
-const offweekDays = [0, 6];
+type DayName =
+  | "Sunday"
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday";
+
+type DayConfig = {
+  start: string;
+  end: string;
+  fee: string;
+  enabled: boolean;
+};
+
+type DaysObject = Record<DayName, DayConfig>;
+
+const dayMap: Record<DayName, number> = {
+  Sunday: 0,
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+};
 
 export default function Calendar() {
+  const [slotchanage, setSlotChange] = useState(0);
+  const [offweekDays, setOffweekDays] = useState<number[]>([]);
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date(2026, 2));
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [manageSlots, setManageSlots] = useState(false);
+  const [Loading, setLoading] = useState(true);
+  const [MMMUserData] = useState(() => {
+    if (typeof window === "undefined") return null;
+    const data = localStorage.getItem("MMMDT");
+    return data ? JSON.parse(data) : null;
+  });
+
+const getOffWeekDays = (days: DaysObject): number[] => {
+  return (Object.keys(days) as DayName[])
+    .filter((day) => !days[day].enabled)
+    .map((day) => dayMap[day]);
+};
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  const firstDay = new Date(year, month, 1).getDay();
+  let firstDay = new Date(year, month, 1).getDay();
+  firstDay = (firstDay === 0 ? 6 : firstDay - 1);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const prevMonth = () => {
@@ -50,18 +93,31 @@ export default function Calendar() {
   const monthName = currentDate.toLocaleString("default", { month: "long" });
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    getSlotManageSettings(MMMUserData?.id)
+      .then((data) => {
+        setLoading(false);
+        console.log("Fetched Slot Manage Settings:", data);
+        if (data.success) {
+          setBlockedDates(data.holidays)
+          const offweekDays1 = getOffWeekDays(data.days);
+          setOffweekDays(offweekDays1);  
+        }
+
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [MMMUserData?.id,slotchanage]);
+
+
+
+
   if (manageSlots)
     return (
       <WraperBanner>
-        <div className="relative">
-          <button
-            onClick={() => setManageSlots(false)}
-            className="px-2 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white shadow-lg hover:scale-105 transition absolute top-12 left-10 text-2xl font-bold"
-          >
-            <IoMdArrowRoundBack />
-          </button>
-        </div>
-        <BookingSettingsPage />
+
+        <BookingSettingsPage  setSlotChange={setSlotChange} setManageSlots={setManageSlots}/>
       </WraperBanner>
     );
 
@@ -71,6 +127,19 @@ export default function Calendar() {
         <GoogleOauth />
       </WraperBanner>
     );
+  }
+
+  if(Loading){
+    return (
+      <WraperBanner>
+         <div className="flex-1 flex justify-center items-center h-[70vh]">
+                <LoadingSpin />
+        </div>
+      </WraperBanner>
+    );
+
+
+
   }
 
   return (
@@ -88,9 +157,8 @@ export default function Calendar() {
             >
               Manage{" "}
               <CiSettings
-                className={`text-[25px] transition-transform duration-600 ${
-                  open ? "rotate-180" : ""
-                }`}
+                className={`text-[25px] transition-transform duration-600 ${open ? "rotate-180" : ""
+                  }`}
               />
             </button>
             {open && (
@@ -130,13 +198,13 @@ export default function Calendar() {
           {/* Days Name */}
           <div className="grid grid-cols-7 bg-teal-600 text-white text-center text-sm">
             {[
-              "Sunday",
               "Monday",
               "Tuesday",
               "Wednesday",
               "Thursday",
               "Friday",
               "Saturday",
+              "Sunday",
             ].map((day) => (
               <div key={day} className="py-2">
                 {day}

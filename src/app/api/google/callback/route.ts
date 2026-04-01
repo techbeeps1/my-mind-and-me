@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
       body: JSON.stringify(payload),
     });
       const result = await response.json();
+     
       if(result.success) {
         return NextResponse.redirect(new URL('/schedule', req.url));
       

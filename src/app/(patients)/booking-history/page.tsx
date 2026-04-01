@@ -3,26 +3,28 @@ import WrapperBanner from "@/components/WraperBanner";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
-import { GetInsuranceData } from "@/services/api";
+import { GetBookingHistory } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
-
+import { FaRegEdit } from "react-icons/fa";
 import Link from "next/link";
-export interface Patient {
+export interface BookingHistoryType {
   id: number;
-  Practitioner_name: string;
-  Date: string;
-  Time: string;  
-  Appointment_Fee: string;
-  Status: string;
-  Action: string;  
+  practitioner_id: string;
+  patient_id: string;
+  full_name: string;
+  slot: string;
+  booking_date: string;
+  appointment_type: string;
+  status: string;
+  booking_fee: string;
+  reason: string;
 }
-
 
 
 export default function Insurance() {
   const [landing, setLanding] = useState(true);
-  const [patients, setPatients] = useState<Patient[]>([]);
- 
+  const [BookingHistory, setBookingHistory] = useState<BookingHistoryType[]>([]);
+
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
     const data = localStorage.getItem("MMMDT");
@@ -30,40 +32,49 @@ export default function Insurance() {
   });
 
 
-
+  const statusColors: { [key: string]: string } = {
+    completed: "text-green-800 border border-green-800/50 bg-green-100",
+    cancelled: "text-red-800 border border-red-800/50 bg-red-100",
+    pending: "text-yellow-800 border border-yellow-800/50 bg-yellow-100",
+    rescheduled: "text-blue-800 border border-blue-800/50 bg-blue-100",
+    booked: "text-green-800 border border-green-800/50 bg-green-100",
+  };
 
   const [search, setSearch] = useState("");
 
-const filteredData = useMemo(() => {
-  return patients.filter((item) => {
-    const matchesSearch =
+  const filteredData = useMemo(() => {
+    return BookingHistory.filter((item) => {
+      const matchesSearch =
 
-      item.Practitioner_name.toLowerCase().includes(search.toLowerCase()) ||
-      item.Date.toLowerCase().includes(search.toLowerCase()) ||
-      item.Time.toLowerCase().includes(search.toLowerCase()) ||
-      item.Appointment_Fee.toLowerCase().includes(search.toLowerCase());
-      item.Status.toLowerCase().includes(search.toLowerCase());
-      item.Action.toLowerCase().includes(search.toLowerCase());
-       
-    return matchesSearch;
-  });
-}, [search, patients]);
+        item.full_name.toLowerCase().includes(search.toLowerCase()) ||
+        item.booking_date.toLowerCase().includes(search.toLowerCase()) ||
+        item.slot.toLowerCase().includes(search.toLowerCase()) ||
+        item.booking_fee.toLowerCase().includes(search.toLowerCase()) ||
+        item.status.toLowerCase().includes(search.toLowerCase()) ||
+        item.appointment_type.toLowerCase().includes(search.toLowerCase());
+
+      return matchesSearch;
+    });
+  }, [search, BookingHistory]);
 
 
 
-     useEffect(() => {
-     GetInsuranceData(MMMUserData?.id)
-       .then((data) => {
-         setLanding(false);
-         console.log("Patient Profile Data:", data);
-         //setPatients(data.data);
-       })
-       .catch((err) => {
-         console.error(err);
-       });
-   }, []);
- 
- if (landing) {
+  useEffect(() => {
+    GetBookingHistory(MMMUserData?.id)
+      .then((data) => {
+        setLanding(false);
+        console.log("Patient Profile Data:", data);
+        if (data.success) {
+          setBookingHistory(data.history);
+        }
+
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [MMMUserData?.id]);
+
+  if (landing) {
     return (
       <WrapperBanner>
         <div className="flex-1 flex justify-center items-center h-[70vh]">
@@ -74,8 +85,6 @@ const filteredData = useMemo(() => {
   }
 
 
-
-
   return (
     <>
       <WrapperBanner>
@@ -84,7 +93,7 @@ const filteredData = useMemo(() => {
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
               Booking History
             </h2>
-              
+
             <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl ">
               {/* Search & Filter */}
               <div className="flex justify-between flex-wrap  mb-5">
@@ -100,9 +109,11 @@ const filteredData = useMemo(() => {
                     <FiSearch className=" h-5 w-5  " />
                   </button>
                 </div>
+                {MMMUserData?.role === "patient" && (
                   <Link href={"/book-a-appointment"} className="px-4 cursor-pointer py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition">
-        Book a Appointment
-      </Link>
+                    Book a Appointment
+                  </Link>
+                )}
               </div>
 
               {/* Table */}
@@ -110,9 +121,12 @@ const filteredData = useMemo(() => {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
+                        <th className="px-4 py-3 text-left bg-primary/8">
+                        Booking ID
+                      </th>
                       <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">
-                        Practitioner Name
-                      </th>                      
+                        {MMMUserData?.role === "patient" ? "Practitioner Name" : "Patient Name"}
+                      </th>
                       <th className="px-4 py-3 text-left bg-primary/8">
                         Date
                       </th>
@@ -122,12 +136,15 @@ const filteredData = useMemo(() => {
                       <th className="px-4 py-3 text-left bg-primary/8 ">
                         Appointment Fee
                       </th>
-                       <th className="px-4 py-3 text-left bg-primary/8">
-                        Status
-                      </th> 
                       <th className="px-4 py-3 text-left bg-primary/8">
-                       Action
-                      </th>                      
+                        Status
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8">
+                        Reason
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8">
+                        Action
+                      </th>
                     </tr>
                   </thead>
 
@@ -145,27 +162,39 @@ const filteredData = useMemo(() => {
 
                     {filteredData.map((item) => (
                       <tr key={item.id}>
-                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">                         
-                          {item.insurance_name}                        </td>
+                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
+                          {"#BK0111"}
+                        </td>
+                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
+                          {item.full_name}                        </td>
 
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          {item.policy_number}
+                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                          {item.booking_date}
                         </td>
 
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.coverage_details}
+                          {item.slot}
                         </td>
-                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.notes}
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                          {item.booking_fee}
                         </td>
 
-                       <td className="px-4 py-4 text-sm text-primary font-semibold">
-                          {item.start_date}            
+                        <td className={`px-4 py-4 text-sm font-semibold `}>
+
+                          <span className={`${statusColors[item.status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}>
+                            {item.status}
+                          </span >
                         </td>
-                           <td className="px-4 py-4 text-sm text-primary font-semibold">
-                          {item.end_date}
-                         
-                        </td>                       
+                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                          {item.reason}
+
+                        </td>
+                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                          <div>
+                            <FaRegEdit className="text-xl hover:text-gray-500 cursor-pointer" />
+                          </div>
+
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -174,7 +203,7 @@ const filteredData = useMemo(() => {
             </div>
           </div>
         </div>
-      
+
       </WrapperBanner>
     </>
   );

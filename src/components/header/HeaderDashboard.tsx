@@ -166,7 +166,7 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
                 height={60}
                 width={60}
                 priority
-                className="object-cover md:h-15 md:w-15 h-10 w-10"
+                className="rounded-full object-cover md:h-15 md:w-15 h-10 w-10"
               />
 
               {/* Name & Role */}
