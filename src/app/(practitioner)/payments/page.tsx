@@ -11,6 +11,7 @@ export interface BookingHistoryType {
   id: number;
   practitioner_id: string;
   patient_id: string;
+  booking_id: string;
   full_name: string;
   slot: string;
   booking_date: string;
@@ -45,7 +46,7 @@ export default function Insurance() {
   const filteredData = useMemo(() => {
     return BookingHistory.filter((item) => {
       const matchesSearch =
-
+       item.booking_id.toString().toLowerCase().includes(search.toLowerCase()) ||
         item.full_name.toLowerCase().includes(search.toLowerCase()) ||
         item.booking_date.toLowerCase().includes(search.toLowerCase()) ||
         item.slot.toLowerCase().includes(search.toLowerCase()) ||
@@ -91,7 +92,7 @@ export default function Insurance() {
         <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
           <div className="max-w-337.5 w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
-              Booking History
+              Payments
             </h2>
 
             <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl ">
@@ -163,7 +164,7 @@ export default function Insurance() {
                     {filteredData.map((item) => (
                       <tr key={item.id}>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
-                          {"#BK0111"}
+                          #{item.booking_id}
                         </td>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
                           {item.full_name}                        </td>

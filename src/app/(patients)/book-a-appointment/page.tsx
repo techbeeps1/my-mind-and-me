@@ -2,7 +2,7 @@
 
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
-import "../../Datepicker.css";
+import "@/app/Datepicker.css";
 import { useState } from "react";
 import {
   createBooking,
@@ -193,10 +193,18 @@ export default function DoctorProfileComplete() {
     }
     setStep((prev) => prev + 1);
     if (step === 1) {
-      getSlotData(selectedDate ? formatDateLocal(selectedDate) : "")
       getData();
+      getSlotData(selectedDate ? formatDateLocal(selectedDate) : "")
+      
+    }
+    if (step === 2) {
+           setFormData((prev) => ({
+          ...prev,
+          fee: getFeeByDate(selectedDate ? formatDateLocal(selectedDate) : "").toString(),
+        }));
     }
   }
+
 
   const handleChange = (
     e: React.ChangeEvent<

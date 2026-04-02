@@ -6,15 +6,11 @@ import { IoMdLogOut } from "react-icons/io";
 import { CiSettings } from "react-icons/ci";
 import { FaRegCalendarTimes } from "react-icons/fa";
 import BookingSettingsPage from "@/components/comman/BookingSettingsPage";
-import { getSlotManageSettings } from "@/services/api";
+import { getBookingbyMonth, getSlotManageSettings } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
+import ScheduleDetails from "@/components/ScheduleDetails";
+import { IoToday } from "react-icons/io5";
 
-const bookedDates = [
-  { date: "2026-03-09", title: "Session with John" },
-  { date: "2026-03-18", title: "Session with John" },
-  { date: "2026-03-23", title: "Session with John" },
-  { date: "2026-03-23", title: "Session with John" },
-];
 
 
 type DayName =
@@ -46,13 +42,16 @@ const dayMap: Record<DayName, number> = {
 };
 
 export default function Calendar() {
+  const [openModal, setOpenModal] = useState(false);
+  const [bookedDates, setBookedDates] = useState<{ date: string; count: string }[]>([]);
   const [slotchanage, setSlotChange] = useState(0);
   const [offweekDays, setOffweekDays] = useState<number[]>([]);
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 2));
+ const [currentDate, setCurrentDate] = useState(new Date());
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [manageSlots, setManageSlots] = useState(false);
   const [Loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
     const data = localStorage.getItem("MMMDT");
@@ -65,19 +64,31 @@ const getOffWeekDays = (days: DaysObject): number[] => {
     .map((day) => dayMap[day]);
 };
 
+const today = new Date();
+
+const todayStr = `${today.getFullYear()}-${String(
+  today.getMonth() + 1
+).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
+
+
 
   let firstDay = new Date(year, month, 1).getDay();
   firstDay = (firstDay === 0 ? 6 : firstDay - 1);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-
   const prevMonth = () => {
     setCurrentDate(new Date(year, month - 1));
+       getBookingbyMonth(MMMUserData.id, new Date(year, (month - 1) +1).toISOString().slice(0, 7)).then((data) => {
+      if (data.success) { setBookedDates(data.data);} 
+    })
   };
-
   const nextMonth = () => {
     setCurrentDate(new Date(year, month + 1));
+       getBookingbyMonth(MMMUserData.id, new Date(year, (month + 1) +1).toISOString().slice(0, 7)).then((data) => {
+      if (data.success) { setBookedDates(data.data);} 
+    })
   };
 
   const days = [];
@@ -91,25 +102,39 @@ const getOffWeekDays = (days: DaysObject): number[] => {
   }
 
   const monthName = currentDate.toLocaleString("default", { month: "long" });
+
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    getSlotManageSettings(MMMUserData?.id)
-      .then((data) => {
-        setLoading(false);
-        console.log("Fetched Slot Manage Settings:", data);
-        if (data.success) {
-          setBlockedDates(data.holidays)
-          const offweekDays1 = getOffWeekDays(data.days);
-          setOffweekDays(offweekDays1);  
-        }
 
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, [MMMUserData?.id,slotchanage]);
+useEffect(() => {
+  if (!MMMUserData?.id) return;
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      const [slotData, bookingData] = await Promise.all([
+        getSlotManageSettings(MMMUserData.id),
+        getBookingbyMonth(MMMUserData.id, new Date().toISOString().slice(0, 7)),
+      ]);
+
+      if (slotData.success) {
+        setBlockedDates(slotData.holidays);
+        setOffweekDays(getOffWeekDays(slotData.days));
+      }
+
+      if (bookingData.success) {
+        setBookedDates(bookingData.data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [MMMUserData?.id, slotchanage]);
 
 
 
@@ -187,12 +212,12 @@ const getOffWeekDays = (days: DaysObject): number[] => {
 
         <div className="max-w-4xl mx-auto  rounded-lg overflow-hidden">
           {/* Header */}
-          <div className="bg-teal-700 text-white flex justify-between items-center px-6 py-4">
-            <button onClick={prevMonth}>❮</button>
+          <div className="bg-teal-700 text-white flex justify-center gap-5 items-center px-6 py-4">
+            <button className="cursor-pointer px-4 py-2 text-[20px]" onClick={prevMonth}>❮</button>
             <h2 className="text-xl font-semibold">
               {monthName} {year}
             </h2>
-            <button onClick={nextMonth}>❯</button>
+            <button className="cursor-pointer px-4 py-2 text-[20px]" onClick={nextMonth}>❯</button>
           </div>
 
           {/* Days Name */}
@@ -221,22 +246,25 @@ const getOffWeekDays = (days: DaysObject): number[] => {
 
               const booking = bookedDates.find((b) => b.date === dateStr);
               const isBlocked = blockedDates.includes(dateStr);
+              const isToday = dateStr === todayStr; 
               const isOffweek = offweekDays.includes(
                 new Date(year, month, day || 0).getDay(),
               );
 
               return (
                 <div
-                  key={i}
-                  className={`${isBlocked || isOffweek ? "bg-gray-100 cursor-not-allowed" : "hover:bg-gray-200"} h-28 border border-gray-300 p-2 text-sm relative ${booking ? "cursor-pointer  bg-[#d3e3e2]" : ""}`}
+                  key={i}  onClick={() => booking ? (setSelectedDate(dateStr), setOpenModal(true)) : ''}
+                  className={`${isBlocked || isOffweek ? "bg-gray-100 cursor-not-allowed" : ""} h-28 border border-gray-300 p-2 text-sm relative ${booking ? "cursor-pointer  bg-primary hover:bg-[#2a9f9a]" : ""}`}
                 >
                   {day && (
                     <>
-                      <span className="text-gray-500 text-xs">{day}</span>
-
+                      <div className="flex justify-between">
+                      <span className={`text-xs ${booking ? "text-white" : "text-gray-500"}`}>{day}</span>
+                      {isToday && <IoToday className="text-gray-600" />}
+                      </div>
                       {booking && (
-                        <div className="mt-4 text-[#444444] p-2 rounded text-xs">
-                          {booking.title}
+                        <div  className="mt-4 text-[#fff] p-2 rounded text-md font-semibold">
+                           You have {booking.count} sessions
                         </div>
                       )}
                     </>
@@ -248,6 +276,8 @@ const getOffWeekDays = (days: DaysObject): number[] => {
         </div>
       </div>
       <div className="h-16"></div>
+
+    { openModal && (<ScheduleDetails isOpen={openModal} onClose={() => setOpenModal(false)} date={selectedDate} /> ) }
     </WraperBanner>
   );
 }

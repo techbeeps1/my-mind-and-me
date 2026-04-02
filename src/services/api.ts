@@ -20,6 +20,34 @@ export const bookingApiPath = "/api/booking";
 
 export const imagePath = "http://54.89.179.53:8000/image/"; 
 
+// get celender booking by month
+export async function getBookingbyMonth( UserId:string, date:string ) {
+  const res = await fetch(`${bookingApiPath}/booking-count/${UserId}/${date}`);
+   if (!res.ok) throw new Error("Failed to fetch calendar booking");
+  return res.json();
+}
+
+
+// booking status change
+export async function changeBookingStatus( data:any ) {
+  const res = await fetch(`${bookingApiPath}/status`, {   
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { throw new Error("Failed to change booking status");}
+  return await res.json();
+}
+
+
+// booking history
+export async function GetBookinglistbydate(UserId:string, date:string) {
+  const res = await fetch(`${bookingApiPath}/history/${UserId}/${date}`);
+   if (!res.ok) throw new Error("Failed to fetch booking history");
+  return res.json();
+}
 
 
 // booking history

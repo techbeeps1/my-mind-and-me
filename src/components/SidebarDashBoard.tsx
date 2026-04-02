@@ -13,7 +13,7 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
     });
   
   const pathname = usePathname(); // current URL
- console.log(pathname)
+
    const menu0 = [
     { name: "Dashboard", path: "/dashboard" },
     { name: "Add Referrer ", path: "/add-referrer" },
@@ -33,6 +33,7 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
     { name: "Dashboard", path: "/dashboard" },
     { name: "Schedule", path: "/schedule" },
     { name: "Booking History", path: "/booking-history" },
+    { name: "Payments", path: "/payments" },
    
     { name: "Verification Status", path: "/verification-status" },
     { name: "Bank Details", path: "/bank-details" },
