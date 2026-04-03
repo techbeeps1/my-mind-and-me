@@ -143,7 +143,7 @@ export default function Booking_a_appointment() {
   });
 
   useEffect(() => {
-
+if (!MMMUserData?.id) return;
     getpractitionerList(MMMUserData.id).then((res) => {
       if (res.success) {
         setpractitionersList(res.data)
@@ -152,7 +152,7 @@ export default function Booking_a_appointment() {
       console.error(err);
     });
 
-  }, [MMMUserData.id])
+  }, [MMMUserData])
 
 
   const options =

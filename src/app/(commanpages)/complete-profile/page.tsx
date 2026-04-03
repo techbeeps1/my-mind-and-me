@@ -13,6 +13,9 @@ export default function CompleteProfile() {
       });
     
      
+      if (!MMMUserData) {
+     return <div></div>;
+     }
       if(MMMUserData.role === "practitioner"){
     return <PractitionerProfileComplete/>
       }
@@ -23,6 +26,6 @@ export default function CompleteProfile() {
         return <PatientsProfileComplete/>
       }
 
-
+  return null;
   }
   

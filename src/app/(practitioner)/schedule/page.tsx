@@ -59,7 +59,9 @@ export default function Calendar() {
     return data ? JSON.parse(data) : null;
   });
 
+  
   useEffect(() => {
+     if (!MMMUserData?.id) return;
     isGoogleConnect(MMMUserData.id).then((data) => {
     setIsLoggedIn(data.success)
 
@@ -67,8 +69,9 @@ export default function Calendar() {
       console.error(err);
     });
 
-  }, [MMMUserData.id])
+  }, [MMMUserData])
 
+  
   function disconnectGoogleCalendar() {
     setIsLoggedIn(false);
 
@@ -110,12 +113,14 @@ export default function Calendar() {
   firstDay = (firstDay === 0 ? 6 : firstDay - 1);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const prevMonth = () => {
+     if (!MMMUserData?.id) return;
     setCurrentDate(new Date(year, month - 1));
     getBookingbyMonth(MMMUserData.id, new Date(year, (month - 1) + 1).toISOString().slice(0, 7)).then((data) => {
       if (data.success) { setBookedDates(data.data); }
     })
   };
   const nextMonth = () => {
+   if (!MMMUserData?.id) return;
     setCurrentDate(new Date(year, month + 1));
     getBookingbyMonth(MMMUserData.id, new Date(year, (month + 1) + 1).toISOString().slice(0, 7)).then((data) => {
       if (data.success) { setBookedDates(data.data); }
@@ -143,7 +148,7 @@ export default function Calendar() {
     const fetchData = async () => {
       try {
         setLoading(true);
-
+  if (!MMMUserData?.id) return;
         const [slotData, bookingData] = await Promise.all([
           getSlotManageSettings(MMMUserData.id),
           getBookingbyMonth(MMMUserData.id, new Date().toISOString().slice(0, 7)),
@@ -167,7 +172,9 @@ export default function Calendar() {
     fetchData();
   }, [MMMUserData?.id, slotchanage]);
 
-
+if (!MMMUserData) {
+  return <LoadingSpin />;
+}
 
   if (manageSlots)
     return (
