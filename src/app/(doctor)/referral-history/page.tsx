@@ -145,11 +145,11 @@ const filteredData = useMemo(() => {
                     {filteredData.map((item) => (
                       <tr key={item.id}>
                         <td className="px-4 py-4 flex items-center gap-3">
-                          <img
+                          {/* <img
                             src={item.profile ?? "https://i.pravatar.cc/40?img=47"}
                             alt={item.patient_name}
                             className="w-9 h-9 rounded-full"
-                          />
+                          /> */}
                           <span className="font-bold text-sm leading-9 text-primary">
                             {item.patient_name}
                           </span>
