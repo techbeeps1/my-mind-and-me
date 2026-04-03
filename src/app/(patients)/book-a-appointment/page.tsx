@@ -108,6 +108,11 @@ const StepProgress = ({ step }: { step: number }) => {
   );
 };
 
+interface BookingCreateDatatype {
+  id: number;
+  success:boolean;
+}
+
 export default function Booking_a_appointment() {
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [bookingCfrm, setBookingCfrm] = useState(false);
@@ -119,7 +124,7 @@ export default function Booking_a_appointment() {
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
   const [slotLoading, setSlotLoading] = useState(false);
   const [paymentGateways, setPaymentGateways] = useState(false);
-  const [bookingcreatedata, setbookingcreatedata] = useState();
+  const [bookingcreatedata, setbookingcreatedata] = useState<BookingCreateDatatype>();
   const [practitionerList, setpractitionersList] = useState<practitionerListType[]>();
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
@@ -356,7 +361,7 @@ export default function Booking_a_appointment() {
       setBookingCfrm(true);
       setPaymentGateways(false)
       const payload = {
-        booking_id: bookingcreatedata?.id,
+        booking_id: bookingcreatedata?.id ?? 0,
         status: "booked",
         reason: ""
       }
