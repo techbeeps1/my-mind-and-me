@@ -30,6 +30,7 @@ export default function Insurance() {
   const [openStatusChange, setOpenStatusChange] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookingHistoryType >();
   const [BookingHistory, setBookingHistory] = useState<BookingHistoryType[]>([]);
+    const [bookingUpdate,setBookingUpdate] =useState<number>(0)
 
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
@@ -69,7 +70,7 @@ export default function Insurance() {
     GetBookingHistory(MMMUserData?.id)
       .then((data) => {
         setLanding(false);
-        console.log("Patient Profile Data:", data);
+
         if (data.success) {
           setBookingHistory(data.history);
         }
@@ -78,7 +79,7 @@ export default function Insurance() {
       .catch((err) => {
         console.error(err);
       });
-  }, [MMMUserData?.id]);
+  }, [MMMUserData?.id,bookingUpdate]);
 
   if (landing) {
     return (
@@ -187,8 +188,8 @@ export default function Insurance() {
 
                         <td className={`px-4 py-4 text-sm font-semibold `}>
 
-                          <span className={`${statusColors[item.status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}>
-                            {item.status}
+                          <span className={ `capitalize ${statusColors[item.status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}>
+                            {item.status === "pending" ? "failed" : item.status}
                           </span >
                         </td>
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
@@ -196,11 +197,14 @@ export default function Insurance() {
 
                         </td>
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
+                          
                           <div onClick={() => {
+                            if( item.status == "booked"){ 
                             setSelectedBooking(item);
                             setOpenStatusChange(true);
+                            }
                           }}>
-                            <FaRegEdit className="text-xl hover:text-gray-500 cursor-pointer" />
+                            <FaRegEdit className={`text-xl  ${item.status !== "booked"  ? "text-gray-300 cursor-not-allowed" : "hover:text-gray-500 cursor-pointer"}`} />
                           </div>
 
                         </td>
@@ -215,7 +219,7 @@ export default function Insurance() {
 
       </WrapperBanner>
         { openStatusChange && selectedBooking && (
-            <BookingStatusChange setOpenStatusChange={setOpenStatusChange} data={selectedBooking} Role={MMMUserData?.role} />
+            <BookingStatusChange setBookingUpdate={setBookingUpdate} setOpenStatusChange={setOpenStatusChange} data={selectedBooking} Role={MMMUserData?.role} />
         )}
     </>
   );

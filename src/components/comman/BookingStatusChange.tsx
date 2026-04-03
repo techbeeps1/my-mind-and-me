@@ -7,7 +7,7 @@ import { BookingHistoryType } from "@/app/(commanpages)/booking-history/page";
 import { changeBookingStatus } from "@/services/api";
 import BookingReschedule from "./BookingReschedule";
 
-export default function BookingStatusChange({ setOpenStatusChange, data, Role }: { setOpenStatusChange: React.Dispatch<React.SetStateAction<boolean>>, data: BookingHistoryType, Role: string }) {
+export default function BookingStatusChange({ setBookingUpdate,setOpenStatusChange, data, Role }: {setBookingUpdate:React.Dispatch<React.SetStateAction<number>>, setOpenStatusChange: React.Dispatch<React.SetStateAction<boolean>>, data: BookingHistoryType, Role: string }) {
 
   const [formData, setFormData] = useState({
     type: "",
@@ -16,6 +16,7 @@ export default function BookingStatusChange({ setOpenStatusChange, data, Role }:
 
   const [openReschedule, setOpenReschedule] = useState(false);
   const [loading, setLoading] = useState(false);
+
 
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -40,13 +41,16 @@ export default function BookingStatusChange({ setOpenStatusChange, data, Role }:
     if(loading) return;
     setLoading(true);
 
+
     changeBookingStatus({
-      booking_id: data.booking_id,
-      practitioner_id: data.practitioner_id,
-      type: formData.type,
+      booking_id: data.id,
+      status: formData.type,
       reason: formData.reason,
     }).then((res) => {
+console.log(res);
+ setBookingUpdate((prev) => prev + 1); 
       toastTBS.success("Booking status updated successfully");
+
       setLoading(false);
       setOpenStatusChange(false);
     }).catch((err) => {
@@ -86,7 +90,7 @@ export default function BookingStatusChange({ setOpenStatusChange, data, Role }:
                     onChange={handleChange}
                     className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
 
-                    <option value="" disabled selected>select type</option>
+                    <option value="" disabled selected>Select type</option>
 
                     <option value="cancelled">Cancelled</option>
                     {Role === "practitioner" && (
@@ -137,7 +141,7 @@ export default function BookingStatusChange({ setOpenStatusChange, data, Role }:
               className="absolute top-4 right-4 z-1 text-white cursor-pointer font-bold h-7.5 w-7.5 rounded-full bg-primary text-sm flex items-center justify-center"
               onClick={() => setOpenStatusChange(false)}
             >✕</button>
-            <BookingReschedule Data={data} />
+            <BookingReschedule setBookingUpdate={setBookingUpdate}  Data={data} />
           </div>
         </div>
 

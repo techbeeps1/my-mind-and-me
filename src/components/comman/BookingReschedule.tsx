@@ -5,9 +5,9 @@ import "react-day-picker/dist/style.css";
 import "@/app/Datepicker.css";
 import { useState } from "react";
 import {
-  createBooking,
   getSlotManageSettings,
-  getSlots
+  getSlots,
+  rescheduleBooking
 } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
@@ -32,7 +32,7 @@ type DayConfig = {
 };
 
 type FormDataType = {
-  patient_id: string;
+  booking_id: string;
   practitioner_id: string;
   date: string;
   slot: string;
@@ -88,7 +88,7 @@ const StepProgress = ({ step }: { step: number }) => {
   );
 };
 
-export default function BookingReschedule({ Data }: { Data: BookingHistoryType }) {
+export default function BookingReschedule({ Data, setBookingUpdate }: { Data: BookingHistoryType, setBookingUpdate: React.Dispatch<React.SetStateAction<number>> }) {
 
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [bookingCfrm, setBookingCfrm] = useState(false);
@@ -99,14 +99,10 @@ export default function BookingReschedule({ Data }: { Data: BookingHistoryType }
   const [offweekDays, setOffweekDays] = useState<number[]>([]);
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
   const [slotLoading, setSlotLoading] = useState(false);
-  const [MMMUserData] = useState(() => {
-    if (typeof window === "undefined") return null;
-    const data = localStorage.getItem("MMMDT");
-    return data ? JSON.parse(data) : null;
-  });
+
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormDataType>({
-    patient_id: MMMUserData?.id || "",
+    booking_id: Data.id,
     practitioner_id: Data.practitioner_id,
     date: new Date().toISOString().split("T")[0],
     slot: "",
@@ -191,7 +187,7 @@ export default function BookingReschedule({ Data }: { Data: BookingHistoryType }
 
   }
 
-  
+
   const handleDateSelect = (date: Date | undefined) => {
     if (!date) return;
     setSelectedDate(date);
@@ -273,11 +269,16 @@ export default function BookingReschedule({ Data }: { Data: BookingHistoryType }
     if (landingData) return;
     setLandingData(true);
     try {
-      const res = await createBooking(formData);
+      const payload = {
+        booking_id: formData.booking_id,
+        new_date: formData.date,
+        new_slot: formData.slot
+      }
+      const res = await rescheduleBooking(payload);
       if (res.success) {
         toastTBS.success("Booking updated successfully");
         setBookingCfrm(true);
-        //router.push("dashboard");
+        setBookingUpdate((prev) => prev + 1);
         setTimeout(() => {
           setLandingData(false);
         }, 1500);
@@ -425,14 +426,14 @@ export default function BookingReschedule({ Data }: { Data: BookingHistoryType }
                     <div className="flex justify-between">
                       <span>Practitioner Name</span>
                       <span className="font-semibold text-gray-800">
-                       {Data.full_name}
+                        {Data.full_name}
                       </span>
                     </div>
 
                     <div className="flex justify-between">
                       <span>Previous Date</span>
-                      <span className="font-semibold text-gray-800">                  
-                        { new Date(Data.booking_date).toLocaleDateString() }
+                      <span className="font-semibold text-gray-800">
+                        {new Date(Data.booking_date).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="flex justify-between">

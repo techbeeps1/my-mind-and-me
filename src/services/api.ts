@@ -20,6 +20,50 @@ export const bookingApiPath = "/api/booking";
 
 export const imagePath = "http://54.89.179.53:8000/image/"; 
 
+
+// get Slots manage settings
+export async function getpractitionerList( UserId:string ) {
+  const res = await fetch(`${bookingApiPath}/refer-practitioners/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch practitionerList");
+  return res.json();
+} 
+
+
+// check google connect 
+export async function isGoogleConnect(UserId:string) {
+  const res = await fetch(`${bookingApiPath}/google/check/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch Google Connection");
+  return res.json();
+}
+
+
+// booking status change
+export async function paymentStatusUpdate( data:any ) {
+  const res = await fetch(`${bookingApiPath}/update`, {   
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+   body:JSON.stringify(data)
+  });
+  if (!res.ok) { throw new Error("Failed to update status");}
+  return await res.json();
+}
+
+
+// booking status change
+export async function disconnectGoogleCalendarAPI( user_id:any ) {
+  const res = await fetch(`${bookingApiPath}/google/disconnect/${user_id}`, {   
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+   
+  });
+  if (!res.ok) { throw new Error("Failed to disconnect Google Calendar");}
+  return await res.json();
+}
+
 // get celender booking by month
 export async function getBookingbyMonth( UserId:string, date:string ) {
   const res = await fetch(`${bookingApiPath}/booking-count/${UserId}/${date}`);
@@ -30,8 +74,8 @@ export async function getBookingbyMonth( UserId:string, date:string ) {
 
 // booking status change
 export async function changeBookingStatus( data:any ) {
-  const res = await fetch(`${bookingApiPath}/status`, {   
-    method: "PUT",
+  const res = await fetch(`${bookingApiPath}/update`, {   
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
@@ -64,6 +108,19 @@ export async function getSlotManageSettings( UserId:string ) {
    if (!res.ok) throw new Error("Failed to fetch slot manage settings");
   return res.json();
 } 
+
+// reschedule booking
+export async function rescheduleBooking( data:any ) {
+  const res = await fetch(`${bookingApiPath}/reschedule`, {   
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { throw new Error("Failed to reschedule Booking");}
+  return await res.json();
+}
 
 
 

@@ -2,16 +2,20 @@
 
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
-import "@/app/Datepicker.css";
-import { useState } from "react";
+import "../../Datepicker.css";
+import { useEffect, useState } from "react";
+import Select from "react-select";
 import {
   createBooking,
+  getpractitionerList,
   getSlotManageSettings,
-  getSlots
+  getSlots,
+  paymentStatusUpdate
 } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import WrapperBanner from "@/components/WraperBanner";
+import DemoPaymentGateway from "@/components/DemoPaymentGateway";
 
 
 type DayName =
@@ -30,6 +34,14 @@ type DayConfig = {
   enabled: boolean;
 };
 
+type PaymentResponse = {
+  txnId: string;
+  date: string;
+  method: string;
+  status: string;
+  amount: string;
+
+};
 type FormDataType = {
   patient_id: string;
   practitioner_id: string;
@@ -38,6 +50,14 @@ type FormDataType = {
   slot: string;
   fee: string;
 };
+
+type practitionerListType = {
+  id: string;
+  full_name: string;
+  unique_id: string;
+}
+
+
 type DaysObject = Record<DayName, DayConfig>;
 
 const dayMap: Record<DayName, number> = {
@@ -88,7 +108,7 @@ const StepProgress = ({ step }: { step: number }) => {
   );
 };
 
-export default function DoctorProfileComplete() {
+export default function Booking_a_appointment() {
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [bookingCfrm, setBookingCfrm] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -98,6 +118,9 @@ export default function DoctorProfileComplete() {
   const [offweekDays, setOffweekDays] = useState<number[]>([]);
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
   const [slotLoading, setSlotLoading] = useState(false);
+  const [paymentGateways, setPaymentGateways] = useState(false);
+  const [bookingcreatedata, setbookingcreatedata] = useState();
+  const [practitionerList, setpractitionersList] = useState<practitionerListType[]>();
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
     const data = localStorage.getItem("MMMDT");
@@ -113,6 +136,25 @@ export default function DoctorProfileComplete() {
     fee: "",
 
   });
+
+  useEffect(() => {
+
+    getpractitionerList(MMMUserData.id).then((res) => {
+      if (res.success) {
+        setpractitionersList(res.data)
+      }
+    }).catch((err) => {
+      console.error(err);
+    });
+
+  }, [MMMUserData.id])
+
+
+  const options =
+    practitionerList?.map((item) => ({
+      value: item.id,
+      label: `${item.full_name} || PR${item.unique_id}`,
+    })) || [];
 
   const [dayFees, setDayFees] = useState<Record<DayName, number>>({
     Sunday: 0,
@@ -194,29 +236,18 @@ export default function DoctorProfileComplete() {
     setStep((prev) => prev + 1);
     if (step === 1) {
       getData();
-      getSlotData(selectedDate ? formatDateLocal(selectedDate) : "")
-      
+
+
     }
     if (step === 2) {
-           setFormData((prev) => ({
-          ...prev,
-          fee: getFeeByDate(selectedDate ? formatDateLocal(selectedDate) : "").toString(),
-        }));
+      setFormData((prev) => ({
+        ...prev,
+        fee: getFeeByDate(selectedDate ? formatDateLocal(selectedDate) : "").toString(),
+      }));
     }
   }
 
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   const handleDateSelect = (date: Date | undefined) => {
     if (!date) return;
@@ -259,6 +290,10 @@ export default function DoctorProfileComplete() {
           const offweekDays1 = getOffWeekDays(data.days);
           setOffweekDays(offweekDays1);
           setFeesFromAPI(data.days);
+          if (!data.holidays.includes(selectedDate ? formatDateLocal(selectedDate) : "")) {
+            getSlotData(selectedDate ? formatDateLocal(selectedDate) : "")
+          }
+
         }
       })
       .catch((err) => {
@@ -297,8 +332,9 @@ export default function DoctorProfileComplete() {
     try {
       const res = await createBooking(formData);
       if (res.success) {
-        toastTBS.success("Booking created successfully");
-        setBookingCfrm(true);
+        //  toastTBS.success("Booking created successfully");
+        setPaymentGateways(true);
+        setbookingcreatedata(res)
         //router.push("dashboard");
         setTimeout(() => {
           setLandingData(false);
@@ -315,6 +351,21 @@ export default function DoctorProfileComplete() {
     }
   };
 
+  function paymentstatus(data: PaymentResponse) {
+    if (data.status === "success") {
+      setBookingCfrm(true);
+      setPaymentGateways(false)
+      const payload = {
+        booking_id: bookingcreatedata?.id,
+        status: "booked",
+        reason: ""
+      }
+      paymentStatusUpdate(payload).then((res) => {
+        console.log(res)
+      })
+    }
+  }
+
   if (londing && step === 2) {
     return (
       <WrapperBanner>
@@ -324,12 +375,27 @@ export default function DoctorProfileComplete() {
         >
           <div className="flex-1 flex justify-center items-center h-[70vh]">
             <LoadingSpin />
+
           </div>
         </div>
       </WrapperBanner>
     );
   }
 
+  if (paymentGateways && step === 3) {
+    return (
+      <WrapperBanner>
+        <div
+          className=" bg-cover bg-center bg-no-repeat min-h-screen "
+          style={{ backgroundImage: "url('/banner-bg.jpg')" }}
+        >
+          <div className="flex-1 flex justify-center items-center h-[70vh]">
+            <DemoPaymentGateway data={formData} callback={paymentstatus} />
+          </div>
+        </div>
+      </WrapperBanner>
+    );
+  }
 
 
 
@@ -359,18 +425,30 @@ export default function DoctorProfileComplete() {
                         </h2>
 
                         <div className="w-full">
-                          <select
-                            name="practitioner_id"
-                            value={formData.practitioner_id}
-                            onChange={handleChange}
-                            className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
-                          >
-                            <option value="" disabled selected>
-                              Select Practitioner
-                            </option>
-                            <option value="65715c3e-37c3-4f2b-a831-768dd5380e74">patients 1</option>
-                            <option value="65715c3e-37c3-4f2b-a831-768dd5380e74">patients 2</option>
-                          </select>
+                          <Select
+                            options={options}
+                            value={
+                              options?.find(opt => opt.value === formData.practitioner_id) || null
+                            }
+                            onChange={(selected) =>
+                              setFormData({
+                                ...formData,
+                                practitioner_id: selected?.value || "",
+                              })
+                            }
+                            placeholder="Select Practitioner"
+                            isSearchable
+                            styles={{
+                              control: (base, state) => ({
+                                ...base,
+                                borderColor: state.isFocused ? "#25716e" : "#e5e7eb", // focus color
+                                boxShadow: state.isFocused ? "0 0 0 1px #25716e" : "none",
+                                "&:hover": {
+                                  borderColor: state.isFocused ? "#25716e" : "#d1d5db",
+                                },
+                              }),
+                            }}
+                          />
                         </div>
                       </div>
                     </>
@@ -439,21 +517,21 @@ export default function DoctorProfileComplete() {
 
                       {bookingCfrm ? (
                         <>
-                        <div className="flex justify-center mb-4">
-                          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-100">
-                            <span className="text-green-600 text-3xl font-bold">✓</span>
+                          <div className="flex justify-center mb-4">
+                            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-100">
+                              <span className="text-green-600 text-3xl font-bold">✓</span>
+                            </div>
                           </div>
-                        </div>
 
-                      
-                      <h2 className="text-2xl font-bold text-primary mb-2 text-center">
-                        Booking Confirmed!
-                      </h2>
 
-                      <p className="text-gray-500 text-sm mb-5 text-center">
-                        Your appointment has been successfully booked.
-                      </p>
-                    </>
+                          <h2 className="text-2xl font-bold text-primary mb-2 text-center">
+                            Booking Confirmed!
+                          </h2>
+
+                          <p className="text-gray-500 text-sm mb-5 text-center">
+                            Your appointment has been successfully booked.
+                          </p>
+                        </>
                       ) : (
 
                         <h3 className="text-xl font-bold text-primary mb-5">
@@ -508,43 +586,44 @@ export default function DoctorProfileComplete() {
                     </div>
                   )}
                   {!bookingCfrm && (
-                  <div className="flex justify-center mt-10 gap-2">
-                    {step > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => setStep(step - 1)}
-                        className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
-                      >
-                        Back
-                      </button>
-                    )}
+                    <div className="flex justify-center mt-10 gap-2">
+                      {step > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => setStep(step - 1)}
+                          className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
+                        >
+                          Back
+                        </button>
+                      )}
 
-                    {step < 3 && (
-                      <button
-                        type="button"
-                        onClick={nextStep}
-                        className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
-                      >
-                        Next
-                      </button>
-                    )}
+                      {step < 3 && (
+                        <button
+                          type="button"
+                          onClick={nextStep}
+                          className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
+                        >
+                          Next
+                        </button>
+                      )}
 
-                    {step === 3 && (
-                      <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
-                        {landingData ? (
-                          <LoadingSpin width={2} height={11} />
-                        ) : (
-                          "Book Now"
-                        )}
-                      </button>
-                    )}
-                  </div>
+                      {step === 3 && (
+                        <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                          {landingData ? (
+                            <LoadingSpin width={2} height={11} />
+                          ) : (
+                            "Book Now"
+                          )}
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               </form>
             </div>
           </div>
         </div>
+
       </WrapperBanner>
     </>
   );
