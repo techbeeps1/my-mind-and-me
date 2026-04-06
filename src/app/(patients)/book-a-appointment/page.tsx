@@ -306,6 +306,8 @@ if (!MMMUserData?.id) return;
       });
   }
 
+
+  const [ notavailable, setnotavailable] = useState(false);
   function getSlotData(date: string) {
 
     const data = JSON.stringify({ date, user_id: formData.practitioner_id });
@@ -318,9 +320,11 @@ if (!MMMUserData?.id) return;
           fee: getFeeByDate(date).toString(),
         }));
 
-        setSlotLoading(false);
+        
+      } else{
+        setnotavailable(true)
       }
-
+setSlotLoading(false);
     }).catch((err) => {
       toastTBS.error("Error fetching slots:" + err.message);
       setSlotLoading(false);
@@ -487,7 +491,7 @@ if (!MMMUserData?.id) return;
                         {/* Time Slots Section */}
                         <div className="bg-white lg:shadow lg:rounded-xl lg:p-4 w-full lg:w-1/2">
                           <h3 className="text-lg font-semibold mb-3 text-primary">
-                            Select preferred time slot
+                             Select preferred time slot
                           </h3>
                           {slotLoading ? (
                             <div className="flex justify-center items-center h-32">
@@ -509,6 +513,12 @@ if (!MMMUserData?.id) return;
                                 </button>
                               ))}
                             </div>
+                          )}
+
+                          {notavailable && (<div className={` text-red-600  duration-400 rounded-lg  text-sm font-semibold `}
+                                >
+                                 Sorry, there are no available slots for the selected date.
+                                </div>
                           )}
                         </div>
                       </div>
