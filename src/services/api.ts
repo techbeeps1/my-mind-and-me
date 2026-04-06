@@ -200,7 +200,7 @@ export async function GetInsuranceData(UserId:string) {
 
 // patient profile edit
 export async function patientProfileEdit( data:any ) {
-  const res = await fetch(`${PATIENT_END}/profile`, {
+  const res = await fetch(`${paApiPath}/profile`, {
     method: "POST",
     body: data,
   });

@@ -58,8 +58,11 @@ const filteredData = useMemo(() => {
      GetInsuranceData(MMMUserData?.id)
        .then((data) => {
          setLanding(false);
-         console.log("Patient Profile Data:", data);
-         setPatients(data.data);
+         if(data.status){
+ setPatients(data.data);
+         }
+   
+        
        })
        .catch((err) => {
          console.error(err);

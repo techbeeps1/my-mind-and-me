@@ -53,8 +53,10 @@ export default function MedicalHistory() {
        Getmedicalhistory(MMMUserData?.id)
          .then((data) => {
            setLanding(false);
-           console.log("Patient Profile Data:", data);
-           setPatientsMedicalHistory(data.data);
+           if(data.status){
+            setPatientsMedicalHistory(data.data);
+           }
+          
          })
          .catch((err) => {
            console.error(err);
