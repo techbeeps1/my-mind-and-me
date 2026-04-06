@@ -211,7 +211,7 @@ export default function DoctorProfile() {
                       </label>
                     )}
                     <div className="lg:text-lg md:text-base text-sm text-primary">
-                      <div className="font-semibold">Ashley Lars</div>
+                      <div className="font-semibold">{formData.full_name}</div>
                       <div className="lg:text-base md:text-sm text-xs text-[#C6C6C6]">
                         Receptionist
                       </div>

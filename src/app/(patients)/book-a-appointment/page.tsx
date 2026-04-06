@@ -474,7 +474,9 @@ if (!MMMUserData?.id) return;
                             selected={selectedDate}
                             onSelect={handleDateSelect}
                             weekStartsOn={1}
-                            disabled={[blockedDates.map(date => new Date(date)),
+                            disabled={[
+                               { before: new Date() },
+                              blockedDates.map(date => new Date(date)),
                             { dayOfWeek: offweekDays }
                             ]}
                             className="rounded-md border md:p-5 p-2 w-full"
