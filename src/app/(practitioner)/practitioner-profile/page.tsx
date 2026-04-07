@@ -97,10 +97,24 @@ export default function PractitionerProfile() {
   useEffect(() => {
     GetPractitionerProfile(MMMUserData?.id).then((data) => {
       setLanding(false)
-      setFormData(data.data);
-        setSpInterestData(data.data.special_interests || []);
-        setModalitiesData(data.data.modalities || []);
-        setLanguagesData(data.data.languages || []);
+      console.log(data.data);
+      setFormData(() => ({
+        user_id: MMMUserData?.id || "",
+        full_name: data.data.full_name || "",
+        phone: data.data.phone || "",
+        gender: data.data.gender || "",
+        dob: data.data.dob || "",
+        license_number: data.data.license_number || "",
+        qualifications: data.data.qualifications || "",
+        languages: data.data.languages || "",
+        modalities: data.data.modalities || "",
+        special_interests: data.data.special_interests || "",
+        profile_image: "/profile-img.png",
+      }));
+      
+      setSpInterestData(data.data.special_interests ?? []);
+      setModalitiesData(data.data.modalities ?? []);
+      setLanguagesData(data.data.languages ?? []);
        
        setPreview(imagePath + data.data.profile_image || "/profile-img.png");
     }).catch((err) => {

@@ -4,7 +4,7 @@ import WrapperBanner from "@/components/WraperBanner";
 
 import { GoDotFill } from "react-icons/go";
 import { useEffect, useState } from "react";
-import { GetBankDetails, GetpractitionerBio, UpdateBankDetails, UpdatepractitionerBio } from "@/services/api";
+import { GetpractitionerBio, UpdatepractitionerBio } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 
@@ -163,7 +163,7 @@ export default function PractitionerProfile() {
                         onChange={handleChange}
                         rows={6}
                       
-                        placeholder="Enter your bio"
+                        placeholder="please write about yourself, your experience, your approach to therapy, and anything else you'd like potential clients to know."
                         className={`w-full text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-8 outline-none ${!isEdit ?"bg-primary/[0.08]":"resize-none" }`}
                       />
                     </div>
