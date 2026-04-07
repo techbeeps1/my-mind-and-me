@@ -31,7 +31,7 @@ export default function PractitionerProfile() {
     const Modalities = [
     "CBT",
     "DBT",
-    "psychodynamic",
+    "Psychodynamic",
 
   ];
     const Languages = [
@@ -116,7 +116,7 @@ export default function PractitionerProfile() {
       setModalitiesData(data.data.modalities ?? []);
       setLanguagesData(data.data.languages ?? []);
        
-       setPreview(imagePath + data.data.profile_image || "/profile-img.png");
+       setPreview(data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png");
     }).catch((err) => {
       console.error(err);
     });
@@ -326,6 +326,7 @@ const validateForm = (data: FormDataType): string => {
                         name="phone"
                         onChange={handleChange}
                         type="number"
+                
 
                         placeholder="Phone"
                         className="w-full text-primary text-sm placeholder:text-primary leading-[20px] bg-transparent  outline-none text-sm"
@@ -341,6 +342,9 @@ const validateForm = (data: FormDataType): string => {
                     </label>
                     <select name="gender" value={formData.gender}
                       onChange={handleChange} disabled={isEdit} className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
+                      <option value="" selected disabled>
+                        Select Gender
+                      </option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                       <option value="other">Other</option>

@@ -78,7 +78,8 @@ export default function DoctorProfile() {
       .then((data) => {
         setLanding(false);
         setFormData(data.data);
-        setPreview(imagePath + data.data.profile_image || "/profile-img.png");
+        
+        setPreview(data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png");
       })
       .catch((err) => {
         console.error(err);
@@ -294,6 +295,9 @@ export default function DoctorProfile() {
                       disabled={isEdit}
                       className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/8 outline-none"
                     >
+                       <option value="" selected disabled>
+                        Select Gender
+                      </option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                       <option value="other">Other</option>

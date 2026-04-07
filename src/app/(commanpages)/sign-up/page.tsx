@@ -87,6 +87,32 @@ export default function Home() {
       toastTBS.error("Please accept Terms & Conditions");
       return;
     }
+    if (!formData.name.trim()) {
+      toastTBS.error("Name is required");
+      return;
+    }
+    if (!formData.email.trim()) {
+      toastTBS.error("Email is required");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      toastTBS.error("Invalid email format");
+      return;
+    }
+    if (!formData.password.trim()) {
+      toastTBS.error("Password is required");
+      return;
+    }
+    if(formData.phone.trim()){
+        if (!/^\d{10}$/.test(formData.phone)) {
+          toastTBS.error("Invalid phone number");
+           return;
+        }
+         
+    }else{
+          toastTBS.error("Phone number is required");
+           return;
+        } 
 
     if (passwordError) {
       toastTBS.error(passwordError);
@@ -115,15 +141,19 @@ export default function Home() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message);
-      }
-
-      toast.success("You have registered successfully!");
-
-      setTimeout(() => {
+     console.log(data);
+     if(data.success){
+    toastTBS.success("You have registered successfully!");
+        setTimeout(() => {
         router.push("/login");
       }, 2000);
+     }else{
+      toastTBS.error(data.message || "Registration failed");
+     }
+
+      
+
+  
 
 
     } catch (error: unknown) {
@@ -218,6 +248,7 @@ export default function Home() {
                       <div className="flex items-center gap-[12px] bg-primary/[0.08] px-[16px] py-[10px] rounded-md">
                         <FaPhone />
                         <input
+                          required
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}

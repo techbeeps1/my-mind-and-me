@@ -79,7 +79,7 @@ export default function DoctorProfile() {
      referralProfile(MMMUserData?.id).then((data) => {
       setLanding(false)
       setFormData(data.data);
-      setPreview(imagePath + data.data.profile_image || "/profile-img.png");
+      setPreview(data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png");
     }).catch((err) => {
       console.error(err);
     });
@@ -173,7 +173,7 @@ export default function DoctorProfile() {
                                             </label>
                     )}
                     <div className="lg:text-lg md:text-base text-sm text-primary">
-                      <div className="font-semibold">Ashley Lars</div>
+                      <div className="font-semibold">{formData.full_name}</div>
                       <div className="lg:text-base md:text-sm text-xs text-[#C6C6C6]">Receptionist</div>
                     </div>
                   </div>
@@ -240,6 +240,9 @@ export default function DoctorProfile() {
                     </label>
                     <select name="gender" value={formData.gender}
                       onChange={handleChange} disabled={isEdit} className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
+                       <option value="" selected disabled>
+                        Select Gender
+                      </option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                       <option value="other">Other</option>

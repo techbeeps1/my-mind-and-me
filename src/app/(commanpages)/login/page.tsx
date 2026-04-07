@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 
 import { authApiPath } from "@/services/api";
 import {toastTBS} from "@/lib/toast";
+import LoadingSpin from "@/components/LoadingSpin";
 
 
 export default function Home() {
@@ -46,7 +47,8 @@ const [errors, setErrors] = useState<FormErrors>({});
   }
 
 
-  async function submitlogin() {
+  async function submitlogin(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     if (!validate()) return;
 
     try {
@@ -112,7 +114,7 @@ const [errors, setErrors] = useState<FormErrors>({});
             </h1>
 
             <div className="space-y-[20px]">
-
+   <form onSubmit={submitlogin} className="space-y-5">
               {/* Email */}
               <div>
                 <label className="block text-sm font-semibold mb-2">
@@ -169,12 +171,14 @@ const [errors, setErrors] = useState<FormErrors>({});
 
               {/* Button */}
               <button
-                onClick={submitlogin}
+                type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-full text-white font-bold bg-gradient-to-r from-cyan-400 to-teal-600 hover:opacity-90 transition"
+                className="cursor-pointer flex justify-center w-full py-3 rounded-full text-white font-bold bg-gradient-to-r from-cyan-400 to-teal-600 hover:opacity-90 transition"
               >
-                {loading ? "Logging in..." : "Log In"}
+                {loading ? <LoadingSpin height={16} width={3} /> : "Login"}
               </button>
+
+</form>
                 {/* Footer */}
               <p className="text-center text-sm text-primary leading-[14px] mt-[30px]">
                 Do not have an account?{" "}
