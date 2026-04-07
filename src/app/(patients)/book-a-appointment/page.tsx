@@ -16,6 +16,7 @@ import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import WrapperBanner from "@/components/WraperBanner";
 import DemoPaymentGateway from "@/components/DemoPaymentGateway";
+import Link from "next/link";
 
 
 type DayName =
@@ -110,7 +111,7 @@ const StepProgress = ({ step }: { step: number }) => {
 
 interface BookingCreateDatatype {
   id: number;
-  success:boolean;
+  success: boolean;
 }
 
 export default function Booking_a_appointment() {
@@ -143,7 +144,7 @@ export default function Booking_a_appointment() {
   });
 
   useEffect(() => {
-if (!MMMUserData?.id) return;
+    if (!MMMUserData?.id) return;
     getpractitionerList(MMMUserData.id).then((res) => {
       if (res.success) {
         setpractitionersList(res.data)
@@ -307,7 +308,7 @@ if (!MMMUserData?.id) return;
   }
 
 
-  const [ notavailable, setnotavailable] = useState(false);
+  const [notavailable, setnotavailable] = useState(false);
   function getSlotData(date: string) {
 
     const data = JSON.stringify({ date, user_id: formData.practitioner_id });
@@ -320,11 +321,11 @@ if (!MMMUserData?.id) return;
           fee: getFeeByDate(date).toString(),
         }));
 
-        
-      } else{
+
+      } else {
         setnotavailable(true)
       }
-setSlotLoading(false);
+      setSlotLoading(false);
     }).catch((err) => {
       toastTBS.error("Error fetching slots:" + err.message);
       setSlotLoading(false);
@@ -479,9 +480,9 @@ setSlotLoading(false);
                             onSelect={handleDateSelect}
                             weekStartsOn={1}
                             disabled={[
-                               { before: new Date() },
+                              { before: new Date() },
                               blockedDates.map(date => new Date(date)),
-                            { dayOfWeek: offweekDays }
+                              { dayOfWeek: offweekDays }
                             ]}
                             className="rounded-md border md:p-5 p-2 w-full"
                           />
@@ -491,7 +492,7 @@ setSlotLoading(false);
                         {/* Time Slots Section */}
                         <div className="bg-white lg:shadow lg:rounded-xl lg:p-4 w-full lg:w-1/2">
                           <h3 className="text-lg font-semibold mb-3 text-primary">
-                             Select preferred time slot
+                            Select preferred time slot
                           </h3>
                           {slotLoading ? (
                             <div className="flex justify-center items-center h-32">
@@ -516,9 +517,9 @@ setSlotLoading(false);
                           )}
 
                           {notavailable && (<div className={` text-red-600  duration-400 rounded-lg  text-sm font-semibold `}
-                                >
-                                 Sorry, there are no available slots for the selected date.
-                                </div>
+                          >
+                            Sorry, there are no available slots for the selected date.
+                          </div>
                           )}
                         </div>
                       </div>
@@ -602,7 +603,7 @@ setSlotLoading(false);
                       </div>
                     </div>
                   )}
-                  {!bookingCfrm && (
+                  {!bookingCfrm ? (
                     <div className="flex justify-center mt-10 gap-2">
                       {step > 1 && (
                         <button
@@ -633,6 +634,12 @@ setSlotLoading(false);
                           )}
                         </button>
                       )}
+                    </div>
+                  ) : (
+                    <div className="flex justify-center mt-5 gap-2">
+                      <Link className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition" href="/dashboard">Dashboard</Link>
+
+                      <Link className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition" href="/booking-history">Booking History</Link>
                     </div>
                   )}
                 </div>

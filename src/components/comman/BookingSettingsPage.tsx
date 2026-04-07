@@ -9,10 +9,13 @@ import LoadingSpin from "../LoadingSpin";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 type DaySchedule = {
-  fee: string
+  fee: string;
   enabled: boolean;
   start: string;
   end: string;
+  haveBusyHours?: boolean;
+  busyStart?: string;
+  busyEnd?: string;
 };
 type BookingSettings = {
   user_id: string;
@@ -34,9 +37,18 @@ const defaultDay: DaySchedule = {
   fee: "50",
   start: "09:00",
   end: "18:00",
+  haveBusyHours: true,
+  busyStart: "13:00",
+  busyEnd: "14:00",
 };
 
-export default function BookingSettingsPage({setSlotChange  , setManageSlots }: { setSlotChange: React.Dispatch<React.SetStateAction<number>>; setManageSlots: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function BookingSettingsPage({
+  setSlotChange,
+  setManageSlots,
+}: {
+  setSlotChange: React.Dispatch<React.SetStateAction<number>>;
+  setManageSlots: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
     const data = localStorage.getItem("MMMDT");
@@ -53,7 +65,6 @@ export default function BookingSettingsPage({setSlotChange  , setManageSlots }: 
   const [holidayInput, setHolidayInput] = useState("");
   const [landing, setLanding] = useState(true);
 
-
   useEffect(() => {
     getSlotManageSettings(MMMUserData?.id)
       .then((data) => {
@@ -62,13 +73,11 @@ export default function BookingSettingsPage({setSlotChange  , setManageSlots }: 
         if (data.success) {
           setSettings(data);
         }
-
       })
       .catch((err) => {
         console.error(err);
       });
   }, [MMMUserData?.id]);
-
 
   // Toggle day
   const toggleDay = (day: string) => {
@@ -85,7 +94,11 @@ export default function BookingSettingsPage({setSlotChange  , setManageSlots }: 
   };
 
   // Update time
-  const updateTime = (day: string, field: "start" | "end", value: string) => {
+  const updateTime = (
+    day: string,
+    field: "start" | "end" | "busyEnd" | "busyStart",
+    value: string,
+  ) => {
     setSettings((prev) => ({
       ...prev,
       days: {
@@ -114,20 +127,30 @@ export default function BookingSettingsPage({setSlotChange  , setManageSlots }: 
       holidays: prev.holidays.filter((d) => d !== date),
     }));
   };
-
+  function checkboxhandle(day: string, checked: boolean) {
+    setSettings((prev) => ({
+      ...prev,
+      days: {
+        ...prev.days,
+        [day]: {
+          ...prev.days[day],
+          haveLunchBreak: checked,
+        },
+      },
+    }));
+  }
 
   // validation can be added here before submission
 
   function validateSettings(settings: BookingSettings) {
     // 1. Slot Duration validation
-    if (settings.slotduration <= 16) {
+    if (settings.slotduration < 15) {
       toastTBS.error("Slot duration must be at least 15 minutes");
       return false;
     }
     // 2. Days validation
     for (const [day, d] of Object.entries(settings.days)) {
       if (d.enabled) {
-
         // Fee validation
         const fee = Number(d.fee);
         if (!fee || fee <= 0) {
@@ -162,44 +185,47 @@ export default function BookingSettingsPage({setSlotChange  , setManageSlots }: 
 
     setSlotChange((prev) => prev + 1); // Trigger slot change to refresh slots in calendar
 
-       slotManageAPI({ ...settings, user_id: MMMUserData?.id || "" }).then((res) => {
-      if (res.success) {
-        console.log("API Response:", res);
-        toastTBS.success("Booking settings saved successfully");
+    slotManageAPI({ ...settings, user_id: MMMUserData?.id || "" })
+      .then((res) => {
+        if (res.success) {
+          console.log("API Response:", res);
+          toastTBS.success("Booking settings saved successfully");
+          setLandingData(false);
+        } else {
+          toastTBS.error("Failed to save booking settings");
+          setLandingData(false);
+        }
+      })
+      .catch((err) => {
+        toastTBS.error("Failed to save booking settings: " + err.message);
+        console.error("API Error:", err);
         setLandingData(false);
-      } else {
-        toastTBS.error("Failed to save booking settings");
-        setLandingData(false);
-      }
-
-    }).catch((err) => {
-      toastTBS.error("Failed to save booking settings: " + err.message);
-      console.error("API Error:", err);
-      setLandingData(false);
-    });
-
-
+      });
   };
   if (landing) {
     return (
-      <div className=" bg-cover bg-center bg-no-repeat min-h-screen " style={{ backgroundImage: "url('/banner-bg.jpg')" }}>
+      <div
+        className=" bg-cover bg-center bg-no-repeat min-h-screen "
+        style={{ backgroundImage: "url('/banner-bg.jpg')" }}
+      >
         <div className="flex-1 flex justify-center items-center h-[70vh]">
           <LoadingSpin />
         </div>
       </div>
-
-    )
+    );
   }
 
   return (
-    <>        <div className="relative">
-      <button
-        onClick={() => setManageSlots(false)}
-        className="px-2 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white shadow-lg hover:scale-105 transition absolute top-12 left-10 text-2xl font-bold"
-      >
-        <IoMdArrowRoundBack />
-      </button>
-    </div>
+    <>
+      {" "}
+      <div className="relative">
+        <button
+          onClick={() => setManageSlots(false)}
+          className="px-2 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white shadow-lg hover:scale-105 transition absolute top-12 left-10 text-2xl font-bold"
+        >
+          <IoMdArrowRoundBack />
+        </button>
+      </div>
       <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
         <div className="max-w-337.5 w-full bg-white rounded-[10px] shadow-xl h-fit ">
           <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-6 py-5 font-semibold md:mb-11.25 mb-7.5">
@@ -214,7 +240,7 @@ export default function BookingSettingsPage({setSlotChange  , setManageSlots }: 
               onClick={handleSubmit}
               className=" px-4 cursor-pointer py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
             >
-              {landingData ? (<LoadingSpin width={3} height={15} />) : "Save"}
+              {landingData ? <LoadingSpin width={3} height={15} /> : "Save"}
             </button>
           </div>
           {/* Header */}
@@ -230,45 +256,46 @@ export default function BookingSettingsPage({setSlotChange  , setManageSlots }: 
               return (
                 <div
                   key={day}
-                  className="flex items-center bg-primary/8 justify-between rounded-xl p-3"
+                  className="flex items-center bg-primary/8 justify-between rounded-xl p-3 flex-wrap gap-4"
                 >
                   <div className="flex items-center gap-4">
                     {/* Toggle */}
                     <button
                       onClick={() => toggleDay(day)}
-                      className={`w-10 h-5 flex items-center rounded-full p-1 transition ${d.enabled ? "bg-primary" : "bg-gray-300"
-                        }`}
+                      className={`w-10 h-5 flex items-center rounded-full p-1 transition ${
+                        d.enabled ? "bg-primary" : "bg-gray-300"
+                      }`}
                     >
                       <div
-                        className={`bg-white w-4 h-4 rounded-full shadow transform transition ${d.enabled ? "translate-x-5" : ""
-                          }`}
+                        className={`bg-white w-4 h-4 rounded-full shadow transform transition ${
+                          d.enabled ? "translate-x-5" : ""
+                        }`}
                       />
                     </button>
-
                     <span className="font-medium w-24">{day}</span>
                   </div>
-
-
-
                   {d.enabled && (
                     <>
                       <div className="flex items-center gap-4">
                         <span className="text-primary text-sm">Fee:</span>
                         <input
                           className="border border-primary text-sm text-primary rounded-lg px-2 py-1 w-20"
-                          type="number" value={d.fee ?? "0"}
+                          type="number"
+                          value={d.fee ?? "0"}
                           min={0.1}
                           step={0.1}
-                          onChange={(e) => setSettings((prev) => ({
-                            ...prev,
-                            days: {
-                              ...prev.days,
-                              [day]: {
-                                ...prev.days[day],
-                                fee: e.target.value
-                              }
-                            }
-                          }))}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              days: {
+                                ...prev.days,
+                                [day]: {
+                                  ...prev.days[day],
+                                  fee: e.target.value,
+                                },
+                              },
+                            }))
+                          }
                         />
                       </div>
                       <div className="flex items-center gap-2">
@@ -289,12 +316,64 @@ export default function BookingSettingsPage({setSlotChange  , setManageSlots }: 
                           <input
                             type="time"
                             value={d.end}
-                            onChange={(e) => updateTime(day, "end", e.target.value)}
+                            onChange={(e) =>
+                              updateTime(day, "end", e.target.value)
+                            }
                             className="border border-primary [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm text-primary rounded-lg px-2 py-1"
                           />
                           <FaRegClock className="w-3.5 h-3.5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
                       </div>
+
+                      <div className="flex items-center gap-4 py-1 ">
+                           <button
+                          onClick={() => checkboxhandle(day, !d.haveBusyHours)}
+                          className={`w-10 h-5 flex items-center rounded-full p-1 transition ${
+                            d.haveBusyHours ? "bg-primary" : "bg-gray-300"
+                          }`}
+                        >
+                          <div
+                            className={`bg-white w-4 h-4 rounded-full shadow transform transition ${
+                              d.haveBusyHours ? "translate-x-5" : ""
+                            }`}
+                          />
+                        </button>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          {" "}
+                          Busy?
+                        </label>
+
+                    
+                      </div>
+                      {d.haveBusyHours && (
+                      <div className="flex items-center gap-2">
+                        <div className="relative">
+                          <input
+                          readOnly={!d.haveBusyHours}
+                            type="time"
+                            value={d.busyStart}
+                            onChange={(e) =>
+                              updateTime(day, "busyStart", e.target.value)
+                            }
+                            className={`border [&::-webkit-calendar-picker-indicator]:opacity-0 border-primary text-sm text-primary rounded-lg px-2 py-1`}
+                          />
+                          <FaRegClock className="w-3.5 h-3.5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+
+                        <span className="text-primary text-sm">—</span>
+                        <div className="relative">
+                          <input
+                            type="time"
+                            value={d.busyEnd}
+                            onChange={(e) =>
+                              updateTime(day, "busyEnd", e.target.value)
+                            }
+                            className="border border-primary [&::-webkit-calendar-picker-indicator]:opacity-0 text-sm text-primary rounded-lg px-2 py-1"
+                          />
+                          <FaRegClock className="w-3.5 h-3.5 text-primary absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                      </div>
+                      )}
                     </>
                   )}
                 </div>
@@ -364,6 +443,5 @@ export default function BookingSettingsPage({setSlotChange  , setManageSlots }: 
         </div>
       </div>
     </>
-
   );
 }
