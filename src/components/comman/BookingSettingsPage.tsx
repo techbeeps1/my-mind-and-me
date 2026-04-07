@@ -134,7 +134,7 @@ export default function BookingSettingsPage({
         ...prev.days,
         [day]: {
           ...prev.days[day],
-          haveLunchBreak: checked,
+          haveBusyHours: checked,
         },
       },
     }));
@@ -171,8 +171,23 @@ export default function BookingSettingsPage({
           toastTBS.error(`${day}: Start time must be before End time`);
           return false;
         }
+
+        // Busy hours validation
+        if (d.haveBusyHours) {
+          if (!d.busyStart || !d.busyEnd) {
+            toastTBS.error(`${day}: Busy hours start and end time required`);
+            return false;
+          }
+          const busyStart = new Date(`1970-01-01T${d.busyStart}`);
+          const busyEnd = new Date(`1970-01-01T${d.busyEnd}`);
+
+          if (busyStart >= busyEnd) {
+            toastTBS.error(`${day}: Busy hours start time must be before end time`);
+            return false;
+          }
       }
     }
+  }
 
     return true;
   }
