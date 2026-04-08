@@ -22,7 +22,7 @@ type ChangePasswordPayload = {
 
 // ✅ API CALL
 async function changePasswordApi(payload: ChangePasswordPayload) {
-  const res = await fetch("/api/auth/reset-password", {
+  const res = await fetch("/api/auth/change-password", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -297,7 +297,7 @@ export async function GetReferralHistory(userid:string) {
 
 // add Referrer
 export async function AddReferrerFun( data:any ) {
-  const res = await fetch(`${REF_END}/create-referral`, {
+  const res = await fetch(`${refApiPath}/create-referral`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -333,7 +333,7 @@ export async function referralProfile(UserId:string) {
 
 // referral profile edit
 export async function referralProfileEdit( data:any ) {
-  const res = await fetch(`${REF_END}/profile`, {
+  const res = await fetch(`${refApiPath}/profile`, {
     method: "POST",
     body: data,
   });

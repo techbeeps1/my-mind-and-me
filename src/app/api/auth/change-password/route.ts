@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   if (!token) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-  const res = await fetch(`${AUTH_END}/reset-password` ,{
+  const res = await fetch(`${AUTH_END}/change-password` ,{
     method: "POST",
     body: JSON.stringify(body),
     headers:{ "Content-Type": "application/json" ,

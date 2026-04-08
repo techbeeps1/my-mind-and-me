@@ -23,12 +23,11 @@ export default function VerifyTokenPage({ params }: PageProps) {
     const verifyEmail = async () => {
 
       const res = await fetch(
-        `http://54.89.179.53:8001/v1/auth/verify-email?token=${token}`
+        `/api/auth/verify-email?token=${token}`
       );
 
       const data = await res.json();
-
-      if (res.ok) {
+      if (data.success) {
         toastTBS.success("✅ Email verified successfully!");
         router.push("/login");
       } else {
