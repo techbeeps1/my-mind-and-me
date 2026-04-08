@@ -112,9 +112,11 @@ export default function Home() {
         }
          
     }else{
+      if(userRole.toLowerCase() == "practitioner"){
           toastTBS.error("Phone number is required");
            return;
         } 
+      }
 
     if (passwordError) {
       toastTBS.error(passwordError);

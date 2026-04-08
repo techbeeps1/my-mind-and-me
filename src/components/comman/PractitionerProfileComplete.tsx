@@ -70,7 +70,7 @@ export default function PractitionerProfileComplete() {
   const Modalities = [
     "CBT",
     "DBT",
-    "psychodynamic",
+    "Psychodynamic",
 
   ];
   const Languages = [

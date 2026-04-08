@@ -347,6 +347,7 @@ export default function DoctorProfileComplete() {
 
                             name="dob"
                             value={formData.dob}
+                            max={ new Date().toISOString().split("T")[0] }
                             onChange={handleChange}
                             type="date"
                             placeholder="DD/MM/YYYY"
