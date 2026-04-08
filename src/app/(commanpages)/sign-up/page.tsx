@@ -258,7 +258,7 @@ export default function Home() {
                       <div className="flex items-center gap-[12px] bg-primary/[0.08] px-[16px] py-[10px] rounded-md">
                         <FaPhone />
                         <input
-                          required
+                          required={userRole.toLowerCase() === "practitioner"}
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
@@ -340,12 +340,12 @@ export default function Home() {
                       !isAgreed ||
                       !formData.name ||
                       !formData.email ||
-                      !formData.phone ||
-                      (!formData.password && userRole.toLowerCase() === "practitioner") ||
+                       (userRole.toLowerCase() === "practitioner" && !formData.phone) ||
+                      !formData.password ||
                       !formData.confirmPassword||
                       !userRole
                     }
-                    className={`w-full py-[12px] duration-400 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold text-lg leading-[24px]  transition ${(!isAgreed || !formData.name || !formData.email || !formData.phone || !formData.password || !formData.confirmPassword || !userRole) ? "opacity-50 cursor-not-allowed": "cursor-pointer hover:opacity-90 "}`}
+                    className={ `flex justify-center w-full py-[12px] duration-400 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold text-lg leading-[24px]  transition ${(!isAgreed || !formData.name || !formData.email || (userRole.toLowerCase() === "practitioner" && !formData.phone) || !formData.password || !formData.confirmPassword || !userRole) ? "opacity-50 cursor-not-allowed": "cursor-pointer hover:opacity-90 "}`}
                   >
                     {loading ? <LoadingSpin height={16} width={3} /> : "Sign up"}
                   </button>
