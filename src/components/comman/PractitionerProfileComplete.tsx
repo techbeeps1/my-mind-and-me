@@ -403,6 +403,7 @@ export default function PractitionerProfileComplete() {
                             name="dob"
                             value={formData.dob}
                             onChange={handleChange}
+                            max={ new Date().toISOString().split("T")[0] }
                             type="date"
                             placeholder="DD/MM/YYYY"
                             className="w-full text-primary text-sm placeholder:text-primary leading-[20px] bg-transparent  outline-none text-sm"

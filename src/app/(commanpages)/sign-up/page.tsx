@@ -10,6 +10,7 @@ import { FaRegUser, FaPhone } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { toastTBS } from "@/lib/toast";
+import LoadingSpin from "@/components/LoadingSpin";
 
 type SignupPayload = {
   email: string;
@@ -24,6 +25,7 @@ export default function Home() {
   const [passVisble, setPassVisble] = useState(false);
   const [confpassVisble, setConfPassVisble] = useState(false);
   const [userRole, setUserRole] = useState('Patient');
+  const [loading, setLoading] = useState(false);
 
   const [isAgreed, setIsAgreed] = useState(false);
 
@@ -77,7 +79,7 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     if (!userRole) {
       toastTBS.error("Please select role");
       return;
@@ -131,6 +133,8 @@ export default function Home() {
       name: formData.name,
       phone: formData.phone,
     };
+   
+  setLoading(true);
 
     try {
       const res = await fetch("/api/auth/register", {
@@ -143,11 +147,13 @@ export default function Home() {
       const data = await res.json();
      console.log(data);
      if(data.success){
+    setLoading(false);
     toastTBS.success("You have registered successfully!");
         setTimeout(() => {
         router.push("/login");
       }, 2000);
      }else{
+        setLoading(false);
       toastTBS.error(data.message || "Registration failed");
      }
 
@@ -162,6 +168,8 @@ export default function Home() {
       } else {
         toastTBS.error("Something went wrong");
       }
+
+      setLoading(false);
     }
   };
 
@@ -337,8 +345,10 @@ export default function Home() {
                     }
                     className={`w-full py-[12px] duration-400 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold text-lg leading-[24px]  transition ${(!isAgreed || !formData.name || !formData.email || !formData.phone || !formData.password || !formData.confirmPassword || !userRole) ? "opacity-50 cursor-not-allowed": "cursor-pointer hover:opacity-90 "}`}
                   >
-                    Sign up
+                    {loading ? <LoadingSpin height={16} width={3} /> : "Sign up"}
                   </button>
+                  
+                             
                 </div>
               </form>
 

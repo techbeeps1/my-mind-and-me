@@ -301,6 +301,11 @@ export default function Booking_a_appointment() {
           }
 
         }
+        else{
+            setOffweekDays([1,2,3,4,5,6,0]);
+            setnotavailable("Practitioner has not set availability yet. Please check back later.");
+          }
+      
       })
       .catch((err) => {
         console.error(err);
@@ -308,7 +313,7 @@ export default function Booking_a_appointment() {
   }
 
 
-  const [notavailable, setnotavailable] = useState(false);
+  const [notavailable, setnotavailable] = useState("");
   function getSlotData(date: string) {
 
     const data = JSON.stringify({ date, user_id: formData.practitioner_id });
@@ -323,7 +328,7 @@ export default function Booking_a_appointment() {
 
 
       } else {
-        setnotavailable(true)
+        setnotavailable("No slots available for the selected date.");
       }
       setSlotLoading(false);
     }).catch((err) => {
@@ -518,7 +523,7 @@ export default function Booking_a_appointment() {
 
                           {notavailable && (<div className={` text-red-600  duration-400 rounded-lg  text-sm font-semibold `}
                           >
-                            Sorry, there are no available slots for the selected date.
+                            {notavailable}
                           </div>
                           )}
                         </div>

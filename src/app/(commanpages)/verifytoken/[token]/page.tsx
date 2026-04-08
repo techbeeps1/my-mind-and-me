@@ -28,7 +28,7 @@ export default function VerifyTokenPage({ params }: PageProps) {
 
       const data = await res.json();
       if (data.success) {
-        toastTBS.success("✅ Email verified successfully!");
+        toastTBS.success("Email verified successfully!");
         router.push("/login");
       } else {
         setStatus(false);

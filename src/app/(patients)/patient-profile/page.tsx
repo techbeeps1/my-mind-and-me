@@ -312,6 +312,7 @@ export default function DoctorProfile() {
                       <input
                         readOnly={isEdit}
                         name="dob"
+                        max={ new Date().toISOString().split("T")[0] }
                         value={formData.dob}
                         onChange={handleChange}
                         type="date"
