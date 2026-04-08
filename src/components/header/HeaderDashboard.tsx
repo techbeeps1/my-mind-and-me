@@ -1,11 +1,11 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { IoNotifications, IoClose } from "react-icons/io5";
 import { RiMenu2Fill } from "react-icons/ri";
-import { GetProfile } from "@/services/api";
+import { GetProfile, imagePath } from "@/services/api";
 
 type HeaderDashboardProps = {
   menutrigger: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,25 +21,22 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
     });
 
     useEffect(() => { 
-
-
       if (MMMUserData) {
-        GetProfile(MMMUserData.id).then((res) => {
+        GetProfile(MMMUserData?.role,MMMUserData?.id).then((res) => {
           if (res.success) {
             const profileData = res.data;
-            setProfile(profileData.profile_image || "/profile-img.png");
-            setUsername(profileData.full_name || "");
+            setProfile(profileData.profile_image? imagePath + profileData.profile_image : "/profile-img.png");
+            setUsername(profileData.user_name || "");
           }
         }).catch((err) => {
           console.error("Error fetching profile data:", err);
         });
-       
       }
 
     }, [MMMUserData]);
 
 
-     const profileUrl = MMMUserData?.role === "referrer" ? "/referrer-profile" : MMMUserData?.role === "patient" ? "/patient-profile" : "/practitioner-profile";
+  const profileUrl = MMMUserData?.role === "referrer" ? "/referrer-profile" : MMMUserData?.role === "patient" ? "/patient-profile" : "/practitioner-profile";
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {

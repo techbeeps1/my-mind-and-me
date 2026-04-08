@@ -3,13 +3,14 @@ import { AUTH_END } from "@/services/api";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const tokenParam = searchParams.get("token");
+  const role = searchParams.get("role");
+  const id = searchParams.get("id");
 
   const token = req.cookies.get("MMMAT")?.value;
   if (!token) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-  const res = await fetch(`${AUTH_END}/verify-email?token=${tokenParam}`, {
+  const res = await fetch(`${AUTH_END}/profile/${role}/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

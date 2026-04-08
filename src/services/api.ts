@@ -22,8 +22,8 @@ export const imagePath = "http://54.89.179.53:8000/image/";
 
 
 
-export async function GetProfile( UserId:string ) {
-  const res = await fetch(`${authApiPath}/profile/${UserId}`);
+export async function GetProfile( role:string, UserId:string ) {
+  const res = await fetch(`${authApiPath}/profile?role=${role}&id=${UserId}`);
    if (!res.ok) throw new Error("Failed to fetch practitionerList");
   return res.json();
 } 
