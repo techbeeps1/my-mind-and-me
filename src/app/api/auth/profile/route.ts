@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   if (!token) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-  const res = await fetch(`${AUTH_END}/profile/${tokenParam}`, {
+  const res = await fetch(`${AUTH_END}/verify-email?token=${tokenParam}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

@@ -21,6 +21,13 @@ export const bookingApiPath = "/api/booking";
 export const imagePath = "http://54.89.179.53:8000/image/"; 
 
 
+
+export async function GetProfile( UserId:string ) {
+  const res = await fetch(`${authApiPath}/profile/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch practitionerList");
+  return res.json();
+} 
+
 // get Slots manage settings
 export async function getpractitionerList( UserId:string ) {
   const res = await fetch(`${bookingApiPath}/refer-practitioners/${UserId}`);

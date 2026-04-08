@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { IoNotifications, IoClose } from "react-icons/io5";
 import { RiMenu2Fill } from "react-icons/ri";
-import { MdMarkEmailUnread } from "react-icons/md";
+import { GetProfile } from "@/services/api";
+
 type HeaderDashboardProps = {
   menutrigger: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
+  const [profile,setProfile] = useState("/profile-img.png");
+  const [username,setUsername] = useState("");
   const [open, setOpen] = useState(true);
      const [MMMUserData] = useState(() => {
       if (typeof window === "undefined") return null;
@@ -17,15 +20,28 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
       return data ? JSON.parse(data) : null;
     });
 
+    useEffect(() => { 
+
+
+      if (MMMUserData) {
+        GetProfile(MMMUserData.id).then((res) => {
+          if (res.success) {
+            const profileData = res.data;
+            setProfile(profileData.profile_image || "/profile-img.png");
+            setUsername(profileData.full_name || "");
+          }
+        }).catch((err) => {
+          console.error("Error fetching profile data:", err);
+        });
+       
+      }
+
+    }, [MMMUserData]);
+
 
      const profileUrl = MMMUserData?.role === "referrer" ? "/referrer-profile" : MMMUserData?.role === "patient" ? "/patient-profile" : "/practitioner-profile";
-  // 🔁 state variable renamed
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-
-  // ✅ proper typing for ref
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
-  // ✅ outside click handler with proper typing
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -37,7 +53,6 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -111,7 +126,7 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
         </div>
         <div className="flex items-center gap-4 text-white">
           <div className="relative flex justify-end">
-            {/* 🔔 Bell Button */}
+  
             <button
               onClick={() => setIsPopupOpen((prev) => !prev)}
               className=" relative md:w-10 md:h-10 w-7.5 h-7.5 cursor-pointer rounded-full text-primary bg-white flex items-center justify-center"
@@ -161,7 +176,7 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
             >
               {/* Profile Image */}
               <Image
-                src="/profile-img.png"
+                src={profile}
                 alt="profile img"
                 height={60}
                 width={60}
@@ -171,7 +186,7 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
 
               {/* Name & Role */}
               <div className="text-white md:block hidden">
-                <p className="md:text-lg text-sm  font-semibold">{MMMUserData?.user_name}</p>
+                <p className="md:text-lg text-sm  font-semibold">{username || MMMUserData?.user_name}</p>
                 <p className="md:text-base text-xs text-[#C6C6C6] capitalize">
                   {MMMUserData?.role??''}
                 </p>
