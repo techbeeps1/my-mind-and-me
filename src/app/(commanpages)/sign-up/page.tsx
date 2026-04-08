@@ -341,7 +341,7 @@ export default function Home() {
                       !formData.name ||
                       !formData.email ||
                       !formData.phone ||
-                      !formData.password ||
+                      (!formData.password && userRole.toLowerCase() === "practitioner") ||
                       !formData.confirmPassword||
                       !userRole
                     }
