@@ -41,7 +41,7 @@ export default function ReferralHistory() {
     }).catch((err) => {
       console.error(err);
     });
-  }, [MMMUserData?.id]);
+  }, [MMMUserData?.id,uploadModal]);
 
 if (landing) {
   return (
