@@ -76,7 +76,7 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
 
   return (
     <>
-      <header className=" flex items-center justify-between bg-primary lg:px-8 lg:py-10 p-5 sticky top-0 w-full z-10">
+      <header className=" flex items-center justify-between bg-primary lg:px-8 lg:py-5 p-5 sticky top-0 w-full z-10">
         <button
           onClick={() => {
             setOpen(!open);
@@ -168,13 +168,13 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
                 height={60}
                 width={60}
                 priority
-                className="rounded-full object-cover md:h-15 md:w-15 h-10 w-10"
+                className="rounded-full object-cover md:h-12.5 md:w-12.5 h-10 w-10"
               />
 
               {/* Name & Role */}
               <div className="text-white md:block hidden">
-                <p className="md:text-lg text-sm  font-semibold">{username || MMMUserData?.user_name}</p>
-                <p className="md:text-base text-xs text-[#C6C6C6] capitalize">
+                <p className="md:text-base text-sm  font-semibold">{username || MMMUserData?.user_name}</p>
+                <p className="md:text-sm text-xs text-[#C6C6C6] capitalize">
                   {MMMUserData?.role??''}
                 </p>
               </div>
