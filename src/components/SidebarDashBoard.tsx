@@ -18,6 +18,7 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
     { name: "Dashboard", path: "/dashboard" },
     { name: "Add Referrer ", path: "/add-referrer" },
     { name: "Referral History", path: "/referral-history" },
+    { name: "Patients", path: "/patients-list" },
     { name: "Profile", path: "/referrer-profile" },
   ];
   const menu1 = [
@@ -34,9 +35,9 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
     { name: "Schedule", path: "/schedule" },
     { name: "Booking History", path: "/booking-history" },
     { name: "Payments", path: "/payments" },
-   
     { name: "Verification Status", path: "/verification-status" },
     { name: "Bank Details", path: "/bank-details" },
+    { name: "Patients", path: "/patients-list" },
     { name: "Profile", path: "/practitioner-profile" },
     { name: "Bio", path: "/bio" }
     ,

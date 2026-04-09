@@ -300,7 +300,7 @@ export default function VerifyDocsUpload() {
             <div className="flex justify-center mt-12">
               <button
                 type="submit"
-                className="px-10 py-3 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
+                className="cursor-pointer px-10 py-3 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
               >
                 {loading ? <LoadingSpin width={4} height={15} /> : "Submit"}
               </button>

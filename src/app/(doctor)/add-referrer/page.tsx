@@ -24,7 +24,7 @@ type Referral = {
   preferred_modality: string;
   clinical_presentation: string;
   chief_complaint: string;
-  additional_requirements: string;
+  medical_note: string;
 };
 export default function AddReferrer() {
   const [PreferredModality, setPreferredModality] = useState("");
@@ -45,7 +45,7 @@ export default function AddReferrer() {
   preferred_modality: "Therapy",
   clinical_presentation: "",
   chief_complaint: "",
-  additional_requirements: ""
+  medical_note: ""
 };
   const [referralData, setReferralData] = useState<Referral>(initialReferralData)
 
@@ -67,8 +67,8 @@ const validateForm = () => {
     return false;
   }
   if(!referralData.clinical_presentation.trim()){
-    //toastTBS.error("Please enter clinical presentation");
-    //return false;
+    toastTBS.error("Please enter clinical presentation");
+    return false;
   }
   else if (referralData.clinical_presentation.length < 5 || referralData.clinical_presentation.length > 200) {
     toastTBS.error("Clinical presentation must be 5–200 characters");
@@ -76,15 +76,17 @@ const validateForm = () => {
   }
 
   if(!referralData.chief_complaint.trim()){
-    //toastTBS.error("Please enter chief complaint");
-    //return false;
+    toastTBS.error("Please enter chief complaint");
+    return false;
   }else if (referralData.chief_complaint.length < 5 || referralData.chief_complaint.length > 200) {
     toastTBS.error("Chief complaint must be 5–200 characters");
     return false;
   }
-
-  if(referralData.additional_requirements.trim() && (referralData.additional_requirements.length < 5 || referralData.additional_requirements.length > 200)){
-    toastTBS.error("Additional requirements must be 5–200 characters");
+ if(!referralData.medical_note.trim()){
+    toastTBS.error("Please enter medical note");
+    return false;
+  }else if( referralData.medical_note.length < 5 || referralData.medical_note.length > 200){
+    toastTBS.error("Medical note must be 5–200 characters");
     return false;
   }
 
@@ -220,7 +222,7 @@ useEffect(() => {console.log(referralData)}, [referralData]);
                 </div>
                 <div>
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                    Clinical Presentation 
+                    Clinical Presentation <span className="text-red-500 text-xs">* ( For Practitioner )</span>
                   </label>
                   <textarea onChange={handleChange} name="clinical_presentation"
                     className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
@@ -229,7 +231,7 @@ useEffect(() => {console.log(referralData)}, [referralData]);
                 </div>
                 <div>
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                    Chief Complaint
+                    Chief Complaint <span className="text-red-500 text-xs">* ( For Practitioner )</span>
                   </label>
                   <textarea onChange={handleChange} name="chief_complaint"
                     className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
@@ -238,11 +240,11 @@ useEffect(() => {console.log(referralData)}, [referralData]);
                 </div>
                 <div>
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                    Additional requirements
+                    Medical Note <span className="text-red-500 text-xs">* ( For Patient )</span>
                   </label>
-                  <textarea onChange={handleChange} name="additional_requirements"
+                  <textarea onChange={handleChange} name="medical_note"
                     className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
-                    placeholder="Additional requirements"
+                    placeholder="Medical Note"
                   />
                 </div>
 

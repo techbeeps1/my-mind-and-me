@@ -288,6 +288,7 @@ export default function Booking_a_appointment() {
   };
 
   function getData() {
+     setnotavailable("");
     getSlotManageSettings(formData.practitioner_id)
       .then((data) => {
         setLanding(false);
@@ -296,6 +297,7 @@ export default function Booking_a_appointment() {
           const offweekDays1 = getOffWeekDays(data.days);
           setOffweekDays(offweekDays1);
           setFeesFromAPI(data.days);
+         
           if (!data.holidays.includes(selectedDate ? formatDateLocal(selectedDate) : "")) {
             getSlotData(selectedDate ? formatDateLocal(selectedDate) : "")
           }
@@ -315,7 +317,7 @@ export default function Booking_a_appointment() {
 
   const [notavailable, setnotavailable] = useState("");
   function getSlotData(date: string) {
-
+ setnotavailable("");
     const data = JSON.stringify({ date, user_id: formData.practitioner_id });
     setSlotLoading(true);
     getSlots(data).then((data) => {
@@ -325,7 +327,10 @@ export default function Booking_a_appointment() {
           ...prev,
           fee: getFeeByDate(date).toString(),
         }));
+      if(data.slots.length === 0){
+        setnotavailable("No slots available for the selected date."); 
 
+      }
 
       } else {
         setnotavailable("No slots available for the selected date.");
