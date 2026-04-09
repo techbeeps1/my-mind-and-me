@@ -5,15 +5,12 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const tokenParam = searchParams.get("token");
 
-  const token = req.cookies.get("MMMAT")?.value;
-  if (!token) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
+  
   const res = await fetch(`${AUTH_END}/profile/${tokenParam}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+    
     },
   });
   const data = await res.json();
