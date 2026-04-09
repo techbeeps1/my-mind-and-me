@@ -22,6 +22,14 @@ export const imagePath = "http://54.89.179.53:8000/image/";
 
 
 
+// booking history
+export async function GetPaymentHistory(UserId:string) {
+  const res = await fetch(`${bookingApiPath}/payment-history/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch payment history");
+  return res.json();
+}
+
+
 export async function GetProfile( role:string, UserId:string ) {
   const res = await fetch(`${authApiPath}/profile?role=${role}&id=${UserId}`);
    if (!res.ok) throw new Error("Failed to fetch practitionerList");

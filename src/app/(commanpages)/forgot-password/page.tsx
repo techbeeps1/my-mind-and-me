@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 //import { sendResetLink } from "@/services/api"; // Assuming a reset password function is available
 import { toastTBS } from "@/lib/toast";
 import { sendResetLink } from "@/services/api";
+import LoadingSpin from "@/components/LoadingSpin";
 
 export default function ForgotPass() {
   const [email, setEmail] = useState("");
@@ -115,9 +116,9 @@ export default function ForgotPass() {
               <button
                 onClick={submitForgotPassword}
                 disabled={loading}
-                className="w-full py-3 rounded-full text-white font-bold bg-gradient-to-r from-cyan-400 to-teal-600 hover:opacity-90 transition"
+                className={`${email ?'cursor-pointer':'cursor-not-allowed'} flex justify-center w-full py-3 rounded-full text-white font-bold bg-gradient-to-r from-cyan-400 to-teal-600 hover:opacity-90 transition`}
               >
-                {loading ? "Sending..." : "Send Reset Link"}
+                {loading ? <LoadingSpin width={3} height={14} /> : "Send Reset Link"}
               </button>
             </div>
 

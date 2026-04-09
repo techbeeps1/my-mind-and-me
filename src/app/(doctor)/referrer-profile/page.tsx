@@ -22,6 +22,79 @@ export default function DoctorProfile() {
     return data ? JSON.parse(data) : null;
   });
 
+  type FormErrors = Partial<Record<keyof FormDataType, string>>;
+
+
+  const validateDoctorProfile = (data: FormDataType): FormErrors => {
+  const errors: FormErrors = {};
+
+  if(!data.full_name.trim()) {
+    errors.full_name = "Full name is required";
+  } else if (data.full_name.trim().length < 2 || data.full_name.trim().length > 50) {
+    errors.full_name = "Full name must be 2–50 characters";
+  }
+
+  if (!data.gender) {
+    errors.gender = "Gender is required";
+  }
+
+  if (!data.dob) {
+    errors.dob = "Date of birth is required";
+  }
+  if(!data.phone.trim()) {
+    errors.phone = "Phone number is required";
+  } else if (!/^\d{10}$/.test(data.phone.trim())) {
+    errors.phone = "Phone number must be exactly 10 digits";
+  }
+  // License Number
+  const license = data.license_number.trim();
+  if (!license) {
+    errors.license_number = "License number is required";
+  } else if (!/^[a-zA-Z0-9]+$/.test(license)) {
+    errors.license_number = "License number must be alphanumeric only";
+  } else if (license.length < 5 || license.length > 25) {
+    errors.license_number = "License number must be 5–25 characters";
+  }
+
+  // Registration
+  const registration = data.registration.trim();
+  if (!registration) {
+    errors.registration = "Registration is required";
+  } else if (!/^[a-zA-Z0-9]+$/.test(registration)) {
+    errors.registration = "Registration must be alphanumeric only";
+  } else if (registration.length < 5 || registration.length > 25) {
+    errors.registration = "Registration must be 5–25 characters";
+  }
+
+  // Clinic Name
+  const clinicName = data.clinic_name.trim();
+  if (!clinicName) {
+   // errors.clinic_name = "Clinic name is required";
+  } else if (clinicName.length < 2 || clinicName.length > 50) {
+    errors.clinic_name = "Clinic name must be 2–50 characters";
+  } else if (!/^[a-zA-Z0-9\s.,&()-]+$/.test(clinicName)) {
+    errors.clinic_name = "Invalid clinic name";
+  }
+
+  // Phone Number (10 digits)
+  const phone = data.clinic_phone.trim();
+  if (!phone) {
+   // errors.clinic_phone = "Phone number is required";
+  } else if (!/^\d{10}$/.test(phone)) {
+    errors.clinic_phone = "Clinic phone number must be exactly 10 digits";
+  }
+
+  // Address
+  const address = data.address.trim();
+  if (!address) {
+   // errors.address = "Address is required";
+  } else if (address.length < 5 || address.length > 150) {
+    errors.address = "Address must be 5–150 characters";
+  }
+
+  return errors;
+};
+
   type FormDataType = {
     user_id: string;
     full_name: string;
@@ -88,6 +161,13 @@ export default function DoctorProfile() {
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData();
+
+    const errors = validateDoctorProfile(formData);
+
+if (Object.keys(errors).length > 0) {
+  toastTBS.error(Object.values(errors)[0]); // show first error
+  return;
+}
 
     Object.keys(formData).forEach((key) => {
       const typedKey = key as keyof FormDataType;
@@ -197,7 +277,7 @@ export default function DoctorProfile() {
                   <div className="w-full">
                     {/* Name */}
                     <label className="block text-sm font-semibold leading-[24px] text-primary mb-[8px]">
-                      Full Name
+                      Full Name <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                       <FaRegUser className="h-[15px] w-[15px] text-primary" />
@@ -215,7 +295,7 @@ export default function DoctorProfile() {
                   {/* Phone */}
                   <div className="w-full">
                     <label className="block text-sm font-semibold leading-[24px] text-primary mb-[8px]">
-                      Phone
+                      Phone <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                       <FaPhone className="h-[15px] w-[15px] text-primary" />
@@ -236,7 +316,7 @@ export default function DoctorProfile() {
                   <div className="w-full">
                     {/* Name */}
                     <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                      Gender
+                      Gender <span className="text-red-500">*</span>
                     </label>
                     <select name="gender" value={formData.gender}
                       onChange={handleChange} disabled={isEdit} className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
@@ -251,7 +331,7 @@ export default function DoctorProfile() {
                   {/* Phone */}
                   <div className="w-full">
                     <label className="block text-sm font-semibold leading-[24px] text-primary mb-[8px]">
-                      DOB
+                      DOB <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                       <input

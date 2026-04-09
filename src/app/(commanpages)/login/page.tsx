@@ -75,7 +75,7 @@ const [errors, setErrors] = useState<FormErrors>({});
       }, 1000);
     }else{
       const errorData = await res.json();
-      throw new Error(errorData.detail || "Login failed");
+      throw new Error(errorData.message || "Login failed");
     }
     } catch (err) {
        if (err instanceof Error) {

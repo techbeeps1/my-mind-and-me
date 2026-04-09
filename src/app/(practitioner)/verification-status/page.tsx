@@ -80,7 +80,7 @@ if (uploadModal) {
               {/* Search & Filter */}
               <div className="flex justify-end flex-wrap  mb-2">
                
-      <button onClick={() => setUploadModal(true)} className="px-4 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition">
+      <button onClick={() => setUploadModal(true)} className="cursor-pointer px-4 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition">
         Upload New Document
       </button>
         

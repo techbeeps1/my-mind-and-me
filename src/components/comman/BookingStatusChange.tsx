@@ -38,6 +38,11 @@ export default function BookingStatusChange({ setBookingUpdate,setOpenStatusChan
       return;
     }
 
+    if( formData.type === "cancelled" && (formData.reason.trim().length < 2 || formData.reason.trim().length > 250) ) {
+      toastTBS.error("Reason must be between 2 to 250 characters");
+      return;
+    }
+
     if(loading) return;
     setLoading(true);
 
@@ -45,14 +50,17 @@ export default function BookingStatusChange({ setBookingUpdate,setOpenStatusChan
     changeBookingStatus({
       booking_id: data.id,
       status: formData.type,
-      reason: formData.reason,
+      reason: formData.type === "cancelled" ? Role + ": " + formData.reason : "",
     }).then((res) => {
-console.log(res);
- setBookingUpdate((prev) => prev + 1); 
-      toastTBS.success("Booking status updated successfully");
 
-      setLoading(false);
-      setOpenStatusChange(false);
+       if(res.success) {
+          toastTBS.success("Booking status updated successfully");
+       }else {
+        toastTBS.success(res.message || "Failed to update booking status");
+       }
+        setBookingUpdate((prev) => prev + 1); 
+          setOpenStatusChange(false);
+      setLoading(false);   
     }).catch((err) => {
       console.error(err);
       toastTBS.error("Failed to update booking status");

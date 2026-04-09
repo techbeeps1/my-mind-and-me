@@ -131,6 +131,9 @@ const validateForm = (data: FormDataType): string => {
   if (!data.full_name.trim()) {
     errors = "Full name is required";
     return errors;
+  }else if (data.full_name.trim().length < 3 || data.full_name.trim().length > 50) {
+    errors = "Full name must be between 3 and 50 characters long";
+    return errors;
   }
 
   if (!data.phone.trim()) {
@@ -154,12 +157,20 @@ const validateForm = (data: FormDataType): string => {
   if (!data.license_number.trim()) {
     errors = "License number is required";
     return errors;
+  }else if (data.license_number.trim().length < 5 || data.license_number.trim().length > 20) {
+    errors = "License number must be between 5 and 20 characters long";
+    return errors;
   }
 
   if (!data.qualifications.trim()) {
     errors = "Qualifications are required";
     return errors;
+  }else if (data.qualifications.trim().length < 5 || data.qualifications.trim().length > 50) {
+    errors = "Qualifications must be between 5 and 50 characters long";
+    return errors;
   }
+ 
+ 
 
   return "";
 };
@@ -298,7 +309,7 @@ const validateForm = (data: FormDataType): string => {
                   <div className="w-full">
                     {/* Name */}
                     <label className="block text-sm font-semibold leading-[24px] text-primary mb-[8px]">
-                      Full Name
+                      Full Name <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                       <FaRegUser className="h-[15px] w-[15px] text-primary" />
@@ -316,7 +327,7 @@ const validateForm = (data: FormDataType): string => {
                   {/* Phone */}
                   <div className="w-full">
                     <label className="block text-sm font-semibold leading-[24px] text-primary mb-[8px]">
-                      Phone
+                      Phone <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                       <FaPhone className="h-[15px] w-[15px] text-primary" />
@@ -343,7 +354,7 @@ const validateForm = (data: FormDataType): string => {
                     <select name="gender" value={formData.gender}
                       onChange={handleChange} disabled={isEdit} className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
                       <option value="" selected disabled>
-                        Select Gender
+                        Select Gender <span className="text-red-500">*</span>
                       </option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
@@ -353,7 +364,7 @@ const validateForm = (data: FormDataType): string => {
                   {/* Phone */}
                   <div className="w-full">
                     <label className="block text-sm font-semibold leading-[24px] text-primary mb-[8px]">
-                      DOB
+                      DOB <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                       <input

@@ -141,7 +141,7 @@ export default function Insurance() {
                         Time
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 ">
-                        Appointment Fee
+                        Amount
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8">
                         Status
@@ -183,7 +183,7 @@ export default function Insurance() {
                           {item.slot}
                         </td>
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.booking_fee}
+                         {"R "}{item.booking_fee}
                         </td>
 
                         <td className={`px-4 py-4 text-sm font-semibold `}>
@@ -192,7 +192,7 @@ export default function Insurance() {
                             {item.status === "pending" ? "failed" : item.status}
                           </span >
                         </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 text-sm text-primary font-semibold capitalize">
                           {item.reason}
 
                         </td>

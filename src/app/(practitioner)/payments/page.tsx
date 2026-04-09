@@ -3,28 +3,26 @@ import WrapperBanner from "@/components/WraperBanner";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
-import { GetBookingHistory } from "@/services/api";
+import {  GetPaymentHistory } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
-import { FaRegEdit } from "react-icons/fa";
-import Link from "next/link";
-export interface BookingHistoryType {
-  id: number;
-  practitioner_id: string;
-  patient_id: string;
+export interface PaymentHistoryType {
+  payment_id: number;
   booking_id: string;
-  full_name: string;
-  slot: string;
-  booking_date: string;
-  appointment_type: string;
-  status: string;
-  booking_fee: string;
-  reason: string;
+  fee: string;
+  platform_fee: string;
+  payment_status: string;
+  practitioner_payout: string;
+  date: string;
+  time: string;
+  patient_id: string;
+  practitioner_id: string;
 }
-
 
 export default function Insurance() {
   const [landing, setLanding] = useState(true);
-  const [BookingHistory, setBookingHistory] = useState<BookingHistoryType[]>([]);
+  const [PaymentHistory, setPaymentHistory] = useState<PaymentHistoryType[]>(
+    [],
+  );
 
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
@@ -32,43 +30,42 @@ export default function Insurance() {
     return data ? JSON.parse(data) : null;
   });
 
-
   const statusColors: { [key: string]: string } = {
-    completed: "text-green-800 border border-green-800/50 bg-green-100",
+    confirmed: "text-green-800 border border-green-800/50 bg-green-100",
     cancelled: "text-red-800 border border-red-800/50 bg-red-100",
-    pending: "text-yellow-800 border border-yellow-800/50 bg-yellow-100",
-    rescheduled: "text-blue-800 border border-blue-800/50 bg-blue-100",
-    booked: "text-green-800 border border-green-800/50 bg-green-100",
+    refund: "text-pink-900 border border-pink-800 bg-pink-300",
+    settled: "text-blue-800 border border-blue-800/50 bg-blue-100",
+    hold: "text-yellow-800 border border-yellow-800/50 bg-yellow-100",
   };
 
   const [search, setSearch] = useState("");
 
   const filteredData = useMemo(() => {
-    return BookingHistory.filter((item) => {
+    return PaymentHistory.filter((item) => {
       const matchesSearch =
-       item.booking_id.toString().toLowerCase().includes(search.toLowerCase()) ||
-        item.full_name.toLowerCase().includes(search.toLowerCase()) ||
-        item.booking_date.toLowerCase().includes(search.toLowerCase()) ||
-        item.slot.toLowerCase().includes(search.toLowerCase()) ||
-        item.booking_fee.toLowerCase().includes(search.toLowerCase()) ||
-        item.status.toLowerCase().includes(search.toLowerCase()) ||
-        item.appointment_type.toLowerCase().includes(search.toLowerCase());
+        item.payment_id
+          .toString()
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
+        item.booking_id.toString().toLowerCase().includes(search.toLowerCase()) ||
+        item.fee.toLowerCase().includes(search.toLowerCase()) ||
+        item.payment_status.toLowerCase().includes(search.toLowerCase()) ||
+        item.practitioner_payout.toLowerCase().includes(search.toLowerCase()) ||
+        item.date.toLowerCase().includes(search.toLowerCase()) ||
+        item.time.toLowerCase().includes(search.toLowerCase());
 
       return matchesSearch;
     });
-  }, [search, BookingHistory]);
-
-
+  }, [search, PaymentHistory]);
 
   useEffect(() => {
-    GetBookingHistory(MMMUserData?.id)
+    GetPaymentHistory(MMMUserData?.id)
       .then((data) => {
         setLanding(false);
         console.log("Patient Profile Data:", data);
         if (data.success) {
-          setBookingHistory(data.history);
+          setPaymentHistory(data.history);
         }
-
       })
       .catch((err) => {
         console.error(err);
@@ -84,7 +81,6 @@ export default function Insurance() {
       </WrapperBanner>
     );
   }
-
 
   return (
     <>
@@ -110,11 +106,6 @@ export default function Insurance() {
                     <FiSearch className=" h-5 w-5  " />
                   </button>
                 </div>
-                {MMMUserData?.role === "patient" && (
-                  <Link href={"/book-a-appointment"} className="px-4 cursor-pointer py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition">
-                    Book a Appointment
-                  </Link>
-                )}
               </div>
 
               {/* Table */}
@@ -122,30 +113,25 @@ export default function Insurance() {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
-                        <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="px-4 py-3 text-left bg-primary/8">
                         Booking ID
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">
-                        {MMMUserData?.role === "patient" ? "Practitioner Name" : "Patient Name"}
-                      </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
-                        Date
-                      </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
-                        Time
+                      <th className="px-4 py-3 text-left bg-primary/8">Date</th>
+                      <th className="px-4 py-3 text-left bg-primary/8">Time</th>
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
+                        Total
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 ">
-                        Appointment Fee
+                        Platform Fee
                       </th>
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
+                        Payout Amount
+                      </th>
+
                       <th className="px-4 py-3 text-left bg-primary/8">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
-                        Reason
-                      </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
-                        Action
-                      </th>
+              
                     </tr>
                   </thead>
 
@@ -162,40 +148,37 @@ export default function Insurance() {
                     )}
 
                     {filteredData.map((item) => (
-                      <tr key={item.id}>
+                      <tr key={item.payment_id}>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
-                          #{item.booking_id}
+                          #{item.booking_id}{" "}
                         </td>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
-                          {item.full_name}                        </td>
+                          {item.date}{" "}
+                        </td>
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
-                          {item.booking_date}
+                          {item.time}{" "}
                         </td>
 
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.slot}
+                         {"R "}{item.fee}
                         </td>
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.booking_fee}
+                        {"R "}{item.platform_fee}
+                        </td>
+                          <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                          {"R "}{item.practitioner_payout}
                         </td>
 
-                        <td className={`px-4 py-4 text-sm font-semibold `}>
-
-                          <span className={`${statusColors[item.status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}>
-                            {item.status}
-                          </span >
+                        <td className={`px-4 py-4 text-sm font-semibold capitalize `}>
+                          <span
+                            className={`${statusColors[item.payment_status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}
+                          >
+                            {item.payment_status}
+                          </span>
                         </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
-                          {item.reason}
+               
 
-                        </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
-                          <div>
-                            <FaRegEdit className="text-xl hover:text-gray-500 cursor-pointer" />
-                          </div>
-
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -204,7 +187,6 @@ export default function Insurance() {
             </div>
           </div>
         </div>
-
       </WrapperBanner>
     </>
   );

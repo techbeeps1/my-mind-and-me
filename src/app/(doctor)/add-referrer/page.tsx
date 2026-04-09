@@ -66,14 +66,31 @@ const validateForm = () => {
     toastTBS.error("Please select preferred modality");
     return false;
   }
-  if (!referralData.clinical_presentation.trim()) {
-    toastTBS.error("Clinical presentation is required");
+  if(!referralData.clinical_presentation.trim()){
+    //toastTBS.error("Please enter clinical presentation");
+    //return false;
+  }
+  else if (referralData.clinical_presentation.length < 5 || referralData.clinical_presentation.length > 200) {
+    toastTBS.error("Clinical presentation must be 5–200 characters");
     return false;
   }
-  if (!referralData.chief_complaint.trim()) {
-    toastTBS.error("Chief complaint is required");
+
+  if(!referralData.chief_complaint.trim()){
+    //toastTBS.error("Please enter chief complaint");
+    //return false;
+  }else if (referralData.chief_complaint.length < 5 || referralData.chief_complaint.length > 200) {
+    toastTBS.error("Chief complaint must be 5–200 characters");
     return false;
   }
+
+  if(referralData.additional_requirements.trim() && (referralData.additional_requirements.length < 5 || referralData.additional_requirements.length > 200)){
+    toastTBS.error("Additional requirements must be 5–200 characters");
+    return false;
+  }
+
+
+
+
   return true;
 };
 
@@ -139,7 +156,7 @@ useEffect(() => {console.log(referralData)}, [referralData]);
               <form className="space-y-3.75" onSubmit={handleSubmit}>                
                 <div>
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                    Patient Selection
+                    Patient Selection <span className="text-red-500">*</span>
                   </label>
                   <select onChange={handleChange} name="patient_id" className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
                     <option value="" disabled selected >Patient Selection</option>
@@ -152,7 +169,7 @@ useEffect(() => {console.log(referralData)}, [referralData]);
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                      Preferred Practitioner
+                      Preferred Practitioner <span className="text-red-500">*</span>
                     </label>
                     <select onChange={handleChange} name="therapist_id" className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
                     <option value="" disabled selected >Preferred Practitioner</option>
@@ -165,7 +182,7 @@ useEffect(() => {console.log(referralData)}, [referralData]);
                   </div>
                   <div>
                     <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                      Urgency Level
+                      Urgency Level <span className="text-red-500">*</span>
                     </label>
                     <select onChange={handleChange} name="urgency_level" className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
                      <option value="" disabled selected>Select Level</option>
@@ -177,7 +194,7 @@ useEffect(() => {console.log(referralData)}, [referralData]);
                 </div>
                 <div>
                   <p className="font-semibold text-primary leading-6 mb-2">
-                    Preferred Modality
+                    Preferred Modality <span className="text-red-500">*</span>
                   </p>
                   <div className="flex gap-[20px] md:flex-row flex-col justify-between">
                     {["Therapy", "Psychiatric Assessment", "Both"].map(
@@ -203,7 +220,7 @@ useEffect(() => {console.log(referralData)}, [referralData]);
                 </div>
                 <div>
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                    Clinical Presentation
+                    Clinical Presentation 
                   </label>
                   <textarea onChange={handleChange} name="clinical_presentation"
                     className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"

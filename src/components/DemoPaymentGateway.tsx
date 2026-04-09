@@ -101,7 +101,7 @@ return(
     {step === "select" && (
       <>
         <div className="space-y-3">
-          {["UPI", "Card", "Net Banking"].map((item) => (
+          {["Card Payments (Debit & Credit)", "Net Banking"].map((item) => (
             <div
               key={item}
               onClick={() => setMethod(item)}

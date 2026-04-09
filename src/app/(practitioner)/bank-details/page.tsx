@@ -4,10 +4,10 @@ import WrapperBanner from "@/components/WraperBanner";
 
 import { GoDotFill } from "react-icons/go";
 import { useEffect, useState } from "react";
-import { GetBankDetails, imagePath, PractitionerProfileEdit, UpdateBankDetails } from "@/services/api";
+import { GetBankDetails, UpdateBankDetails } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
-import { json } from "stream/consumers";
+
 export default function PractitionerProfile() {
   const [isEdit, setisEdit] = useState(true);
 
@@ -65,32 +65,45 @@ export default function PractitionerProfile() {
 
 
 
-  const validateForm = (data: FormDataType): string => {
-    let errors: string = "";
+ const validateForm = (data: FormDataType): string => {
+  // Trim all values once
+  const beneficiary = data.beneficiary_name.trim();
+  const bank = data.bank_name.trim();
+  const account = data.account_number.trim();
+  const branch = data.branch_number.trim();
 
+  // Regex
+  const nameRegex = /^[A-Za-z\s]{2,50}$/; // only letters + spaces
+  const bankRegex = /^.{2,50}$/; // any characters (2–50)
+  const accountRegex = /^[A-Za-z0-9]{5,25}$/; // alphanumeric only
+  const branchRegex = /^[A-Za-z0-9]{6,20}$/; // alphanumeric only
 
+  // Beneficiary Name
+  if (!beneficiary) return "Beneficiary name is required";
+  if (!nameRegex.test(beneficiary)) {
+    return "Beneficiary name must be 2–50 characters and contain only letters";
+  }
 
-    if (!data.bank_name.trim()) {
-      errors = "Bank name is required";
-      return errors;
-    }
+  // Bank Name
+  if (!bank) return "Bank name is required";
+  if (!bankRegex.test(bank)) {
+    return "Bank name must be between 2–50 characters";
+  }
 
-    if (!data.branch_number.trim()) {
-      errors = "Branch number is required";
-      return errors;
-    }
+  // Account Number
+  if (!account) return "Account number is required";
+  if (!accountRegex.test(account)) {
+    return "Account number must be 5–25 characters (alphanumeric only)";
+  }
 
-    if (!data.account_number.trim()) {
-      errors = "Account number is required";
-      return errors;
-    }
+  // Branch Number
+  if (!branch) return "Branch number is required";
+  if (!branchRegex.test(branch)) {
+    return "Branch number must be 6–20 characters (alphanumeric only)";
+  }
 
-    if (!data.beneficiary_name.trim()) {
-      errors = "Beneficiary name is required";
-      return errors;
-    }
-    return "";
-  };
+  return "";
+};
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

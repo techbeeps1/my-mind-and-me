@@ -2,37 +2,66 @@ import { NextResponse } from "next/server";
 import { AUTH_END } from "@/services/api";
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const res = await fetch(`${AUTH_END}/login` ,{
-    method: "POST",
-    body: JSON.stringify(body),
-    headers:{ "Content-Type": "application/json" }
-  });
+  try {
+    const body = await req.json();
 
-  const data = await res.json();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 10000); // 10 sec timeout
 
-  if(data.detail){
-    const response = NextResponse.json(data,{ status: 401 });
-      return response;
+    const res = await fetch(`${AUTH_END}/login`, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    const data = await res.json();
+
+    if (!data.success) {
+      return NextResponse.json(data, { status: 401 });
+    }
+
+    const response = NextResponse.json(data.user);
+
+    if (data.user.role !== "admin") {
+      response.cookies.set("MMMAT", data.access_token, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+      });
+
+      response.cookies.set("MMMRT", data.refresh_token, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+      });
+
+      response.cookies.set("MMMDT", JSON.stringify(data.user), {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+      });
+    }
+
+    return response;
+
+  } catch (error: unknown) {
+  
+
+    if (error instanceof Error && error.name === "AbortError") {
+      return NextResponse.json(
+        { message: "Server timeout. Please try again later." },
+        { status: 504 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Unable to connect to server" },
+      { status: 500 }
+    );
   }
-  const response = NextResponse.json(data.user);
-  if(data.user.role !== "admin"){
-  response.cookies.set("MMMAT", data.access_token, {
-    httpOnly: true,
-    secure: true,
-    path: "/",
-  });
-  response.cookies.set("MMMRT", data.refresh_token, {
-    httpOnly: true,
-    secure: true,
-    path: "/",
-  });
-  response.cookies.set("MMMDT",JSON.stringify( data.user), {
-    httpOnly: true,
-    secure: true,
-    path: "/",
-  });
-}
-
-  return response;
 }

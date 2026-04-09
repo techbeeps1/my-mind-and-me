@@ -55,42 +55,51 @@ export default function AddInsurance() {
 
 
 
-  const validateForm = (data: FormDataType): string => {
-    let errors: string = "";
+const validateForm = (data: FormDataType): string => {
+  // Insurance Name
+  if (!data.insurance_name.trim()) {
+    return "Insurance name is required";
+  }
+  if (data.insurance_name.trim().length < 3 || data.insurance_name.trim().length > 50) {
+    return "Insurance name must be between 3 to 50 characters";
+  }
 
-    if (!data.insurance_name.trim()) {
-      errors = "Insurance name is required";
-      return errors;
-    }
+  // Policy Number
+  if (!data.policy_number.trim()) {
+    return "Policy number is required";
+  }
+  if (!/^[a-zA-Z0-9]+$/.test(data.policy_number)) {
+    return "Policy number must be alphanumeric (no special characters)";
+  }
+  if (data.policy_number.length < 6 || data.policy_number.length > 20) {
+    return "Policy number must be between 6 to 20 characters";
+  }
 
-    if (!data.policy_number.trim()) {
-      errors = "Policy number is required";
-      return errors;
-    }
+  // Coverage Details
+  if (!data.coverage_details.trim()) {
+    return "Coverage details are required";
+  }
+  if (
+    data.coverage_details.trim().length < 10 ||
+    data.coverage_details.trim().length > 250
+  ) {
+    return "Coverage details must be between 10 to 250 characters";
+  }
 
-    if (!data.coverage_details.trim()) {
-      errors = "Coverage details are required";
-      return errors;
-    }
 
-    if (!data.notes.trim()) {
-      errors = "Notes are required";
-      return errors;
-    }
-    if (!data.start_date.trim()) {
-      errors = "Start date is required";
-      return errors;
-    }
+  // Dates
+  if (!data.start_date.trim()) {
+    return "Start date is required";
+  }
   if (!data.end_date.trim()) {
-      errors = "End date is required";
-      return errors;
-    }
-  if(new Date(data.start_date) > new Date(data.end_date)){
-    errors = "Start date cannot be later than end date";
-    return errors;
-  }  
-    return "";
-  };
+    return "End date is required";
+  }
+  if (new Date(data.start_date) > new Date(data.end_date)) {
+    return "Start date cannot be later than end date";
+  }
+
+  return "";
+};
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -217,7 +226,7 @@ export default function AddInsurance() {
                     </div>
                     <div className="w-100">
                       <label className="text-sm font-semibold block leading-6 text-primary mb-2">
-                        Notes <span className="text-red-500">*</span>
+                        Notes
                       </label>
                       <input
                      

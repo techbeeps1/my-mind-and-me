@@ -36,11 +36,7 @@ function UploadBox({
   setFiles: React.Dispatch<React.SetStateAction<FilesState>>;
   files: FilesState;
 }) {
-  const allowedTypes = [
-    "image/jpeg",
-    "image/png",
-    "application/pdf",
-  ];
+  const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
 
   const maxSize = 1 * 1024 * 1024; // 1MB
 
@@ -58,10 +54,7 @@ function UploadBox({
     return true;
   };
 
-  const handleFileChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    key: FileKey
-  ) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, key: FileKey) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -168,10 +161,7 @@ export default function VerifyDocsUpload() {
     cpd: null,
   });
 
-  const handleDate = (
-    e: ChangeEvent<HTMLInputElement>,
-    key: FileKey
-  ) => {
+  const handleDate = (e: ChangeEvent<HTMLInputElement>, key: FileKey) => {
     setExDate((prev) => ({
       ...prev,
       [key]: e.target.value,
@@ -187,8 +177,12 @@ export default function VerifyDocsUpload() {
 
       if (files[fileKey] && !exDate[fileKey]) {
         toastTBS.error(
-          `Please select expiry date for ${fileKey.toUpperCase()}`
+          `Please select expiry date for ${fileKey.toUpperCase()}`,
         );
+        return;
+      }
+      if (!files[fileKey] && exDate[fileKey]) {
+        toastTBS.error(`Please upload document for ${fileKey.toUpperCase()}`);
         return;
       }
     }
@@ -201,54 +195,41 @@ export default function VerifyDocsUpload() {
         const file = files[fileKey]!.file;
 
         if (file.size > 1 * 1024 * 1024) {
-          toastTBS.error(
-            `${fileKey.toUpperCase()} must be less than 1MB`
-          );
+          toastTBS.error(`${fileKey.toUpperCase()} must be less than 1MB`);
           return;
         }
 
         if (
-          ![
-            "image/jpeg",
-            "image/png",
-            "application/pdf",
-          ].includes(file.type)
+          !["image/jpeg", "image/png", "application/pdf"].includes(file.type)
         ) {
-          toastTBS.error(
-            `${fileKey.toUpperCase()} must be JPG, PNG or PDF`
-          );
+          toastTBS.error(`${fileKey.toUpperCase()} must be JPG, PNG or PDF`);
           return;
         }
       }
     }
 
-    if (loading) return;
-    setLoading(true);
-
     const formData = new FormData();
-
     Object.keys(files).forEach((key) => {
       const fileKey = key as FileKey;
       if (files[fileKey]) {
-        formData.append(
-          `${fileKey}_file`,
-          files[fileKey]!.file
-        );
+        formData.append(`${fileKey}_file`, files[fileKey]!.file);
       }
     });
 
     Object.keys(exDate).forEach((key) => {
       const dateKey = key as FileKey;
       if (exDate[dateKey]) {
-        formData.append(
-          `${dateKey}_expiry`,
-          exDate[dateKey]!
-        );
+        formData.append(`${dateKey}_expiry`, exDate[dateKey]!);
       }
     });
+    if ([...formData.entries()].length <= 0) {
+      toastTBS.error("Please upload at least one document.");
+      return;
+    }
 
+    if (loading) return;
+    setLoading(true);
     formData.append("user_id", MMMUserData?.id);
-
     fetch("/api/practitioner/verification_documents", {
       method: "POST",
       body: formData,
@@ -288,7 +269,6 @@ export default function VerifyDocsUpload() {
         <div className="w-245 max-w-full mx-auto md:mb-11.25 mb-7.5 px-5">
           <form onSubmit={handleSubmit}>
             <div className="max-w-135 mx-auto space-y-8">
-
               {(["hpcsa", "bhf", "mps", "cpd"] as FileKey[]).map((key) => (
                 <div
                   key={key}
@@ -315,7 +295,6 @@ export default function VerifyDocsUpload() {
                   </div>
                 </div>
               ))}
-
             </div>
 
             <div className="flex justify-center mt-12">
@@ -323,11 +302,7 @@ export default function VerifyDocsUpload() {
                 type="submit"
                 className="px-10 py-3 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
               >
-                {loading ? (
-                  <LoadingSpin width={4} height={15} />
-                ) : (
-                  "Submit"
-                )}
+                {loading ? <LoadingSpin width={4} height={15} /> : "Submit"}
               </button>
             </div>
           </form>
