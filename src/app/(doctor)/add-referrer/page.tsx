@@ -17,7 +17,7 @@ type UserPatientANDPractitioner = {
 
 
 type Referral = {
-  doctor_id: string;
+
   patient_id: string;
   therapist_id: string;
   urgency_level: string;
@@ -38,7 +38,7 @@ export default function AddReferrer() {
   });
 
   const initialReferralData: Referral = {
-  doctor_id: "",
+
   patient_id: "",
   therapist_id: "",
   urgency_level: "",

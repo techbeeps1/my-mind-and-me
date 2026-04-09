@@ -14,7 +14,7 @@ import {
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import { RiImageEditFill } from "react-icons/ri";
-export default function DoctorProfile() {
+export default function MyPatientProfile() {
   const [isEdit, setisEdit] = useState(true);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");

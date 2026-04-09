@@ -4,9 +4,10 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toastTBS } from "@/lib/toast";
 
-
+import { useProfile } from "@/services/ProfileContext";
 
 export default function LogoutPage() {
+   const { logoutUser } = useProfile();
   const router = useRouter();
   const hasLoggedOut = useRef(false);
 
@@ -23,7 +24,7 @@ export default function LogoutPage() {
         localStorage.removeItem("MMMDT");
         localStorage.removeItem("loginTime");
         localStorage.removeItem("lastActivity");
-
+        logoutUser();
         toastTBS.success("Logged out successfully");
 
         router.push("/login");
