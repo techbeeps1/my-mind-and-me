@@ -6,11 +6,10 @@ export async function GET(req: NextRequest) {
   const tokenParam = searchParams.get("token");
 
   
-  const res = await fetch(`${AUTH_END}/profile/${tokenParam}`, {
+  const res = await fetch(`${AUTH_END}/verify-email?token=${tokenParam}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-    
     },
   });
   const data = await res.json();
