@@ -21,6 +21,25 @@ export const bookingApiPath = "/api/booking";
 export const imagePath = "http://54.89.179.53:8000/image/"; 
 
 
+// booking status change
+export async function CreateMedicalNote( data:any ) {
+  const res = await fetch(`${refApiPath}/medical-history`, {   
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { throw new Error("Failed to create medical note");}
+  return await res.json();
+}
+
+//get medical history by patient id
+export async function GetMedicalHistory(UserId:string) {
+  const res = await fetch(`${paApiPath}/medical-history/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch medical history");
+  return res.json();
+}
 
 // booking history
 export async function GetPaymentHistory(UserId:string) {

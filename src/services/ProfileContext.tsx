@@ -1,5 +1,5 @@
 "use client";
-
+ 
 import {
   createContext,
   useContext,
@@ -16,6 +16,7 @@ type UserData = {
   id: string | number;
   role: string;
   user_name?: string;
+  is_active: boolean;
 };
 
 type ProfileResponse = {

@@ -1,5 +1,6 @@
 'use client'
 
+import { useProfile } from "@/services/ProfileContext";
 import Image from "next/image";
 import Link from "next/link";
 import { GoEyeClosed, GoEye } from "react-icons/go";
@@ -14,6 +15,7 @@ import LoadingSpin from "@/components/LoadingSpin";
 
 
 export default function Home() {
+   const { setMMMUserData } = useProfile();
   const [passVisble, setPassVisble] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,10 +65,10 @@ const [errors, setErrors] = useState<FormErrors>({});
           body: JSON.stringify({ email, password }),
         });
 
-      
         if(res.ok){
         const data = await res.json();
       if (data.id) {
+        setMMMUserData(data);
         localStorage.setItem("MMMDT", JSON.stringify(data));
       }
      toastTBS.success("Login successful");
