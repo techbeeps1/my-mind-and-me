@@ -76,7 +76,7 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
 
   return (
     <>
-      <header className=" flex items-center justify-between bg-primary lg:px-8 lg:py-5 p-5 sticky top-0 w-full z-10">
+      <header className=" flex items-center justify-between bg-primary  p-5 sticky top-0 w-full z-10">
         <button
           onClick={() => {
             setOpen(!open);

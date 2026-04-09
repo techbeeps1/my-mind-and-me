@@ -100,7 +100,7 @@ if (uploadModal) {
     <>
       <WrapperBanner>
         <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
-          <div className="max-w-337.5 w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
+          <div className="w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
               Insurance
             </h2>
@@ -116,11 +116,11 @@ if (uploadModal) {
                     onChange={(e) => setSearch(e.target.value)}
                     className=" bg-primary/8 placeholder:text-primary w-75 rounded-md px-4 py-2.5 outline-none"
                   />
-                  <button className="absolute top-1/2 right-6 z-1 cursor-pointer text-primary -translate-y-1/2 transform ">
+                  <button className="absolute top-1/2 right-6 z-1  text-primary -translate-y-1/2 transform ">
                     <FiSearch className=" h-5 w-5  " />
                   </button>
                 </div>
-                  <button onClick={() => setUploadModal(true)} className="px-4 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition">
+                  <button onClick={() => setUploadModal(true)} className="px-4 py-2 cursor-pointer rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition">
         Add New Insurance
       </button>
               </div>

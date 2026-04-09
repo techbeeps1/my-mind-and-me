@@ -48,7 +48,7 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
     return (
         <>
           <div className={`w-67.5  lg:mt-0 md:mt-25 mt-22.5 fixed left-0 h-full top-0 z-2 max-w-full bg-[linear-gradient(50deg,var(--color-AquaBlue)_-95%,var(--color-white)_100%)]  py-5 transform transition-all duration-500 ease-in-out  ${ishide?'w-0 lg:w-70 invisible lg:visible -translate-x-full lg:translate-x-0 ':' translate-x-0 visible lg:w-85'}`}>
-            <div className="pb-6.5 border-b-4 border-primary lg:ps-12.5 ps-7.5">
+            <div className="pb-4 border-b-4 border-primary lg:ps-12.5 ps-7.5">
               {/* Logo */}
               <Image
                 src="/logo-deshboard.svg"
@@ -56,7 +56,7 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
                 height={90}
                 width={80}
                 priority
-                className="object-cover"
+                className="object-cover w-12.5 h-12.5"
               />
             </div>
 
