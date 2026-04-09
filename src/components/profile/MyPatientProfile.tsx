@@ -14,7 +14,9 @@ import {
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import { RiImageEditFill } from "react-icons/ri";
+import { useProfile } from "@/services/ProfileContext";
 export default function MyPatientProfile() {
+    const { setUsername } = useProfile();
   const [isEdit, setisEdit] = useState(true);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");
@@ -156,6 +158,7 @@ export default function MyPatientProfile() {
       if (res.status) {
         toastTBS.success("Profile updated successfully");
         setisEdit(true);
+        setUsername(formData.full_name);
         setTimeout(() => {
           setLandingData(false);
         }, 1500);

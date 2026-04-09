@@ -21,7 +21,7 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
 
 
 
-  const profileUrl = MMMUserData?.role === "referrer" ? "/referrer-profile" : MMMUserData?.role === "patient" ? "/patient-profile" : "/practitioner-profile";
+  const profileUrl = "my-profile";
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {

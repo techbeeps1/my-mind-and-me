@@ -3,8 +3,12 @@
 import LoadingSpin from "@/components/LoadingSpin";
 import WrapperBanner from "@/components/WraperBanner";
 import { toastTBS } from "@/lib/toast";
-import { AddReferrerFun, GetAllPatient, GetAllPractitioner } from "@/services/api";
-import {  useEffect, useState } from "react";
+import {
+  AddReferrerFun,
+  GetAllPatient,
+  GetAllPractitioner,
+} from "@/services/api";
+import { useEffect, useState } from "react";
 type UserPatientANDPractitioner = {
   id: string;
   unique_id: string;
@@ -15,9 +19,7 @@ type UserPatientANDPractitioner = {
   dob?: string | null;
 };
 
-
 type Referral = {
-
   patient_id: string;
   therapist_id: string;
   urgency_level: string;
@@ -28,8 +30,12 @@ type Referral = {
 };
 export default function AddReferrer() {
   const [PreferredModality, setPreferredModality] = useState("");
-  const [allPractitioners, setAllPractitioners] = useState<UserPatientANDPractitioner[]>([]);
-  const [allPatients, setAllPatients] = useState<UserPatientANDPractitioner[]>([]);
+  const [allPractitioners, setAllPractitioners] = useState<
+    UserPatientANDPractitioner[]
+  >([]);
+  const [allPatients, setAllPatients] = useState<UserPatientANDPractitioner[]>(
+    [],
+  );
   const [loading, setLoading] = useState(false);
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
@@ -38,112 +44,125 @@ export default function AddReferrer() {
   });
 
   const initialReferralData: Referral = {
+    patient_id: "",
+    therapist_id: "",
+    urgency_level: "",
+    preferred_modality: "Therapy",
+    clinical_presentation: "",
+    chief_complaint: "",
+    medical_note: "",
+  };
+  const [referralData, setReferralData] =
+    useState<Referral>(initialReferralData);
 
-  patient_id: "",
-  therapist_id: "",
-  urgency_level: "",
-  preferred_modality: "Therapy",
-  clinical_presentation: "",
-  chief_complaint: "",
-  medical_note: ""
-};
-  const [referralData, setReferralData] = useState<Referral>(initialReferralData)
+  const validateForm = () => {
+    if (!referralData.patient_id) {
+      toastTBS.error("Please select a patient");
+      return false;
+    }
+    if (!referralData.therapist_id) {
+      toastTBS.error("Please select a practitioner");
+      return false;
+    }
+    if (!referralData.urgency_level) {
+      toastTBS.error("Please select urgency level");
+      return false;
+    }
+    if (!referralData.preferred_modality) {
+      toastTBS.error("Please select preferred modality");
+      return false;
+    }
+    if (!referralData.clinical_presentation.trim()) {
+      toastTBS.error("Please enter clinical presentation");
+      return false;
+    } else if (
+      referralData.clinical_presentation.length < 5 ||
+      referralData.clinical_presentation.length > 200
+    ) {
+      toastTBS.error("Clinical presentation must be 5–200 characters");
+      return false;
+    }
 
-const validateForm = () => {
-  if (!referralData.patient_id) {
-    toastTBS.error("Please select a patient");
-    return false;
-  }
-  if (!referralData.therapist_id) {
-    toastTBS.error("Please select a practitioner");
-    return false;
-  }
-  if (!referralData.urgency_level) {
-    toastTBS.error("Please select urgency level");
-    return false;
-  }
-  if (!referralData.preferred_modality) {
-    toastTBS.error("Please select preferred modality");
-    return false;
-  }
-  if(!referralData.clinical_presentation.trim()){
-    toastTBS.error("Please enter clinical presentation");
-    return false;
-  }
-  else if (referralData.clinical_presentation.length < 5 || referralData.clinical_presentation.length > 200) {
-    toastTBS.error("Clinical presentation must be 5–200 characters");
-    return false;
-  }
+    if (!referralData.chief_complaint.trim()) {
+      toastTBS.error("Please enter chief complaint");
+      return false;
+    } else if (
+      referralData.chief_complaint.length < 5 ||
+      referralData.chief_complaint.length > 200
+    ) {
+      toastTBS.error("Chief complaint must be 5–200 characters");
+      return false;
+    }
+    if (!referralData.medical_note.trim()) {
+      toastTBS.error("Please enter medical note");
+      return false;
+    } else if (
+      referralData.medical_note.length < 5 ||
+      referralData.medical_note.length > 200
+    ) {
+      toastTBS.error("Medical note must be 5–200 characters");
+      return false;
+    }
 
-  if(!referralData.chief_complaint.trim()){
-    toastTBS.error("Please enter chief complaint");
-    return false;
-  }else if (referralData.chief_complaint.length < 5 || referralData.chief_complaint.length > 200) {
-    toastTBS.error("Chief complaint must be 5–200 characters");
-    return false;
-  }
- if(!referralData.medical_note.trim()){
-    toastTBS.error("Please enter medical note");
-    return false;
-  }else if( referralData.medical_note.length < 5 || referralData.medical_note.length > 200){
-    toastTBS.error("Medical note must be 5–200 characters");
-    return false;
-  }
-
-
-
-
-  return true;
-};
+    return true;
+  };
 
   const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-) => {
-  const { name, value } = e.target;
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = e.target;
 
-  setReferralData((prev) => ({
-    ...prev!,
-    [name]: value
-  }));
-};
+    setReferralData((prev) => ({
+      ...prev!,
+      [name]: value,
+    }));
+  };
 
-useEffect(() => {console.log(referralData)}, [referralData]);
   useEffect(() => {
-      GetAllPatient().then((data) => {
-          setAllPatients(data.data);
-       }).catch((err) => {
-         console.error(err);
-       });
-     GetAllPractitioner().then((data) => {
-          setAllPractitioners(data.data);
-       }).catch((err) => {
-         console.error(err);
-       });
-
+    console.log(referralData);
+  }, [referralData]);
+  useEffect(() => {
+    GetAllPatient()
+      .then((data) => {
+        setAllPatients(data.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    GetAllPractitioner()
+      .then((data) => {
+        setAllPractitioners(data.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }, []);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-      if(loading) return;
-      if (!validateForm()) return;
-      setLoading(true);
-      AddReferrerFun({...referralData,user_id: MMMUserData?.id}).then((data) => {
-      console.log("Referral added successfully:", data);
-      if(data.status){
-        toastTBS.success("Referral added successfully");
-         (e.target as HTMLFormElement).reset();
-         setReferralData(initialReferralData);
-        setTimeout(() => {  
-          setLoading(false);
-      }, 1500);
-    }
-    }).catch((err) => {
-      console.error("Failed to add referral:", err);
+    if (loading) return;
+    if (!validateForm()) return;
+    setLoading(true);
+    AddReferrerFun({ ...referralData, user_id: MMMUserData?.id })
+      .then((data) => {
+        console.log("Referral added successfully:", data);
+        if (data.status) {
+          toastTBS.success("Referral added successfully");
+          (e.target as HTMLFormElement).reset();
+          setReferralData(initialReferralData);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1500);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to add referral:", err);
         toastTBS.error("Failed to add referral");
         setTimeout(() => {
           setLoading(false);
         }, 1500);
-    })
-
+      });
   };
 
   return (
@@ -155,39 +174,64 @@ useEffect(() => {console.log(referralData)}, [referralData]);
               Referrer Form
             </h2>
             <div className="w-245  max-w-full mx-auto md:mb-11.25 mb-7.5 px-5">
-              <form className="space-y-3.75" onSubmit={handleSubmit}>                
+              <form className="space-y-3.75" onSubmit={handleSubmit}>
                 <div>
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
                     Patient Selection <span className="text-red-500">*</span>
                   </label>
-                  <select onChange={handleChange} name="patient_id" className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
-                    <option value="" disabled selected >Patient Selection</option>
+                  <select
+                    onChange={handleChange}
+                    name="patient_id"
+                    className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
+                  >
+                    <option value="" disabled selected>
+                      Patient Selection
+                    </option>
                     {allPatients?.map((patient) => (
-                      <option key={patient.id} value={patient.id}>{patient.unique_id
-}{" | "}{patient.user_name}</option>
+                      <option key={patient.id} value={patient.id}>
+                        {patient.unique_id}
+                        {" | "}
+                        {patient.user_name}
+                      </option>
                     ))}
                   </select>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                      Preferred Practitioner <span className="text-red-500">*</span>
+                      Preferred Practitioner{" "}
+                      <span className="text-red-500">*</span>
                     </label>
-                    <select onChange={handleChange} name="therapist_id" className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
-                    <option value="" disabled selected >Preferred Practitioner</option>
-                    
+                    <select
+                      onChange={handleChange}
+                      name="therapist_id"
+                      className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
+                    >
+                      <option value="" disabled selected>
+                        Preferred Practitioner
+                      </option>
+
                       {allPractitioners?.map((practitioner) => (
-                      <option key={practitioner.id} value={practitioner.id}>{practitioner.unique_id
-}{" | "}{practitioner.user_name}</option>
-                    ))}
+                        <option key={practitioner.id} value={practitioner.id}>
+                          {practitioner.unique_id}
+                          {" | "}
+                          {practitioner.user_name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div>
                     <label className="text-sm block font-semibold leading-6 text-primary mb-2">
                       Urgency Level <span className="text-red-500">*</span>
                     </label>
-                    <select onChange={handleChange} name="urgency_level" className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
-                     <option value="" disabled selected>Select Level</option>
+                    <select
+                      onChange={handleChange}
+                      name="urgency_level"
+                      className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
+                    >
+                      <option value="" disabled selected>
+                        Select Level
+                      </option>
                       <option>Emergency</option>
                       <option>High</option>
                       <option>Low</option>
@@ -212,7 +256,10 @@ useEffect(() => {console.log(referralData)}, [referralData]);
                             defaultChecked={i === 0}
                             className="primary"
                             value={role}
-                            onChange={(e) => {handleChange(e); setPreferredModality(e.target.value);}}
+                            onChange={(e) => {
+                              handleChange(e);
+                              setPreferredModality(e.target.value);
+                            }}
                           />
                           {role}
                         </label>
@@ -222,27 +269,42 @@ useEffect(() => {console.log(referralData)}, [referralData]);
                 </div>
                 <div>
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                    Clinical Presentation <span className="text-red-500 text-xs">* ( For Practitioner )</span>
+                    Clinical Presentation{" "}
+                    <span className="text-red-500 text-xs">
+                      * ( For Practitioner )
+                    </span>
                   </label>
-                  <textarea onChange={handleChange} name="clinical_presentation"
+                  <textarea
+                    onChange={handleChange}
+                    name="clinical_presentation"
                     className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
                     placeholder="Clinical Presentation"
                   />
                 </div>
                 <div>
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                    Chief Complaint <span className="text-red-500 text-xs">* ( For Practitioner )</span>
+                    Chief Complaint{" "}
+                    <span className="text-red-500 text-xs">
+                      * ( For Practitioner )
+                    </span>
                   </label>
-                  <textarea onChange={handleChange} name="chief_complaint"
+                  <textarea
+                    onChange={handleChange}
+                    name="chief_complaint"
                     className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
                     placeholder="Chief Complaint"
                   />
                 </div>
                 <div>
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
-                    Medical Note <span className="text-red-500 text-xs">* ( For Patient )</span>
+                    Medical Note{" "}
+                    <span className="text-red-500 text-xs">
+                      * ( For Patient )
+                    </span>
                   </label>
-                  <textarea onChange={handleChange} name="medical_note"
+                  <textarea
+                    onChange={handleChange}
+                    name="medical_note"
                     className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
                     placeholder="Medical Note"
                   />
@@ -250,14 +312,13 @@ useEffect(() => {console.log(referralData)}, [referralData]);
 
                 <div className="flex justify-center">
                   <button className="py-3 px-15 md:w-auto w-full duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold text-lg leading-6 hover:opacity-90 transition">
-                  { loading ? (<LoadingSpin width={3} height={15} />) :  "Submit"}    
+                    {loading ? <LoadingSpin width={3} height={15} /> : "Submit"}
                   </button>
                 </div>
               </form>
             </div>
           </div>
         </div>
-      
       </WrapperBanner>
     </>
   );

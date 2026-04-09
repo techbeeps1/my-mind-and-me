@@ -1,5 +1,5 @@
 "use client";
-
+import { useProfile } from "@/services/ProfileContext";
 import WrapperBanner from "@/components/WraperBanner";
 import Image from "next/image";
 import { FaRegUser, FaPhone } from "react-icons/fa6";
@@ -12,6 +12,7 @@ import LoadingSpin from "@/components/LoadingSpin";
 import TagSelector from "@/components/comman/TagSelector";
 import { RiImageEditFill } from "react-icons/ri";
 export default function MyPractitionerProfile() {
+  const { setUsername } = useProfile();
   const [isEdit, setisEdit] = useState(true);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");
@@ -226,8 +227,10 @@ const validateForm = (data: FormDataType): string => {
 
         toastTBS.success("Profile updated successfully");
         setisEdit(true);
+        setUsername(formData.full_name);
         setTimeout(() => {
           setLandingData(false);
+
 
         }, 1500);
       }

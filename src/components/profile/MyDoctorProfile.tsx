@@ -12,7 +12,8 @@ import LoadingSpin from "@/components/LoadingSpin";
 import { RiImageEditFill } from "react-icons/ri";
 import { useProfile } from "@/services/ProfileContext";
 export default function MyDoctorProfile() {
-  const { setProfile,setUsername } = useProfile(); 
+
+  const { setUsername } = useProfile(); 
   const [isEdit, setisEdit] = useState(true);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");
@@ -193,8 +194,8 @@ if (Object.keys(errors).length > 0) {
     try {
       const res = await referralProfileEdit(data)
       if (res.status) {
-        setProfile(res.data.profile_image ? imagePath + res.data.profile_image : "/profile-img.png");
-        setUsername(res.data.full_name || "");
+   
+        setUsername(formData.full_name);
         toastTBS.success("Profile updated successfully");
         setisEdit(true);
         setTimeout(() => {

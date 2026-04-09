@@ -30,21 +30,14 @@ type ProfileContextType = {
   profile: string;
   username: string;
   MMMUserData: UserData | null;
-
-  // runtime setters
   setProfile: (value: string) => void;
   setUsername: (value: string) => void;
   setMMMUserData: (value: UserData | null) => void;
-
-  // helper functions
   updateUser: (data: UserData) => void;
   logoutUser: () => void;
  
 };
 
-// ------------------------
-// CONTEXT
-// ------------------------
 const ProfileContext = createContext<ProfileContextType | undefined>(
   undefined
 );
@@ -70,7 +63,7 @@ export const ProfileProvider = ({ children }: ProviderProps) => {
 
   // fetch profile from API
   useEffect(() => {
-    if (MMMUserData && !username) {
+    if (MMMUserData ) {
       GetProfile(MMMUserData.role, String(MMMUserData.id))
         .then((res: ProfileResponse) => {
           if (res.success) {
