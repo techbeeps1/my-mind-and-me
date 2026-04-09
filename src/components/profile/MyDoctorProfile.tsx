@@ -10,7 +10,9 @@ import { imagePath, referralProfile, referralProfileEdit } from "@/services/api"
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import { RiImageEditFill } from "react-icons/ri";
-export default function DoctorProfile() {
+import { useProfile } from "@/services/ProfileContext";
+export default function MyDoctorProfile() {
+  const { setProfile,setUsername } = useProfile(); 
   const [isEdit, setisEdit] = useState(true);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");
@@ -191,11 +193,12 @@ if (Object.keys(errors).length > 0) {
     try {
       const res = await referralProfileEdit(data)
       if (res.status) {
-
+        setProfile(res.data.profile_image ? imagePath + res.data.profile_image : "/profile-img.png");
+        setUsername(res.data.full_name || "");
         toastTBS.success("Profile updated successfully");
         setisEdit(true);
         setTimeout(() => {
-          setLandingData(false);
+        setLandingData(false);
 
         }, 1500);
       }

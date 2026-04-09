@@ -11,7 +11,7 @@ import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import TagSelector from "@/components/comman/TagSelector";
 import { RiImageEditFill } from "react-icons/ri";
-export default function PractitionerProfile() {
+export default function MyPractitionerProfile() {
   const [isEdit, setisEdit] = useState(true);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");

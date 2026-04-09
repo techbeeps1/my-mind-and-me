@@ -102,22 +102,13 @@ export default function MedicalHistory() {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
-                      <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">
-                        Diagnosis
-                      </th>                      
                       <th className="px-4 py-3 text-left bg-primary/8">
-                        Treatment Plan
-                      </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
-                        Medications
+                        Doctor/Practitioner Name
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 ">
                         Date
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
-                        Doctor Name
-                      </th>
-                      <th className="px-4 py-3 text-left  bg-primary/8 rounded-tr-lg">
+                      <th className="w-1/2 px-4 py-3 text-left  bg-primary/8 rounded-tr-lg">
                         Notes
                       </th>
                     </tr>
@@ -127,7 +118,7 @@ export default function MedicalHistory() {
                     {filteredData.length === 0 && (
                       <tr>
                         <td
-                          colSpan={4}
+                          colSpan={3}
                           className="text-center py-6 text-sm text-gray-400"
                         >
                           No records found
@@ -137,25 +128,13 @@ export default function MedicalHistory() {
 
                     {filteredData.map((item) => (
                       <tr key={item.id}>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          {item.diagnosis}
-                        </td>
-
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          {item.treatment_plan}
-                        </td>
-
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.medications}
+                       <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
+                          {item.doctor_name}
                         </td>
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
                           <div>{item.created_at}</div>
                                                 
-                        </td>
-
-                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
-                          {item.doctor_name}
-                        </td>
+                        </td>                  
                         <td className="px-4 py-4 text-sm text-primary font-semibold">                         
                           {item.notes}
                         </td>

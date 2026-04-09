@@ -38,6 +38,7 @@ type ProfileContextType = {
 
   // helper functions
   updateUser: (data: UserData) => void;
+  logoutUser: () => void;
  
 };
 
@@ -95,7 +96,13 @@ export const ProfileProvider = ({ children }: ProviderProps) => {
     localStorage.setItem("MMMDT", JSON.stringify(data));
     setMMMUserData(data);
   };
-
+// logout
+const logoutUser = () => {
+  localStorage.removeItem("MMMDT");
+  setMMMUserData(null);
+  setProfile("/profile-img.png");
+  setUsername("");
+}
 
   return (
     <ProfileContext.Provider
@@ -106,7 +113,8 @@ export const ProfileProvider = ({ children }: ProviderProps) => {
         setProfile,
         setUsername,
         setMMMUserData,
-        updateUser
+        updateUser,
+        logoutUser,
         
       }}
     >

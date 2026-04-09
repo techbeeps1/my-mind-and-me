@@ -86,7 +86,9 @@ const validateForm = (data: FormDataType): string => {
     return "Coverage details must be between 10 to 250 characters";
   }
 
-
+ if(data.notes.trim() && (data.notes.trim().length < 5 || data.notes.trim().length > 200)){
+        return "Notes must be between 5 to 200 characters if provided";
+  } 
   // Dates
   if (!data.start_date.trim()) {
     return "Start date is required";
@@ -97,6 +99,8 @@ const validateForm = (data: FormDataType): string => {
   if (new Date(data.start_date) > new Date(data.end_date)) {
     return "Start date cannot be later than end date";
   }
+
+ 
 
   return "";
 };

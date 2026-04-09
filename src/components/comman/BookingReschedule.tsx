@@ -99,6 +99,7 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
   const [offweekDays, setOffweekDays] = useState<number[]>([]);
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
   const [slotLoading, setSlotLoading] = useState(false);
+  const [notavailable, setnotavailable] = useState("");
 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormDataType>({
@@ -241,7 +242,7 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
   }
 
   function getSlotData(date: string) {
-
+    setnotavailable("");
     const data = JSON.stringify({ date, user_id: formData.practitioner_id });
     setSlotLoading(true);
     getSlots(data).then((data) => {
@@ -253,7 +254,16 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
         }));
 
         setSlotLoading(false);
+         if(data.slots.length === 0){
+        setnotavailable("No slots available for the selected date."); 
+
       }
+      }else{
+          setnotavailable("No slots available for the selected date."); 
+
+      }
+
+      
 
     }).catch((err) => {
       toastTBS.error("Error fetching slots:" + err.message);
@@ -295,18 +305,15 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
   };
 
   useState(() => {
-
     getData();
   });
 
 
   if (londing && step === 2) {
     return (
-
       <div
         className=" bg-cover bg-center bg-no-repeat min-h-screen "
-        style={{ backgroundImage: "url('/banner-bg.jpg')" }}
-      >
+        style={{ backgroundImage: "url('/banner-bg.jpg')" }} >
         <div className="flex-1 flex justify-center items-center h-[70vh]">
           <LoadingSpin />
         </div>
@@ -384,6 +391,13 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
                           ))}
                         </div>
                       )}
+   {notavailable && (<div className={` text-red-600  duration-400 rounded-lg  text-sm font-semibold `}
+                          >
+                            {notavailable}
+                          </div>
+                          )}
+                      
+                      
                     </div>
                   </div>
                 </div>
