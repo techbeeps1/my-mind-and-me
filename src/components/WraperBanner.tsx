@@ -11,7 +11,7 @@ export default function WrapperBanner({ children }: WrapperProps) {
   const [sideBarHide, setSideBarHide] = useState<boolean>(true);
   return (
     <main>
-      <div className="lg:ps-85 bg-cover bg-center bg-no-repeat min-h-screen " style={{ backgroundImage: "url('/banner-bg.jpg')" }}>
+      <div className="lg:ps-70 bg-cover bg-center bg-no-repeat min-h-screen " style={{ backgroundImage: "url('/banner-bg.jpg')" }}>
         
         <SidebarDashBoard ishide={sideBarHide} />
         <HeaderDashboard menutrigger={setSideBarHide}/>        

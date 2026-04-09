@@ -142,9 +142,9 @@ export default function BookingStatusChange({ setBookingUpdate,setOpenStatusChan
           </div>
         </div>
       ) : (
-        <div className="fixed top-0 inset-0 z-50 flex items-center justify-center">
+        <div className="fixed top-0 inset-0 z-50 flex justify-center">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpenStatusChange(false)} />
-          <div className="relative bg-white  min-w-[75%] rounded-2xl shadow-2xl z-50 animate-fadeIn">
+          <div className="relative my-12.5 overflow-y-auto   min-w-[75%] z-50 animate-fadeIn custom-scroll">
             <button
               className="absolute top-4 right-4 z-1 text-white cursor-pointer font-bold h-7.5 w-7.5 rounded-full bg-primary text-sm flex items-center justify-center"
               onClick={() => setOpenStatusChange(false)}

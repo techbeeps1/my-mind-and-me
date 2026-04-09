@@ -18,7 +18,7 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
     { name: "Dashboard", path: "/dashboard" },
     { name: "Add Referrer ", path: "/add-referrer" },
     { name: "Referral History", path: "/referral-history" },
-    { name: "Profile", path: "/referrer-profile" },
+    { name: "Profile", path: "/my-profile" },
   ];
   const menu1 = [
     { name: "Dashboard", path: "/dashboard" },  
@@ -27,7 +27,7 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
     { name: "Progress", path: "/progress"},
     { name: "Medical History", path: "/medical-history" },
     { name: "Insurance", path: "/insurance" },
-    { name: "Profile", path: "/patient-profile" },
+    { name: "Profile", path: "/my-profile" },
   ];
   const menu2 = [
     { name: "Dashboard", path: "/dashboard" },
@@ -37,14 +37,14 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
    
     { name: "Verification Status", path: "/verification-status" },
     { name: "Bank Details", path: "/bank-details" },
-    { name: "Profile", path: "/practitioner-profile" },
+    { name: "Profile", path: "/my-profile" },
     { name: "Bio", path: "/bio" }
     ,
   ];
   const menu = MMMUserData?.role === "referrer" ? menu0 : MMMUserData?.role === "patient" ? menu1 : menu2;
     return (
         <>
-          <div className={`w-85  lg:mt-0 md:mt-25 mt-22.5 fixed left-0 h-full top-0 z-2 max-w-full bg-[linear-gradient(50deg,var(--color-AquaBlue)_-95%,var(--color-white)_100%)]  py-5 transform transition-all duration-500 ease-in-out  ${ishide?'w-0 lg:w-85 invisible lg:visible -translate-x-full lg:translate-x-0 ':' translate-x-0 visible lg:w-85'}`}>
+          <div className={`w-67.5  lg:mt-0 md:mt-25 mt-22.5 fixed left-0 h-full top-0 z-2 max-w-full bg-[linear-gradient(50deg,var(--color-AquaBlue)_-95%,var(--color-white)_100%)]  py-5 transform transition-all duration-500 ease-in-out  ${ishide?'w-0 lg:w-70 invisible lg:visible -translate-x-full lg:translate-x-0 ':' translate-x-0 visible lg:w-85'}`}>
             <div className="pb-6.5 border-b-4 border-primary lg:ps-12.5 ps-7.5">
               {/* Logo */}
               <Image
@@ -57,7 +57,7 @@ export default function SidebarDashBoard({ ishide }: { ishide: boolean }) {
               />
             </div>
 
-            <nav className="flex flex-col space-y-4.5 text-primary lg:text-lg font-bold mt-7.5 lg:ps-12.5 ps-7.5">
+            <nav className="flex flex-col h-[82vh] overflow-y-auto space-y-4.5 text-primary lg:text-lg font-bold mt-7.5 2xl:ps-10 ps-7.5">
               {menu.map((item) => (
               <Link key={item.path} href={item.path} className={`text-left w-full rounded-l-full px-3.75 py-2.5 ${
                   pathname === item.path
