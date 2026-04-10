@@ -2,6 +2,7 @@
 import LoadingSpin from "@/components/LoadingSpin";
 import WrapperBanner from "@/components/WraperBanner";
 import { GetReferralHistory } from "@/services/api";
+import { useProfile } from "@/services/ProfileContext";
 
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
@@ -12,42 +13,33 @@ import { FiSearch } from "react-icons/fi";
 export type PatientStatus = "Active" | "Inactive";
 
 export interface Patient {
-  id: string;                   
-  doctor_id: string;           
-  patient_id: string;           
-  therapist_id: string;         
-  urgency_level: string;  
-  preferred_modality: string;  
-  clinical_presentation: string; 
-  chief_complaint: string;       
-  additional_requirements: string;
-  status: string;         
-  created_at: string;          
-  updated_at: string;           
-  patient_name: string;         
-  therapist_name: string;        
-  referred_by_name: string;      
+  id: string;
+  urgency_level: string;
+  preferred_modality: string;
+  clinical_presentation: string;
+  chief_complaint: string;
+  status: PatientStatus;
+  created_at: string;
+  patient_name: string;
+  doctor_name: string;     
 }
 
-
+ 
 
 export default function ReferralHistory() {
+   const { MMMUserData } = useProfile();
   const [search, setSearch] = useState("");
   const [landing, setLanding] = useState(true);
   const[patients, setPatients] = useState<Patient[]>([]);
-  const [MMMUserData] = useState(() => {
-    if (typeof window === "undefined") return null;
-    const data = localStorage.getItem("MMMDT");
-    return data ? JSON.parse(data) : null;
-  });
+
 
   const [statusFilter, setStatusFilter] = useState<PatientStatus | "All">(
     "All",
   );
 
   useEffect(() => {
-
-    GetReferralHistory(MMMUserData?.id).then((data) => {
+    if (!MMMUserData) return;
+    GetReferralHistory(MMMUserData?.role,MMMUserData?.id).then((data) => {
 
          setLanding(false);
         setPatients(data.data);
@@ -55,14 +47,20 @@ export default function ReferralHistory() {
     }).catch((error) => {     
        console.error("Error fetching referral history:", error);
     })
-  }, [MMMUserData?.id]);
+  }, [MMMUserData]);
 
 
 const filteredData = useMemo(() => {
   return patients.filter((item) => {
     const matchesSearch =
       item.patient_name.toLowerCase().includes(search.toLowerCase()) ||
-      item.referred_by_name.toLowerCase().includes(search.toLowerCase());
+      item.doctor_name.toLowerCase().includes(search.toLowerCase()) ||
+      item.urgency_level.toLowerCase().includes(search.toLowerCase()) ||
+      item.preferred_modality.toLowerCase().includes(search.toLowerCase()) ||
+      item.clinical_presentation.toLowerCase().includes(search.toLowerCase()) ||
+      item.chief_complaint.toLowerCase().includes(search.toLowerCase()) ||
+      item.created_at.toLowerCase().includes(search.toLowerCase());
+
 
     const matchesStatus =
       statusFilter === "All" || item.status === statusFilter;
@@ -84,7 +82,7 @@ const filteredData = useMemo(() => {
     <>
       <WrapperBanner>
         <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
-          <div className="max-w-337.5 w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
+          <div className=" w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
               Referral History
             </h2>
@@ -124,8 +122,12 @@ const filteredData = useMemo(() => {
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
                       <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">Patient Name</th>
-                      <th className="px-4 py-3 text-left bg-primary/8">Date</th>
-                      <th className="px-4 py-3 text-left bg-primary/8">Referrals</th>
+                      <th className="px-4 py-3 text-left bg-primary/8">Date</th>            
+                      <th className="px-4 py-3 text-left bg-primary/8">Urgency Level</th>                 
+                      <th className="px-4 py-3 text-left bg-primary/8">Preferred Modality</th>
+                      <th className="px-4 py-3 text-left bg-primary/8">Clinical Presentation</th>
+                      <th className="px-4 py-3 text-left bg-primary/8">Chief Complaint</th>
+                      <th className="px-4 py-3 text-left bg-primary/8">{ MMMUserData?.role == 'practitioner' ? 'Doctor Name' : 'Practitioner Name' }</th>
                       <th className="px-4 py-3 text-right bg-primary/8 rounded-tr-lg">Status</th>
                     </tr>
                   </thead>
@@ -145,11 +147,7 @@ const filteredData = useMemo(() => {
                     {filteredData.map((item) => (
                       <tr key={item.id}>
                         <td className="px-4 py-4 flex items-center gap-3">
-                          {/* <img
-                            src={item.profile ?? "https://i.pravatar.cc/40?img=47"}
-                            alt={item.patient_name}
-                            className="w-9 h-9 rounded-full"
-                          /> */}
+        
                           <span className="font-bold text-sm leading-9 text-primary">
                             {item.patient_name}
                           </span>
@@ -157,13 +155,22 @@ const filteredData = useMemo(() => {
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
                           <div>{item.created_at}</div>
-                          <div className="text-xs text-primary/54">
-                            {item.created_at}
-                          </div>
+                        </td>
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                          {item.urgency_level}
+                        </td>
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                          {item.preferred_modality == "Both" ? "Psychiatric Assessment, Therapy" : item.preferred_modality}
+                        </td>
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                          {item.clinical_presentation}
+                        </td>
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                          {item.chief_complaint}
                         </td>
 
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.referred_by_name}
+                          {item.doctor_name}
                         </td>
 
                         <td className="px-4 py-4 text-right">

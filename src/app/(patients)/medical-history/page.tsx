@@ -2,54 +2,48 @@
 import WrapperBanner from "@/components/WraperBanner";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import SessionModal from "@/components/SessionModal";
 import {  Getmedicalhistory } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
+import { useProfile } from "@/services/ProfileContext";
 export interface Patient {
-  id: number;
-  created_at: string;
-  diagnosis: string;
-  doctor_id: string;
-  medications: string;
-  notes: string;
+  id: string;
   patient_id: string;
+  doctor_id: string;
+  notes: string;
+  created_at: string;
+  updated_at: string;
   patient_name: string;
   doctor_name: string;
-  treatment_plan: string;
-  updated_at: string;
-  
 }
 
 
 
+
+
+
+
 export default function MedicalHistory() {
+   const { MMMUserData } = useProfile();
   const [search, setSearch] = useState("");
   const [landing, setLanding] = useState(true);
   const [patientsMedicalHistory, setPatientsMedicalHistory] = useState<Patient[]>([]);
 
-  const [MMMUserData] = useState(() => {
-    if (typeof window === "undefined") return null;
-    const data = localStorage.getItem("MMMDT");
-    return data ? JSON.parse(data) : null;
-  });
+
 
   const filteredData = useMemo(() => {
     return patientsMedicalHistory.filter((item) => {
       const matchesSearch =
-        item.diagnosis.toLowerCase().includes(search.toLowerCase()) ||
-        item.treatment_plan.toLowerCase().includes(search.toLowerCase()) ||
-        item.medications.toLowerCase().includes(search.toLowerCase()) ||
-        item.notes.toLowerCase().includes(search.toLowerCase()) ||
-        item.patient_name.toLowerCase().includes(search.toLowerCase());
+        item.doctor_name.toLowerCase().includes(search.toLowerCase()) ||
+        item.created_at.toLowerCase().includes(search.toLowerCase()) ||
+        item.notes.toLowerCase().includes(search.toLowerCase()) 
 
   
       return matchesSearch;
     });
   }, [search, patientsMedicalHistory]);
-  const [openModal, setOpenModal] = useState(false);
-
 
       useEffect(() => {
+       if (!MMMUserData) return;
        Getmedicalhistory(MMMUserData?.id)
          .then((data) => {
            setLanding(false);
@@ -61,7 +55,7 @@ export default function MedicalHistory() {
          .catch((err) => {
            console.error(err);
          });
-     }, [MMMUserData?.id]);
+     }, [MMMUserData]);
    
  if (landing) {
     return (
@@ -146,7 +140,7 @@ export default function MedicalHistory() {
             </div>
           </div>
         </div>
-        <SessionModal isOpen={openModal} onClose={() => setOpenModal(false)} />
+      
       </WrapperBanner>
     </>
   );

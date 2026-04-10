@@ -35,7 +35,7 @@ export default function MedicalHistoryPopup({ setMedicalHistoryUpdate,setOpenSta
     CreateMedicalNote({
       patient_id: id,
       doctor_id: MMMUserData?.id || "",
-      note:  formData.note ,
+      notes:  formData.note ,
     }).then((res) => {
 
        if(res.success) {

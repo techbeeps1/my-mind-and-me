@@ -189,7 +189,7 @@ export default function Insurance() {
                         <td className={`px-4 py-4 text-sm font-semibold whitespace-nowrap `}>
 
                           <span className={ `capitalize ${statusColors[item.status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}>
-                            {item.status === "pending" ? "failed" : item.status}
+                            {item.status}
                           </span >
                         </td>
                         <td className="px-4 py-4 text-sm text-primary font-semibold capitalize whitespace-nowrap">

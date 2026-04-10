@@ -9,11 +9,12 @@ type WrapperProps = {
 };
 export default function WrapperBanner({ children }: WrapperProps) {
   const [sideBarHide, setSideBarHide] = useState<boolean>(true);
+  const [collapsed, setCollapsed] = useState(false);
   return (
     <main>
-      <div className="lg:ps-70 bg-cover bg-center bg-no-repeat min-h-screen " style={{ backgroundImage: "url('/banner-bg.jpg')" }}>
+      <div className={`${collapsed ? "lg:ps-15" : "lg:ps-70"} transition-all duration-500 bg-cover bg-center bg-no-repeat min-h-screen `} style={{ backgroundImage: "url('/banner-bg.jpg')" }}>
         
-        <SidebarDashBoard ishide={sideBarHide} />
+        <SidebarDashBoard ishide={sideBarHide} menutrigger={setSideBarHide} collapsed={collapsed} setCollapsed={setCollapsed} />
         <HeaderDashboard menutrigger={setSideBarHide}/>        
         {children}
       </div>

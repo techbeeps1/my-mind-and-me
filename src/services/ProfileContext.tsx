@@ -13,7 +13,7 @@ import { GetProfile, imagePath } from "@/services/api";
 // TYPES
 // ------------------------
 type UserData = {
-  id: string | number;
+  id: string;
   role: string;
   user_name?: string;
   is_active: boolean;

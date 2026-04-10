@@ -121,7 +121,7 @@ export default function AddReferrer() {
   };
 
   useEffect(() => {
-    console.log(referralData);
+
   }, [referralData]);
   useEffect(() => {
     GetAllPatient()
@@ -141,16 +141,18 @@ export default function AddReferrer() {
   }, []);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (loading) return;
     if (!validateForm()) return;
     setLoading(true);
     AddReferrerFun({ ...referralData, user_id: MMMUserData?.id })
       .then((data) => {
-        console.log("Referral added successfully:", data);
+      
         if (data.status) {
           toastTBS.success("Referral added successfully");
           (e.target as HTMLFormElement).reset();
           setReferralData(initialReferralData);
+        
           setTimeout(() => {
             setLoading(false);
           }, 1500);
@@ -159,6 +161,7 @@ export default function AddReferrer() {
       .catch((err) => {
         console.error("Failed to add referral:", err);
         toastTBS.error("Failed to add referral");
+       
         setTimeout(() => {
           setLoading(false);
         }, 1500);
@@ -171,7 +174,7 @@ export default function AddReferrer() {
         <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
           <div className="max-w-337.5 w-full bg-white rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
-              Referrer Form
+              Refer Form
             </h2>
             <div className="w-245  max-w-full mx-auto md:mb-11.25 mb-7.5 px-5">
               <form className="space-y-3.75" onSubmit={handleSubmit}>
@@ -184,7 +187,7 @@ export default function AddReferrer() {
                     name="patient_id"
                     className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
                   >
-                    <option value="" disabled selected>
+                    <option value=""  selected>
                       Patient Selection
                     </option>
                     {allPatients?.map((patient) => (
@@ -207,7 +210,7 @@ export default function AddReferrer() {
                       name="therapist_id"
                       className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
                     >
-                      <option value="" disabled selected>
+                      <option value="" selected>
                         Preferred Practitioner
                       </option>
 
@@ -229,7 +232,7 @@ export default function AddReferrer() {
                       name="urgency_level"
                       className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
                     >
-                      <option value="" disabled selected>
+                      <option value="" selected>
                         Select Level
                       </option>
                       <option>Emergency</option>

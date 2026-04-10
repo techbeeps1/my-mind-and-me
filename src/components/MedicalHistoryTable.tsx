@@ -197,7 +197,7 @@ if (!isOpen) return null;
     </div>
     {openReschedule && (
       <div className="fixed inset-0 z-100 flex items-center justify-center">
-    <MedicalHistoryPopup setMedicalHistoryUpdate={setMedicalHistoryUpdate} setOpenStatusChange={setOpenReschedule} id={filteredData[0]?.id}  />
+    <MedicalHistoryPopup setMedicalHistoryUpdate={setMedicalHistoryUpdate} setOpenStatusChange={setOpenReschedule} id={id}  />
     </div>
     )}
     </>

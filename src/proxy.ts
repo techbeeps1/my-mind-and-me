@@ -49,9 +49,9 @@ export async function proxy(request: NextRequest) {
   const referrer = [
     "/change-password",
     "/dashboard",
-    "/add-referrer",
+    "/add-refer",
     "/referral-history",
-    "/referrer-profile",
+    "/my-profile",
   ];
 
   if (
@@ -68,7 +68,7 @@ export async function proxy(request: NextRequest) {
     "/book-a-appointment",
     "/insurance",
     "/medical-history",
-    "/patient-profile",
+    "/my-profile",
     "/progress",
   ];
 
@@ -87,9 +87,10 @@ export async function proxy(request: NextRequest) {
     "/bio",
     "/patients-progress",
     "/payments",
-    "/practitioner-profile",
+    "/my-profile",
     "/schedule",
     "/verification-status",
+    "/referral-history",  
   ];
 
     if (
@@ -139,19 +140,17 @@ export const config = {
     "/booking-history",
     "/change-password",
     "/complete-profile",
-    "/add-referrer",
-    "/referrer-profile",
+    "/add-refer",
+    "/my-profile",
     "/book-a-appointment",
     "/insurance",
     "/medical-history",
-    "/patient-profile",
     "/progress",
     "/appointment-history",
     "/bank-details",
     "/bio",
     "/patients-progress",
     "/payments",
-    "/practitioner-profile",
     "/schedule",
     "/verification-status",
     "/referral-history",

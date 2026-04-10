@@ -3,7 +3,7 @@
 import {  useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { IoNotifications, IoClose } from "react-icons/io5";
+import { IoNotifications } from "react-icons/io5";
 import { RiMenu2Fill } from "react-icons/ri";
 import { useProfile } from "@/services/ProfileContext";
 type HeaderDashboardProps = {
@@ -11,8 +11,6 @@ type HeaderDashboardProps = {
 };
 export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
     const { profile, username } = useProfile();
-
-  const [open, setOpen] = useState(true);
      const [MMMUserData] = useState(() => {
       if (typeof window === "undefined") return null;
       const data = localStorage.getItem("MMMDT");
@@ -79,16 +77,13 @@ export default function HeaderDashboard({ menutrigger }: HeaderDashboardProps) {
       <header className=" flex items-center justify-between bg-primary  p-5 sticky top-0 w-full z-10">
         <button
           onClick={() => {
-            setOpen(!open);
+           
             menutrigger((prev) => !prev);
           }}
           className="lg:hidden text-white"
         >
-          {open ? (
-            <RiMenu2Fill className=" w-7 h-7" />
-          ) : (
-            <IoClose className=" w-7 h-7" />
-          )}
+          <RiMenu2Fill className=" w-7 h-7" />
+         
         </button>
         <div className="w-1/2 relative lg:block hidden">
           {/* <input

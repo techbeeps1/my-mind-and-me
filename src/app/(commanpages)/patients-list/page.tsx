@@ -3,11 +3,11 @@ import WrapperBanner from "@/components/WraperBanner";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
-import { GetAllPatient } from "@/services/api";
+import {  GetRelatedPatients } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
 import { FaEye } from "react-icons/fa";
 import Link from "next/link";
-
+import { useProfile } from "@/services/ProfileContext";
 import MedicalHistoryTable from "@/components/MedicalHistoryTable";
 
 
@@ -16,24 +16,16 @@ export interface PatientType {
   unique_id: string;
   user_name: string;
   email: string;
-  phone_number: string;
   gender: string;
   dob: string;
 }
 
 export default function Insurance() {
+     const { MMMUserData } = useProfile();
   const [landing, setLanding] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<PatientType | undefined>();
   const [BookingHistory, setBookingHistory] = useState<PatientType[]>([]);
-    const [bookingUpdate,setBookingUpdate] =useState<number>(0)
-
-  const [MMMUserData] = useState(() => {
-    if (typeof window === "undefined") return null;
-    const data = localStorage.getItem("MMMDT");
-    return data ? JSON.parse(data) : null;
-  });
-
 
 
 
@@ -44,7 +36,6 @@ export default function Insurance() {
        item.unique_id?.toString().toLowerCase().includes(search.toLowerCase()) ||
         item.user_name?.toLowerCase().includes(search.toLowerCase()) ||
         item.email?.toLowerCase().includes(search.toLowerCase()) ||
-        item.phone_number?.toLowerCase().includes(search.toLowerCase()) ||
         item.gender?.toLowerCase().includes(search.toLowerCase()) ||
         item.dob?.toLowerCase().includes(search.toLowerCase());
 
@@ -55,10 +46,11 @@ export default function Insurance() {
 
 
   useEffect(() => {
-    GetAllPatient()
+    if (!MMMUserData) return;
+    GetRelatedPatients(MMMUserData?.role, MMMUserData?.id)
       .then((data) => {
         setLanding(false);
-        if (data.status) {
+        if (data.success) {
           setBookingHistory(data.data);
         }
 
@@ -66,7 +58,7 @@ export default function Insurance() {
       .catch((err) => {
         console.error(err);
       });
-  }, [MMMUserData?.id,bookingUpdate]);
+  }, [MMMUserData]);
 
   if (landing) {
     return (
@@ -129,7 +121,7 @@ export default function Insurance() {
                         Gender
                       </th>
                   
-                      <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="w-48 px-4 py-3 text-left bg-primary/8">
                         Medical History
                       </th>
                     </tr>
@@ -168,9 +160,11 @@ export default function Insurance() {
                           
                             setSelectedPatient(item);
                             setOpenModal(true);
+                           
                           
-                          }}>
-                            <FaEye className={`text-xl hover:text-gray-500 cursor-pointer`} />
+                          }}
+                           className={`flex gap-2 hover:text-gray-500 cursor-pointer`}  >
+                            <FaEye className={`text-xl hover:text-gray-500 cursor-pointer`} /> View
                           </div>
                         </td>
                       </tr>

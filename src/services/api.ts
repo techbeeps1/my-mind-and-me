@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-//import axios from "axios";
+export const imagePath = "http://54.89.179.53:8000/image/"; 
 
-export const BACKEND = "http://54.89.179.53:8000/v1/admin";
+
+//export const BACKEND = "http://54.89.179.53:8000/v1/admin";
 export const AUTH_END  = "http://54.89.179.53:8001/v1/auth";
 export const REF_END = "http://54.89.179.53:8002/v1/referrer";
 export const PATIENT_END = "http://54.89.179.53:8003/v1/patient";
 export const PRACTITIONER_END = "http://54.89.179.53:8004/v1/practitioner";
 export const BOOKING_END = "http://54.89.179.53:8006/v1/booking";
 
-export const adminApiPath = "/api/admin";
+//export const adminApiPath = "/api/admin";
 export const authApiPath = "/api/auth";
 export const refApiPath = "/api/referrer";
 export const paApiPath = "/api/patient";
@@ -18,8 +19,15 @@ export const bookingApiPath = "/api/booking";
 
 
 
-export const imagePath = "http://54.89.179.53:8000/image/"; 
 
+
+// get related-patients
+export async function GetRelatedPatients(role:string, UserId:string) {
+  const res = await fetch(`${paApiPath}/related-patients/${role}/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch patient profile");
+  return res.json();
+}
+ 
 
 // booking status change
 export async function CreateMedicalNote( data:any ) {
@@ -323,8 +331,8 @@ export async function GetPractitionerProfile(UserId:string) {
 
 
 // get referral-history
-export async function GetReferralHistory(userid:string) {
-  const res = await fetch(`${refApiPath}/allreferrals/${userid}`);
+export async function GetReferralHistory(role:string,   userid:string) {
+  const res = await fetch(`${refApiPath}/allreferrals/${role}/${userid}`);
    if (!res.ok) throw new Error("Failed to fetch referral history");
   return res.json();
 }

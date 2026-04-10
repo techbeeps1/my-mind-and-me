@@ -154,7 +154,7 @@ export default function PractitionerProfile() {
                 <div className="mt-5">
 
                   <div className="flex md:gap-5 gap-3.75 flex-col">
-                    <div className="w-full">
+                    <div className="w-full border border-primary/30 rounded-md p-1.5">
                         <textarea
                   
                         name="bio"

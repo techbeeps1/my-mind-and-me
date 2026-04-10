@@ -123,7 +123,7 @@ return(
         <button
           disabled={!method}
           onClick={() => setStep("confirm")}
-          className="w-full bg-black hover:bg-gray-900 transition text-white py-3 rounded-xl font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+          className="cursor-pointer w-full bg-black hover:bg-gray-900 transition text-white py-3 rounded-xl font-medium disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Continue →
         </button>
@@ -144,14 +144,14 @@ return(
         <div className="flex gap-3">
           <button
             onClick={() => handleConfirm("success")}
-            className="flex-1 bg-green-500 hover:bg-green-600 transition text-white py-3 rounded-xl font-medium shadow-sm"
+            className="cursor-pointer flex-1 bg-green-500 hover:bg-green-600 transition text-white py-3 rounded-xl font-medium shadow-sm"
           >
             Success
           </button>
 
           <button
             onClick={() => setstatus(true)}
-            className="flex-1 bg-red-500 hover:bg-red-600 transition text-white py-3 rounded-xl font-medium shadow-sm"
+            className="cursor-pointer flex-1 bg-red-500 hover:bg-red-600 transition text-white py-3 rounded-xl font-medium shadow-sm"
           >
             Failed
           </button>
@@ -159,7 +159,7 @@ return(
 
         <button
           onClick={() => setStep("select")}
-          className="w-full text-sm text-gray-400 hover:text-gray-600 transition"
+          className="w-full text-sm text-gray-400 hover:text-gray-600 transition cursor-pointer"
         >
           ← Back
         </button>
