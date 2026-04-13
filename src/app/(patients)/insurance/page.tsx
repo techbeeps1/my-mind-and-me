@@ -2,7 +2,7 @@
 import WrapperBanner from "@/components/WraperBanner";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import SessionModal from "@/components/SessionModal";
+import SessionModal from "@/components/ResourceVideoPlayer";
 import { GetInsuranceData } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
 import { IoMdArrowRoundBack } from "react-icons/io";

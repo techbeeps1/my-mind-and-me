@@ -17,6 +17,7 @@ import {
   FiChevronDown,
   FiMenu,
 } from "react-icons/fi";
+import { LuFileVideo2 } from "react-icons/lu";
 
 type MenuItem = {
   name: string;
@@ -64,6 +65,13 @@ export default function SidebarDashBoard({
       ],
     },
     { name: "Progress", path: "/progress", icon: <FiFileText /> },
+    { name: "Resources", path: "/resources-videos", icon: <LuFileVideo2 />, 
+    children: [
+        { name: "Videos", path: "/resources-videos" },
+        { name: "Reflection Questions", path: "/reflection-questions" },     
+        { name: "My Purchases", path: "/my-purchases" },     
+      ],
+    },
     { name: "Medical History", path: "/medical-history", icon: <FiFileText /> },
    
    

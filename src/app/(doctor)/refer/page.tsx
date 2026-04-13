@@ -235,9 +235,10 @@ export default function AddReferrer() {
                       <option value="" selected>
                         Select Level
                       </option>
+                      <option>Routine</option>
                       <option>Emergency</option>
-                      <option>High</option>
-                      <option>Low</option>
+                      <option>Urgent</option>
+                    
                     </select>
                   </div>
                 </div>

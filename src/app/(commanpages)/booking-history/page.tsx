@@ -28,6 +28,7 @@ export interface BookingHistoryType {
 export default function Insurance() {
   const [landing, setLanding] = useState(true);
   const [openStatusChange, setOpenStatusChange] = useState(false);
+  const [openReason, setOpenReason] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<BookingHistoryType >();
   const [BookingHistory, setBookingHistory] = useState<BookingHistoryType[]>([]);
     const [bookingUpdate,setBookingUpdate] =useState<number>(0)
@@ -128,10 +129,10 @@ export default function Insurance() {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
-                        <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                        <th className="px-4 py-3 text-left bg-primary/8 ">
                         Booking ID
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         {MMMUserData?.role === "patient" ? "Practitioner Name" : "Patient Name"}
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
@@ -140,16 +141,16 @@ export default function Insurance() {
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Time
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
+                      <th className="px-4 py-3 text-left bg-primary/8  ">
                         Amount
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         Reason
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         Action
                       </th>
                     </tr>
@@ -169,10 +170,10 @@ export default function Insurance() {
 
                     {filteredData.map((item) => (
                       <tr key={item.id}>
-                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
+                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
                           #{item.booking_id}
                         </td>
-                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
+                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary ">
                           {item.full_name}                        </td>
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
@@ -182,21 +183,28 @@ export default function Insurance() {
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                           {item.slot}
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold ">
                          {"R "}{item.booking_fee}
                         </td>
 
-                        <td className={`px-4 py-4 text-sm font-semibold whitespace-nowrap `}>
+                        <td className={`px-4 py-4 text-sm font-semibold`}>
 
                           <span className={ `capitalize ${statusColors[item.status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}>
                             {item.status}
                           </span >
                         </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold capitalize whitespace-nowrap">
-                          {item.reason}
+                        <td className="px-4 py-4 text-sm text-primary font-semibold capitalize ">
+                          {item?.reason?.slice(0, 40)}{item?.reason?.length > 40 ? "..." : "" }
+                          {item?.reason && item.reason.length > 40 && (
+                            <span onClick={() => {setOpenReason(item.reason)}} className="ml-2 text-gray-400 cursor-pointer" >
+                            Read More
+                            </span>
+                          )}
+
+              
 
                         </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
+                        <td className="px-4 py-4 text-sm text-primary font-semibold ">
                           
                           <div onClick={() => {
                             if( item.status == "booked"){ 
@@ -216,11 +224,47 @@ export default function Insurance() {
             </div>
           </div>
         </div>
-
+{openReason && (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+  
+        <div
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          onClick={() => setOpenReason("")}
+        />
+        <div className="relative max-w-xl w-full" >
+          <button
+            onClick={() => setOpenReason("")}
+            className="absolute top-4 right-4 z-1 text-white cursor-pointer font-bold h-7.5 w-7.5 rounded-full bg-primary text-sm flex items-center justify-center"
+          >
+            ✕
+          </button>
+  
+                    <div className="max-w-337.5 w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
+                      <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-5 mb-1.5">
+                        Reason
+                      </h2>
+              
+                      <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl ">
+  
+                        <div className="overflow-x-auto rounded-lg  bg-white">
+                          <div className="w-full text-left py-4 text-sm text-primary font-semibold px-4">
+                            {openReason}
+                          </div>
+                        </div>
+                      </div>
+            
+                    </div>
+                  
+  
+  
+        </div>
+      </div>
+)}
       </WrapperBanner>
         { openStatusChange && selectedBooking && (
             <BookingStatusChange setBookingUpdate={setBookingUpdate} setOpenStatusChange={setOpenStatusChange} data={selectedBooking} Role={MMMUserData?.role} />
         )}
+
     </>
   );
 }

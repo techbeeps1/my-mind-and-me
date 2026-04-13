@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { LuEye } from "react-icons/lu";
-import SessionModal from "@/components/SessionModal";
+import SessionModal from "@/components/ResourceVideoPlayer";
 import SidebarDashBoard from "@/components/SidebarDashBoard";
 
 // data/patients.ts
