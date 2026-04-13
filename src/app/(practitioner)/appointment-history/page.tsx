@@ -60,7 +60,7 @@ export default function ReferralHistory() {
       return matchesSearch && matchesStatus;
     });
   }, [search, statusFilter]);
-  const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState("");
   return (
     <>
       <WrapperBanner>
@@ -167,7 +167,7 @@ export default function ReferralHistory() {
                         </td>
 
                         <td className="px-4 py-4 flex items-center gap-2.5 justify-end">
-                          <button onClick={() => setOpenModal(true)} className="px-1.25 flex justify-center items-center h-8.75 w-8.75 bg-primary rounded-sm border border-primary/25 text-white cursor-pointer">
+                          <button onClick={() => setOpenModal(item.name)} className="px-1.25 flex justify-center items-center h-8.75 w-8.75 bg-primary rounded-sm border border-primary/25 text-white cursor-pointer">
                             <LuEye className="h-5 w-5" />
                           </button>
 
@@ -183,7 +183,7 @@ export default function ReferralHistory() {
             </div>
           </div>
         </div>
-        <SessionModal isOpen={openModal} onClose={() => setOpenModal(false)} />
+        <SessionModal isOpen={openModal} onClose={() => setOpenModal("")} />
       </WrapperBanner>
     </>
   );
