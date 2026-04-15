@@ -35,7 +35,7 @@ export default function LogoutPage() {
     };
 
     logout();
-  }, [router]);
+  }, [router, logoutUser]);
 
   return null;
 }

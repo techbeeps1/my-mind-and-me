@@ -15,11 +15,10 @@ type PaymentResponse = {
 };
 type FormDataType = {
   patient_id: string;
-  practitioner_id: string;
-  full_name: string;
-  date: string;
-  slot: string;
-  fee: string;
+  practitioner_id?: string | null;
+  full_name: string | null;
+  slot?: string | null;
+  fee: string ;
 };
 
 export default function DemoPaymentGateway( {data, callback }: { data: FormDataType,callback: (paymentData: PaymentResponse) => void; }) {
@@ -33,7 +32,7 @@ export default function DemoPaymentGateway( {data, callback }: { data: FormDataT
     // simulate callback redirect
     setTimeout(() => {
         const paymentData: PaymentResponse = {
-            txnId: "TXN123456",
+            txnId: "TXN" + Math.floor(Math.random() * 1000000),
             date: new Date().toISOString(),
             method,
             status: type,

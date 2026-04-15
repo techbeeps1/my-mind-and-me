@@ -19,6 +19,47 @@ export const bookingApiPath = "/api/booking";
 
 
 
+// purchase resource status update
+export async function resourcePaymentStatusUpdate( data:any ) {
+  const res = await fetch(`${paApiPath}/resources/payment`, {   
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+   body:JSON.stringify(data)
+  });
+  if (!res.ok) { throw new Error("Failed to update resource payment status");}
+  return await res.json();
+}
+
+// create resource order
+export async function CreatePurchaseResource( data:any ) {
+  const res = await fetch(`${paApiPath}/resources/payment`, {   
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { throw new Error("Failed to create purchase resource");}
+  return await res.json();
+}
+
+
+// get my purchases
+export async function GetMyPurchases(userID:string) {
+  const res = await fetch(`${paApiPath}/mypurchase/${userID}`);
+   if (!res.ok) throw new Error("Failed to fetch my purchases");
+  return res.json();
+}
+
+
+// Get Resources
+export async function GetResources(type:string,userID: string ) {
+  const res = await fetch(`${paApiPath}/resources/${type}/${userID}`);
+   if (!res.ok) throw new Error("Failed to fetch resources");
+  return res.json();
+}
 
 
 // get related-patients

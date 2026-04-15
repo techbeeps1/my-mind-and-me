@@ -62,6 +62,9 @@ export async function proxy(request: NextRequest) {
   }
 
   const patients = [
+    "/resources-videos",
+    "/my-purchases",
+    "/reflection-questions",
     "/change-password",
     "/dashboard",
     "/booking-history",

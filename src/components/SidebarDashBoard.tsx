@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+
 import { useProfile } from "@/services/ProfileContext";
 import { IoClose } from "react-icons/io5";
 import {
@@ -65,7 +65,7 @@ export default function SidebarDashBoard({
       ],
     },
     { name: "Progress", path: "/progress", icon: <FiFileText /> },
-    { name: "Resources", path: "/resources-videos", icon: <LuFileVideo2 />, 
+    { name: "Resources", icon: <LuFileVideo2 />, 
     children: [
         { name: "Videos", path: "/resources-videos" },
         { name: "Reflection Questions", path: "/reflection-questions" },     
@@ -77,7 +77,7 @@ export default function SidebarDashBoard({
    
     {
       name: "My Profile",
-      path: "/my-profile",
+      
       icon: <FiUser />,
       children: [
         { name: "My Profile", path: "/my-profile" },
@@ -104,7 +104,7 @@ export default function SidebarDashBoard({
     { name: "Patients", path: "/patients-list" , icon: <FiUsers /> },
     {
       name: "My Profile",
-      path: "/my-profile",
+     
       icon: <FiUser />,
       children: [
         { name: "My Profile", path: "/my-profile" },
