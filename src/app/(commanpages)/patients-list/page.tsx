@@ -24,6 +24,7 @@ export default function Insurance() {
      const { MMMUserData } = useProfile();
   const [landing, setLanding] = useState(true);
   const [openModal, setOpenModal] = useState(false);
+
   const [selectedPatient, setSelectedPatient] = useState<PatientType | undefined>();
   const [BookingHistory, setBookingHistory] = useState<PatientType[]>([]);
 
@@ -120,10 +121,14 @@ export default function Insurance() {
                       <th className="px-4 py-3 text-left bg-primary/8 ">
                         Gender
                       </th>
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
+                        Type
+                      </th>
                   
-                      <th className="w-48 px-4 py-3 text-left bg-primary/8">
+                      <th className=" px-4 py-3 text-left bg-primary/8">
                         Medical History
                       </th>
+                
                     </tr>
                   </thead>
 
@@ -155,6 +160,9 @@ export default function Insurance() {
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold capitalize">
                          {item.gender}
                         </td>
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold capitalize">
+                        {"Direct"}
+                        </td>
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
                           <div onClick={() => {
                           
@@ -167,6 +175,7 @@ export default function Insurance() {
                             <FaEye className={`text-xl hover:text-gray-500 cursor-pointer`} /> View
                           </div>
                         </td>
+                             
                       </tr>
                     ))}
                   </tbody>
@@ -176,6 +185,8 @@ export default function Insurance() {
           </div>
         </div>
      {openModal && selectedPatient?.id && (<MedicalHistoryTable isOpen={openModal} onClose={() => setOpenModal(false)} id={selectedPatient?.id} />)}
+    
+
       </WrapperBanner>
    
     </>

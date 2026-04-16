@@ -1,19 +1,18 @@
 "use client";
 import LoadingSpin from "@/components/LoadingSpin";
+import PrivateNotesTable from "@/components/PrivateNotesTable";
 import WrapperBanner from "@/components/WraperBanner";
 import { GetReferralHistory } from "@/services/api";
 import { useProfile } from "@/services/ProfileContext";
 
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-
-
-
+import { IoChatboxSharp } from "react-icons/io5";
 
 export type PatientStatus = "Active" | "Inactive";
 
 export interface Patient {
-  id: string;
+  history_id: string;
   urgency_level: string;
   preferred_modality: string;
   clinical_presentation: string;
@@ -21,17 +20,21 @@ export interface Patient {
   status: PatientStatus;
   created_at: string;
   patient_name: string;
-  doctor_name: string;     
+  doctor_name: string;
+  doctor_id: string;
+  practitioner_id: string;
+  patient_id: string;
 }
 
- 
+
 
 export default function ReferralHistory() {
-   const { MMMUserData } = useProfile();
+  const { MMMUserData } = useProfile();
   const [search, setSearch] = useState("");
   const [landing, setLanding] = useState(true);
-  const[patients, setPatients] = useState<Patient[]>([]);
-
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [openModalPrivate, setOpenModalPrivate] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<Patient>();
 
   const [statusFilter, setStatusFilter] = useState<PatientStatus | "All">(
     "All",
@@ -39,41 +42,41 @@ export default function ReferralHistory() {
 
   useEffect(() => {
     if (!MMMUserData) return;
-    GetReferralHistory(MMMUserData?.role,MMMUserData?.id).then((data) => {
-
-         setLanding(false);
+    GetReferralHistory(MMMUserData?.role, MMMUserData?.id)
+      .then((data) => {
+        setLanding(false);
         setPatients(data.data);
-        
-    }).catch((error) => {     
-       console.error("Error fetching referral history:", error);
-    })
+      })
+      .catch((error) => {
+        console.error("Error fetching referral history:", error);
+      });
   }, [MMMUserData]);
 
+  const filteredData = useMemo(() => {
+    return patients.filter((item) => {
+      const matchesSearch =
+        item.patient_name.toLowerCase().includes(search.toLowerCase()) ||
+        item.doctor_name.toLowerCase().includes(search.toLowerCase()) ||
+        item.urgency_level.toLowerCase().includes(search.toLowerCase()) ||
+        item.preferred_modality.toLowerCase().includes(search.toLowerCase()) ||
+        item.clinical_presentation
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
+        item.chief_complaint.toLowerCase().includes(search.toLowerCase()) ||
+        item.created_at.toLowerCase().includes(search.toLowerCase());
 
-const filteredData = useMemo(() => {
-  return patients.filter((item) => {
-    const matchesSearch =
-      item.patient_name.toLowerCase().includes(search.toLowerCase()) ||
-      item.doctor_name.toLowerCase().includes(search.toLowerCase()) ||
-      item.urgency_level.toLowerCase().includes(search.toLowerCase()) ||
-      item.preferred_modality.toLowerCase().includes(search.toLowerCase()) ||
-      item.clinical_presentation.toLowerCase().includes(search.toLowerCase()) ||
-      item.chief_complaint.toLowerCase().includes(search.toLowerCase()) ||
-      item.created_at.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus =
+        statusFilter === "All" || item.status === statusFilter;
 
+      return matchesSearch && matchesStatus;
+    });
+  }, [search, statusFilter, patients]);
 
-    const matchesStatus =
-      statusFilter === "All" || item.status === statusFilter;
-
-    return matchesSearch && matchesStatus;
-  });
-}, [search, statusFilter, patients]);
-
- if (landing) {
+  if (landing) {
     return (
-      <WrapperBanner>   
+      <WrapperBanner>
         <div className="flex-1 flex justify-center items-center h-[70vh]">
-           <LoadingSpin />
+          <LoadingSpin />
         </div>
       </WrapperBanner>
     );
@@ -121,14 +124,33 @@ const filteredData = useMemo(() => {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
-                      <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">Patient Name</th>
-                      <th className="px-4 py-3 text-left bg-primary/8">Date</th>            
-                      <th className="px-4 py-3 text-left bg-primary/8">Urgency Level</th>                 
-                      <th className="px-4 py-3 text-left bg-primary/8">Preferred Modality</th>
-                      <th className="px-4 py-3 text-left bg-primary/8">Clinical Presentation</th>
-                      <th className="px-4 py-3 text-left bg-primary/8">Chief Complaint</th>
-                      <th className="px-4 py-3 text-left bg-primary/8">{ MMMUserData?.role == 'practitioner' ? 'Doctor Name' : 'Practitioner Name' }</th>
-                      <th className="px-4 py-3 text-right bg-primary/8 rounded-tr-lg">Status</th>
+                      <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">
+                        Patient Name
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8">Date</th>
+                      <th className="px-4 py-3 text-left bg-primary/8">
+                        Urgency Level
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8">
+                        Preferred Modality
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8">
+                        Clinical Presentation
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8">
+                        Chief Complaint
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8">
+                        {MMMUserData?.role == "practitioner"
+                          ? "Doctor Name"
+                          : "Practitioner Name"}
+                      </th>
+                      <th className="px-4 py-3 text-right bg-primary/8 ">
+                        Status
+                      </th>
+                      <th className=" px-4 py-3 text-left bg-primary/8 rounded-tr-lg">
+                        Private Notes
+                      </th>
                     </tr>
                   </thead>
 
@@ -145,9 +167,8 @@ const filteredData = useMemo(() => {
                     )}
 
                     {filteredData.map((item) => (
-                      <tr key={item.id}>
+                      <tr key={item.patient_id}>
                         <td className="px-4 py-4 flex items-center gap-3">
-        
                           <span className="font-bold text-sm leading-9 text-primary">
                             {item.patient_name}
                           </span>
@@ -160,7 +181,9 @@ const filteredData = useMemo(() => {
                           {item.urgency_level}
                         </td>
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.preferred_modality == "Both" ? "Psychiatric Assessment, Therapy" : item.preferred_modality}
+                          {item.preferred_modality == "Both"
+                            ? "Psychiatric Assessment, Therapy"
+                            : item.preferred_modality}
                         </td>
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
                           {item.clinical_presentation}
@@ -184,6 +207,20 @@ const filteredData = useMemo(() => {
                             </span>
                           )}
                         </td>
+                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                          <div
+                            onClick={() => {
+                              setSelectedPatient(item);
+                              setOpenModalPrivate(true);
+                            }}
+                            className={`flex gap-2 hover:text-gray-500 cursor-pointer`}
+                          >
+                            <IoChatboxSharp
+                              className={`text-xl hover:text-gray-500 cursor-pointer`}
+                            />{" "}
+                            View
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -192,6 +229,14 @@ const filteredData = useMemo(() => {
             </div>
           </div>
         </div>
+
+        {openModalPrivate && selectedPatient && (
+          <PrivateNotesTable
+            isOpen={openModalPrivate}
+            onClose={() => setOpenModalPrivate(false)}
+            data={selectedPatient}
+          />
+        )}
       </WrapperBanner>
     </>
   );

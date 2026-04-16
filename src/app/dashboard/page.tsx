@@ -19,7 +19,7 @@ export default function Home() {
             </h2>
             <div className=" px-12.5 pb-12.5 rounded-xl min-h-[60vh] ">
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+              {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
 
                 <div className="bg-white p-5 rounded-xl shadow">
                   <p className="text-sm text-gray-500">Total Patients</p>
@@ -41,6 +41,10 @@ export default function Home() {
                   <h2 className="text-2xl font-bold mt-2">₹1,20,000</h2>
                 </div>
 
+              </div> */}
+
+              <div className="bg-white p-5 rounded-xl flex items-center justify-center">
+                <h2 className="text-2xl font-bold text-gray-500">Welcome to your dashboard!</h2>
               </div>
 
             </div>

@@ -18,6 +18,45 @@ export const bookingApiPath = "/api/booking";
 // API paths for LOCAL
 
 
+// add conversation 
+export async function addResourceInProgress( data:any ) {
+  const res = await fetch(`${prApiPath}/progress`, {   
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { throw new Error("Failed to create conversation");}
+  return await res.json();
+}
+
+
+// add conversation 
+export async function SendConversation( data:any ) {
+  const res = await fetch(`${prApiPath}/conversation-history`, {   
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { throw new Error("Failed to create conversation");}
+  return await res.json();
+}
+
+// get conversation 
+export async function getConversation( data:any ) {
+  const res = await fetch(`${prApiPath}/view-conversation`, {   
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { throw new Error("Failed to get conversation");}
+  return await res.json();
+}
 
 // purchase resource status update
 export async function resourcePaymentStatusUpdate( data:any ) {

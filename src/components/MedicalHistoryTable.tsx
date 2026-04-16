@@ -68,6 +68,7 @@ export default function MedicalHistoryTable({
       setTimeout(() => {
         setLanding(true);
     }, 1);
+
       GetMedicalHistory(id) 
         .then((data) => {
           setLanding(false);
