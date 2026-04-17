@@ -62,6 +62,20 @@ export default function BookingStatusChange({
       return;
     }
 
+if (formData.type === "completed") {
+
+  if (formData.medical_note.trim().length < 5 || formData.medical_note.trim().length > 250) {
+    toastTBS.error("Medical note for patient must be between 5 to 250 characters");
+    return;
+  }
+
+  if (formData.private_note.trim().length < 5 || formData.private_note.trim().length > 250) {
+    toastTBS.error("Private note for doctor must be between 5 to 250 characters");
+    return;
+  }
+}
+    
+
     if (loading) return;
     setLoading(true);
    
@@ -75,9 +89,19 @@ export default function BookingStatusChange({
     })
       .then((res) => {
         if (res.success) {
-          setBookingIsCompleted(true);
+        
+          if (formData.type === "completed") {
+            setBookingIsCompleted(true);
+            
+          }
+          else {
+            toastTBS.success(res.message);
+            setOpenStatusChange(false);
+            setBookingUpdate((prev) => prev + 1);
+          }
+
         } else {
-          toastTBS.success(res.message || "Failed to update booking status");
+          toastTBS.error(res.message || "Failed to update booking status");
         }
         setLoading(false);
       })
@@ -176,7 +200,7 @@ export default function BookingStatusChange({
                     </div>
                     <div className="w-full">
                       <label className="block text-sm font-semibold leading-[24px] text-primary mb-[8px]">
-                        Medical Notes (
+                        Private Notes (
                         <span className="text-xs text-gray-500">
                           for Doctor
                         </span>

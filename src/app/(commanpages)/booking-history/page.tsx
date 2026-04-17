@@ -9,8 +9,10 @@ import { FaRegEdit } from "react-icons/fa";
 import Link from "next/link";
 
 import BookingStatusChange from "@/components/comman/BookingStatusChange";
+import ReadMorePopup from "@/components/comman/ReadMorePopup";
+import ReadMoreButton from "@/components/comman/ReadMoreButton";
+import { SiGooglemeet } from "react-icons/si";
 export interface BookingHistoryType {
-
   id: string;
   practitioner_id: string;
   patient_id: string;
@@ -21,24 +23,26 @@ export interface BookingHistoryType {
   appointment_type: string;
   status: string;
   booking_fee: string;
+  meeting_link: string;
   reason: string;
 }
- 
 
 export default function Insurance() {
   const [landing, setLanding] = useState(true);
   const [openStatusChange, setOpenStatusChange] = useState(false);
-  const [openReason, setOpenReason] = useState("");
-  const [selectedBooking, setSelectedBooking] = useState<BookingHistoryType >();
-  const [BookingHistory, setBookingHistory] = useState<BookingHistoryType[]>([]);
-    const [bookingUpdate,setBookingUpdate] =useState<number>(0)
+  const [openReadMore, setOpenReadMore] = useState("");
+  const [openReadMoreTitle, setOpenReadMoreTitle] = useState("");
+  const [selectedBooking, setSelectedBooking] = useState<BookingHistoryType>();
+  const [BookingHistory, setBookingHistory] = useState<BookingHistoryType[]>(
+    [],
+  );
+  const [bookingUpdate, setBookingUpdate] = useState<number>(0);
 
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
     const data = localStorage.getItem("MMMDT");
     return data ? JSON.parse(data) : null;
   });
-
 
   const statusColors: { [key: string]: string } = {
     completed: "text-green-800 border border-green-800/50 bg-green-100",
@@ -53,7 +57,10 @@ export default function Insurance() {
   const filteredData = useMemo(() => {
     return BookingHistory.filter((item) => {
       const matchesSearch =
-       item.booking_id.toString().toLowerCase().includes(search.toLowerCase()) ||
+        item.booking_id
+          .toString()
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
         item.full_name.toLowerCase().includes(search.toLowerCase()) ||
         item.booking_date.toLowerCase().includes(search.toLowerCase()) ||
         item.slot.toLowerCase().includes(search.toLowerCase()) ||
@@ -65,8 +72,6 @@ export default function Insurance() {
     });
   }, [search, BookingHistory]);
 
-
-
   useEffect(() => {
     GetBookingHistory(MMMUserData?.id)
       .then((data) => {
@@ -75,12 +80,11 @@ export default function Insurance() {
         if (data.success) {
           setBookingHistory(data.history);
         }
-
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [MMMUserData?.id,bookingUpdate]);
+  }, [MMMUserData?.id, bookingUpdate]);
 
   if (landing) {
     return (
@@ -91,7 +95,6 @@ export default function Insurance() {
       </WrapperBanner>
     );
   }
-
 
   return (
     <>
@@ -118,7 +121,10 @@ export default function Insurance() {
                   </button>
                 </div>
                 {MMMUserData?.role === "patient" && (
-                  <Link href={"/book-a-appointment"} className="px-4 cursor-pointer py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition">
+                  <Link
+                    href={"/book-a-appointment"}
+                    className="px-4 cursor-pointer py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
+                  >
                     Book a Appointment
                   </Link>
                 )}
@@ -129,11 +135,13 @@ export default function Insurance() {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
-                        <th className="px-4 py-3 text-left bg-primary/8 ">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         Booking ID
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 ">
-                        {MMMUserData?.role === "patient" ? "Practitioner Name" : "Patient Name"}
+                        {MMMUserData?.role === "patient"
+                          ? "Practitioner Name"
+                          : "Patient Name"}
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Date
@@ -174,7 +182,8 @@ export default function Insurance() {
                           #{item.booking_id}
                         </td>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary ">
-                          {item.full_name}                        </td>
+                          {item.full_name}{" "}
+                        </td>
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
                           {item.booking_date}
@@ -184,37 +193,49 @@ export default function Insurance() {
                           {item.slot}
                         </td>
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold ">
-                         {"R "}{item.booking_fee}
+                          {"R "}
+                          {item.booking_fee}
                         </td>
 
                         <td className={`px-4 py-4 text-sm font-semibold`}>
-
-                          <span className={ `capitalize ${statusColors[item.status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}>
+                          <span
+                            className={`capitalize ${statusColors[item.status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}
+                          >
                             {item.status}
-                          </span >
+                          </span>
                         </td>
                         <td className="px-4 py-4 text-sm text-primary font-semibold capitalize ">
-                          {item?.reason?.slice(0, 40)}{item?.reason?.length > 40 ? "..." : "" }
-                          {item?.reason && item.reason.length > 40 && (
-                            <span onClick={() => {setOpenReason(item.reason)}} className="ml-2 text-gray-400 cursor-pointer" >
-                            Read More
-                            </span>
-                          )}
-
-              
-
+                          <ReadMoreButton
+                            text={item.reason}
+                            title="Reason"
+                            limit={40}
+                            setdata={setOpenReadMore}
+                            setdataTitle={setOpenReadMoreTitle}
+                          />
                         </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold ">
-                          
-                          <div onClick={() => {
-                            if( item.status == "booked"){ 
-                            setSelectedBooking(item);
-                            setOpenStatusChange(true);
-                            }
-                          }}>
-                            <FaRegEdit className={`text-xl  ${item.status !== "booked"  ? "text-gray-300 cursor-not-allowed" : "hover:text-gray-500 cursor-pointer"}`} />
+                        <td className="px-4 py-4 text-sm text-primary font-semibold  flex items-center gap-2">
+                          <div
+                            onClick={() => {
+                              if (item.status == "booked") {
+                                setSelectedBooking(item);
+                                setOpenStatusChange(true);
+                              }
+                            }}
+                          >
+                            <FaRegEdit
+                              className={`text-xl  ${item.status !== "booked" ? "text-gray-300 cursor-not-allowed" : "hover:text-gray-500 cursor-pointer"}`}
+                            />
                           </div>
-
+                           
+                          <Link
+                            href={item.meeting_link ?? "#"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`${item.status !== "booked" ? "text-gray-400 cursor-not-allowed bg-gray-300" : "bg-gradient-to-r from-teal-400 to-teal-700 text-white" }  hover:scale-105 transition text-md   font-semibold shadow-lg flex items-center justify-center gap-1 px-2 py-1 rounded-md text-sm`}
+                          >
+                            <SiGooglemeet className="text-lg" /> Join
+                          </Link>
+                            
                         </td>
                       </tr>
                     ))}
@@ -224,47 +245,21 @@ export default function Insurance() {
             </div>
           </div>
         </div>
-{openReason && (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-  
-        <div
-          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-          onClick={() => setOpenReason("")}
+        <ReadMorePopup
+          setOpenReadMore={setOpenReadMore}
+          openReadMore={openReadMore}
+          openReadMoreTitle={openReadMoreTitle}
         />
-        <div className="relative max-w-xl w-full" >
-          <button
-            onClick={() => setOpenReason("")}
-            className="absolute top-4 right-4 z-1 text-white cursor-pointer font-bold h-7.5 w-7.5 rounded-full bg-primary text-sm flex items-center justify-center"
-          >
-            ✕
-          </button>
-  
-                    <div className="max-w-337.5 w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
-                      <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-5 mb-1.5">
-                        Reason
-                      </h2>
-              
-                      <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl ">
-  
-                        <div className="overflow-x-auto rounded-lg  bg-white">
-                          <div className="w-full text-left py-4 text-sm text-primary font-semibold px-4">
-                            {openReason}
-                          </div>
-                        </div>
-                      </div>
-            
-                    </div>
-                  
-  
-  
-        </div>
-      </div>
-)}
       </WrapperBanner>
-        { openStatusChange && selectedBooking && (
-            <BookingStatusChange setBookingUpdate={setBookingUpdate} setOpenStatusChange={setOpenStatusChange} data={selectedBooking} Role={MMMUserData?.role} />
-        )}
 
+      {openStatusChange && selectedBooking && (
+        <BookingStatusChange
+          setBookingUpdate={setBookingUpdate}
+          setOpenStatusChange={setOpenStatusChange}
+          data={selectedBooking}
+          Role={MMMUserData?.role}
+        />
+      )}
     </>
   );
 }

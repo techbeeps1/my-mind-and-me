@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 
 import {  GetBookinglistbydate } from "@/services/api";
-
+import { SiGooglemeet } from "react-icons/si";
 import LoadingSpin from "./LoadingSpin";
+import Link from "next/link";
 
 export interface BookingHistoryType {
 
@@ -12,6 +13,7 @@ export interface BookingHistoryType {
   full_name: string;
   slot: string;
   booking_date: string;
+  meeting_link: string;
 
 }
 
@@ -103,6 +105,9 @@ if (!isOpen) return null;
                               <th className="px-4 py-3 text-left bg-primary/8">
                                 Time
                               </th>
+                              <th className="px-4 py-3 text-left bg-primary/8">
+                                Meeting Link
+                              </th>
                      
                             </tr>
                           </thead>
@@ -133,6 +138,16 @@ if (!isOpen) return null;
         
                                 <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
                                   {item.slot}
+                                </td>
+                                <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                                  <Link
+                                    href={item.meeting_link ?? "#"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className=" hover:scale-105 transition text-md bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg flex items-center justify-center gap-2 px-2 py-1.5 rounded-md text-sm"
+                                  >
+                                    <SiGooglemeet className="text-[18px]" /> Join 
+                                  </Link>
                                 </td>
                              
 

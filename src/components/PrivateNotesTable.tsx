@@ -160,7 +160,7 @@ export default function PrivateNotesTable({
                           <div
                             className={`max-w-[70%] px-4 py-3 rounded-2xl shadow-sm ${
                               isDoctor
-                                ? "bg-gray-100 text-primary"
+                                ? "bg-[#56e1e845] text-gray-800"
                                 : "bg-primary text-white"
                             }`}
                           >

@@ -5,6 +5,8 @@ import { FiSearch } from "react-icons/fi";
 import {  Getmedicalhistory } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
 import { useProfile } from "@/services/ProfileContext";
+import ReadMoreButton from "@/components/comman/ReadMoreButton";
+import ReadMorePopup from "@/components/comman/ReadMorePopup";
 export interface Patient {
   id: string;
   patient_id: string;
@@ -27,7 +29,8 @@ export default function MedicalHistory() {
   const [search, setSearch] = useState("");
   const [landing, setLanding] = useState(true);
   const [patientsMedicalHistory, setPatientsMedicalHistory] = useState<Patient[]>([]);
-
+  const [openReadMore, setOpenReadMore] = useState("");
+  const [openReadMoreTitle, setOpenReadMoreTitle] = useState("");
 
 
   const filteredData = useMemo(() => {
@@ -127,10 +130,13 @@ export default function MedicalHistory() {
                         </td>
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
                           <div>{item.created_at}</div>
+                 
                                                 
                         </td>                  
                         <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-                          {item.notes}
+  
+                          <ReadMoreButton text={item.notes} title="Notes" limit={40} setdata={setOpenReadMore} setdataTitle={setOpenReadMoreTitle}  />
+                          
                         </td>
                       </tr>
                     ))}
@@ -140,6 +146,7 @@ export default function MedicalHistory() {
             </div>
           </div>
         </div>
+       <ReadMorePopup setOpenReadMore={setOpenReadMore} openReadMore={openReadMore} openReadMoreTitle={openReadMoreTitle} />
       
       </WrapperBanner>
     </>
