@@ -5,7 +5,7 @@
 import WrapperBanner from "../../components/WraperBanner";
 
 
-export default function Home() {
+export default function Dashboard() {
 
 
   return (

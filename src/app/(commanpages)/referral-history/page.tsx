@@ -8,6 +8,8 @@ import { useProfile } from "@/services/ProfileContext";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { IoChatboxSharp } from "react-icons/io5";
+import ReadMoreButton from "@/components/comman/ReadMoreButton";
+import ReadMorePopup from "@/components/comman/ReadMorePopup";
 
 export type PatientStatus = "Active" | "Inactive";
 
@@ -35,6 +37,8 @@ export default function ReferralHistory() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [openModalPrivate, setOpenModalPrivate] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient>();
+  const [openReadMore, setOpenReadMore] = useState("");
+  const [openReadMoreTitle, setOpenReadMoreTitle] = useState("");
 
   const [statusFilter, setStatusFilter] = useState<PatientStatus | "All">(
     "All",
@@ -124,31 +128,31 @@ export default function ReferralHistory() {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
-                      <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">
+                      <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg whitespace-nowrap">
                         Patient Name
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">Date</th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">Date</th>
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Urgency Level
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Preferred Modality
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Clinical Presentation
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Chief Complaint
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         {MMMUserData?.role == "practitioner"
                           ? "Doctor Name"
                           : "Practitioner Name"}
                       </th>
-                      <th className="px-4 py-3 text-right bg-primary/8 ">
+                      <th className="px-4 py-3 text-right bg-primary/8 whitespace-nowrap">
                         Status
                       </th>
-                      <th className=" px-4 py-3 text-left bg-primary/8 rounded-tr-lg">
+                      <th className=" px-4 py-3 text-left bg-primary/8 rounded-tr-lg whitespace-nowrap">
                         Private Notes
                       </th>
                     </tr>
@@ -168,31 +172,31 @@ export default function ReferralHistory() {
 
                     {filteredData.map((item) => (
                       <tr key={item.patient_id}>
-                        <td className="px-4 py-4 flex items-center gap-3">
+                        <td className="px-4 py-4 whitespace-nowrap">
                           <span className="font-bold text-sm leading-9 text-primary">
                             {item.patient_name}
                           </span>
                         </td>
 
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
                           <div>{item.created_at}</div>
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                           {item.urgency_level}
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                           {item.preferred_modality == "Both"
                             ? "Psychiatric Assessment, Therapy"
                             : item.preferred_modality}
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.clinical_presentation}
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold ">                          
+                          <ReadMoreButton text={item.clinical_presentation} title="Clinical Presentation" limit={40} setdata={setOpenReadMore} setdataTitle={setOpenReadMoreTitle}  />
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
-                          {item.chief_complaint}
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold ">                          
+                          <ReadMoreButton text={item.chief_complaint} title="Chief Complaint" limit={40} setdata={setOpenReadMore} setdataTitle={setOpenReadMoreTitle}  />
                         </td>
 
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                           {item.doctor_name}
                         </td>
 
@@ -228,8 +232,7 @@ export default function ReferralHistory() {
               </div>
             </div>
           </div>
-        </div>
-
+        </div>        
         {openModalPrivate && selectedPatient && (
           <PrivateNotesTable
             isOpen={openModalPrivate}
@@ -237,6 +240,7 @@ export default function ReferralHistory() {
             data={selectedPatient}
           />
         )}
+        <ReadMorePopup setOpenReadMore={setOpenReadMore} openReadMore={openReadMore} openReadMoreTitle={openReadMoreTitle} />
       </WrapperBanner>
     </>
   );

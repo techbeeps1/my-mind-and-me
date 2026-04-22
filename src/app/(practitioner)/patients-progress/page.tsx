@@ -8,7 +8,7 @@ import { GetBankDetails, imagePath, PractitionerProfileEdit, UpdateBankDetails }
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import { json } from "stream/consumers";
-export default function PractitionerProfile() {
+export default function PatientsProgress() {
   const [isEdit, setisEdit] = useState(true);
 
   const [landingData, setLandingData] = useState(false);

@@ -218,11 +218,11 @@ const validateForm = (data: FormDataType): string => {
                       <label className="text-sm font-semibold block leading-6 text-primary mb-2">
                         Coverage Details <span className="text-red-500">*</span>
                       </label>
-                      <input
+                      <textarea
                       
                         value={formData.coverage_details }
                         onChange={handleChange}
-                        type="text"
+                        
                         name="coverage_details"
                         placeholder="Coverage Details"
                         className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"
@@ -232,11 +232,9 @@ const validateForm = (data: FormDataType): string => {
                       <label className="text-sm font-semibold block leading-6 text-primary mb-2">
                         Notes
                       </label>
-                      <input
-                     
+                      <textarea                     
                         value={formData.notes}
-                        onChange={handleChange}
-                        type="text"
+                        onChange={handleChange}                        
                         name="notes"
                         placeholder="Notes"
                         className="w-full  text-primary text-sm px-4 py-2.5 rounded-md placeholder:text-primary leading-5 bg-primary/[0.08]  outline-none"

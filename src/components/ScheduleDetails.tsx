@@ -93,19 +93,19 @@ if (!isOpen) return null;
                         <table className="w-full">
                           <thead>
                             <tr className=" text-primary text-sm font-semibold">
-                                <th className="px-4 py-3 text-left bg-primary/8">
+                                <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                                 Booking ID
                               </th>
-                              <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">
+                              <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                                 {MMMUserData?.role === "patient" ? "Practitioner Name" : "Patient Name"}
                               </th>
-                              <th className="px-4 py-3 text-left bg-primary/8">
+                              <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                                 Date
                               </th>
-                              <th className="px-4 py-3 text-left bg-primary/8">
+                              <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                                 Time
                               </th>
-                              <th className="px-4 py-3 text-left bg-primary/8">
+                              <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                                 Meeting Link
                               </th>
                      
@@ -126,17 +126,17 @@ if (!isOpen) return null;
         
                             {BookingHistory.map((item) => (
                               <tr key={item.booking_id}>
-                                <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
+                                <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
                                   #{item.booking_id}
                                 </td>
-                                <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
+                                <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
                                   {item.full_name}                        </td>
         
-                                <td className="px-4 py-4 text-sm text-primary font-semibold">
+                                <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
                                   {item.booking_date}
                                 </td>
         
-                                <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                                <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                                   {item.slot}
                                 </td>
                                 <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">

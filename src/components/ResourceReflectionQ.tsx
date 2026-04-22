@@ -21,7 +21,7 @@ export default function ResourceReflectionQ({
       />
 
       {/* Modal */}
-      <div className="relative bg-white w-180 rounded-2xl shadow-2xl p-6 z-50 animate-fadeIn overflow-y-auto">
+      <div className="relative bg-white w-180 rounded-2xl shadow-2xl p-6 z-50 animate-fadeIn overflow-y-auto custom-scroll">
 
         {/* Close Button */}
         <button
@@ -33,7 +33,7 @@ export default function ResourceReflectionQ({
 
         {/* Video Section */}
         <div className="rounded-xl  mb-5  ">
-         <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfBdW1ik8WseCyGQmACNO2JUTwp18nL-RqKoQjtRm6nO7zi8Q/viewform?embedded=true" className="w-full h-[80vh]" >Loading…</iframe>
+         <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfBdW1ik8WseCyGQmACNO2JUTwp18nL-RqKoQjtRm6nO7zi8Q/viewform?embedded=true" className="w-full h-[80vh] custom-scroll" >Loading…</iframe>
         </div>
       </div>
     </div>

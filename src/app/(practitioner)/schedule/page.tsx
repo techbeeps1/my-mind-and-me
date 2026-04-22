@@ -207,7 +207,7 @@ if (!MMMUserData) {
 
   return (
     <WraperBanner>
-      <div className="max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
+      <div className="max-w-6xl mx-auto bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)] p-6 rounded-lg shadow-md mt-5">
         {/* create this as dropdown and add the functionality to manage the slot and disconnect google calendar
          */}
 
@@ -216,7 +216,7 @@ if (!MMMUserData) {
             {/* Trigger Button */}
             <button
               onClick={() => setOpen(!open)}
-              className="cursor-pointer  flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
+              className="cursor-pointer  flex items-center gap-2 px-4 py-2 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-semibold shadow-lg hover:scale-105 transition"
             >
               Manage{" "}
               <CiSettings
@@ -248,7 +248,7 @@ if (!MMMUserData) {
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto  rounded-lg overflow-hidden">
+        <div className="max-w-4xl mx-auto bg-white  rounded-lg overflow-hidden">
           {/* Header */}
           <div className="bg-teal-700 text-white flex justify-center gap-5 items-center px-6 py-4">
             <button className="cursor-pointer px-4 py-2 text-[20px]" onClick={prevMonth}>❮</button>
@@ -259,7 +259,7 @@ if (!MMMUserData) {
           </div>
 
           {/* Days Name */}
-          <div className="grid grid-cols-7 bg-teal-600 text-white text-center text-sm">
+          <div className="grid md:grid-cols-7 grid-cols-4 bg-teal-600 text-white text-center text-sm">
             {[
               "Monday",
               "Tuesday",
@@ -276,7 +276,7 @@ if (!MMMUserData) {
           </div>
 
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7">
+          <div className="grid md:grid-cols-7 sm:grid-cols-4 grid-cols-3 ">
             {days.map((day, i) => {
               const dateStr = day
                 ? `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
@@ -301,7 +301,7 @@ if (!MMMUserData) {
                         {isToday && <IoToday className="text-gray-600" />}
                       </div>
                       {booking && (
-                        <div className="mt-4 text-[#fff] p-2 rounded text-md font-semibold">
+                        <div className="mt-4 text-white p-2 rounded text-md font-semibold">
                           You have {booking.count} sessions
                         </div>
                       )}

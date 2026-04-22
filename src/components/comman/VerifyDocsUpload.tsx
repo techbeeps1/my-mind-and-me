@@ -290,7 +290,7 @@ export default function VerifyDocsUpload() {
                     <input
                       type="date"
                       onChange={(e) => handleDate(e, key)}
-                      className="w-full bg-gray-100 rounded-lg px-4 py-3 focus:outline-none focus:ring-2"
+                      className="w-full bg-primary/8 rounded-lg text-primary px-4 py-3 focus:outline-none focus:ring-2"
                     />
                   </div>
                 </div>
@@ -300,7 +300,7 @@ export default function VerifyDocsUpload() {
             <div className="flex justify-center mt-12">
               <button
                 type="submit"
-                className="cursor-pointer px-10 py-3 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
+                className="px-4 cursor-pointer py-2 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-semibold shadow-lg hover:scale-105 transition"
               >
                 {loading ? <LoadingSpin width={4} height={15} /> : "Submit"}
               </button>

@@ -16,7 +16,7 @@ type PageProps = {
   }>;
 };
 
-export default function VerifyTokenPage({ params }: PageProps) {
+export default function ResetPass({ params }: PageProps) {
   const router = useRouter();
   const { token } = use(params);
 

@@ -18,7 +18,7 @@ export interface PaymentHistoryType {
   practitioner_id: string;
 }
 
-export default function Insurance() {
+export default function PaymentHistory() {
   const [landing, setLanding] = useState(true);
   const [PaymentHistory, setPaymentHistory] = useState<PaymentHistoryType[]>(
     [],
@@ -86,7 +86,7 @@ export default function Insurance() {
     <>
       <WrapperBanner>
         <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
-          <div className="max-w-337.5 w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
+          <div className="w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
               Payments
             </h2>
@@ -113,22 +113,22 @@ export default function Insurance() {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
-                      <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Booking ID
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">Date</th>
-                      <th className="px-4 py-3 text-left bg-primary/8">Time</th>
-                      <th className="px-4 py-3 text-left bg-primary/8 ">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">Date</th>
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">Time</th>
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Total
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 ">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
                         Platform Fee
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 ">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
                         Payout Amount
                       </th>
 
-                      <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Status
                       </th>
               
@@ -149,24 +149,24 @@ export default function Insurance() {
 
                     {filteredData.map((item) => (
                       <tr key={item.payment_id}>
-                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
+                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
                           #{item.booking_id}{" "}
                         </td>
-                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
+                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
                           {item.date}{" "}
                         </td>
 
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
                           {item.time}{" "}
                         </td>
 
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                          {"R "}{item.fee}
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                         {"R "}{item.platform_fee}
                         </td>
-                          <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold">
+                          <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                           {"R "}{item.practitioner_payout}
                         </td>
 

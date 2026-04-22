@@ -42,7 +42,7 @@ export const patients: Patient[] = [
   },
 ];
 
-export default function ReferralHistory() {
+export default function AppointmentHistory() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<PatientStatus | "All">(
     "All",

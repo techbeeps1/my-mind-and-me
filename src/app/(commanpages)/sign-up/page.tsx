@@ -20,7 +20,7 @@ type SignupPayload = {
   phone: string;
 };
 
-export default function Home() {
+export default function SignUp() {
   const router = useRouter();
   const [passVisble, setPassVisble] = useState(false);
   const [confpassVisble, setConfPassVisble] = useState(false);
