@@ -123,7 +123,7 @@ export default function PrivateNotesTable({
             ✕
           </button>
 
-          <div className="min-h-[90vh] w-[70vw] bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
+          <div className="s w-[70vw] bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-5 mb-1.5">
               Private Notes
             </h2>
@@ -131,9 +131,7 @@ export default function PrivateNotesTable({
        
               <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl">
                 <div
-                  className="bg-white rounded-lg p-4 h-[60vh] overflow-y-auto space-y-4 [&::-webkit-scrollbar]:w-1
-  [&::-webkit-scrollbar-track]:bg-transparent
-  [&::-webkit-scrollbar-thumb]:bg-gray-200"
+                  className="bg-white rounded-lg p-4 h-[60vh] overflow-y-auto space-y-4 custom-scroll+  "
                 >
 
                   {BookingHistory.length === 0 && (

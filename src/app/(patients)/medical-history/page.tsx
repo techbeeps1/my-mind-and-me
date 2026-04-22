@@ -133,8 +133,7 @@ export default function MedicalHistory() {
                  
                                                 
                         </td>                  
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">                         
-  
+                        <td className="px-4 py-4 text-sm text-primary font-semibold">
                           <ReadMoreButton text={item.notes} title="Notes" limit={40} setdata={setOpenReadMore} setdataTitle={setOpenReadMoreTitle}  />
                           
                         </td>

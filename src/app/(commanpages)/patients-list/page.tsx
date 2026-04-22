@@ -20,7 +20,7 @@ export interface PatientType {
   dob: string;
 }
 
-export default function Insurance() {
+export default function PatientsList() {
      const { MMMUserData } = useProfile();
   const [landing, setLanding] = useState(true);
   const [openModal, setOpenModal] = useState(false);
@@ -108,24 +108,24 @@ export default function Insurance() {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
-                        <th className="px-4 py-3 text-left bg-primary/8">
+                        <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Patient ID
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                       Patient Name
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         DOB
                       </th>
 
-                      <th className="px-4 py-3 text-left bg-primary/8 ">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Gender
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 ">
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Type
                       </th>
                   
-                      <th className=" px-4 py-3 text-left bg-primary/8">
+                      <th className=" px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Medical History
                       </th>
                 
@@ -146,24 +146,22 @@ export default function Insurance() {
 
                     {filteredData.map((item) => (
                       <tr key={item.id}>
-                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
+                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
                           #{item.unique_id}
                         </td>
-                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
+                        <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
                           {item.user_name}                        </td>
 
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
                           {item.dob}
                         </td>
-
-
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold capitalize">
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold capitalize whitespace-nowrap">
                          {item.gender}
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold capitalize">
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold capitalize whitespace-nowrap">
                         {"Direct"}
                         </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
+                        <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
                           <div onClick={() => {
                           
                             setSelectedPatient(item);

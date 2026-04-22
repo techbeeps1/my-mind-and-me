@@ -27,7 +27,7 @@ export interface BookingHistoryType {
   reason: string;
 }
 
-export default function Insurance() {
+export default function BookingHistory() {
   const [landing, setLanding] = useState(true);
   const [openStatusChange, setOpenStatusChange] = useState(false);
   const [openReadMore, setOpenReadMore] = useState("");
@@ -107,7 +107,7 @@ export default function Insurance() {
 
             <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl ">
               {/* Search & Filter */}
-              <div className="flex justify-between flex-wrap md:gap-0 gap-4  mb-5">
+              <div className="flex justify-between flex-wrap items-center md:gap-0 gap-4  mb-5">
                 <div className="relative">
                   <input
                     type="text"
@@ -123,7 +123,7 @@ export default function Insurance() {
                 {MMMUserData?.role === "patient" && (
                   <Link
                     href={"/book-a-appointment"}
-                    className="px-4 cursor-pointer py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
+                    className="px-4 cursor-pointer py-2 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-semibold shadow-lg hover:scale-105 transition"
                   >
                     Book a Appointment
                   </Link>

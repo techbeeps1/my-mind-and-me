@@ -8,7 +8,7 @@ import { GetBankDetails, UpdateBankDetails } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 
-export default function PractitionerProfile() {
+export default function PractitionerBankDetals() {
   const [isEdit, setisEdit] = useState(true);
 
   const [landingData, setLandingData] = useState(false);

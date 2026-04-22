@@ -21,7 +21,7 @@ interface ResourcesType {
   description: string;
 }
 
-export default function Resources() {
+export default function Progress() {
      const { MMMUserData } = useProfile();
   const [selectedSessionFree, setSelectedSessionFree] = useState("");
   const [selectedSessionPaid, setSelectedSessionPaid] = useState("");
@@ -76,7 +76,7 @@ export default function Resources() {
                       </div>
                       {landing && <div className="flex justify-center min-h-[200px]"><LoadingSpin color="bg-primary" /></div>}
                                    
-              <div className="grid px-7.5 grid-cols-5 gap-5 mb-12.5 ">
+              <div className="grid px-7.5 2xl:grid-cols-5 xl:grid-cols-4 sm:grid-cols-3 gap-5 mb-12.5 ">
       {!filteredData.length && !landing && <div className="col-span-5 text-center text-gray-500">No videos found.</div>}
            
               {filteredData.map((item) => (

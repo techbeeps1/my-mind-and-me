@@ -121,7 +121,7 @@ if (formData.type === "completed") {
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setOpenStatusChange(false)}
           />
-          <div className="relative bg-white w-125 rounded-2xl shadow-2xl p-6 z-50 animate-fadeIn">
+          <div className="relative bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)] w-125 rounded-2xl shadow-2xl p-6 z-50 animate-fadeIn">
             <button
               className="absolute top-4 right-4 z-1 text-white cursor-pointer font-bold h-7.5 w-7.5 rounded-full bg-primary text-sm flex items-center justify-center"
               onClick={() => setOpenStatusChange(false)}
@@ -129,7 +129,7 @@ if (formData.type === "completed") {
               ✕
             </button>
             <>
-              <h2 className="text-center text-[22px] leading-7 font-semibold mb-2">
+              <h2 className="text-center text-[22px] text-primary leading-7 font-semibold mb-2">
                 Manage Booking
               </h2>
               <div className="flex md:gap-5 gap-3.75 md:flex-row flex-wrap justify-between">

@@ -21,8 +21,8 @@ interface ResourcesType {
   description: string;
 }
 
-export default function Resources() {
-     const { MMMUserData } = useProfile();
+export default function ResourcesVideos() {
+  const { MMMUserData } = useProfile();
   const [selectedSessionFree, setSelectedSessionFree] = useState("");
   const [selectedSessionPaid, setSelectedSessionPaid] = useState("");
   const [landing, setLanding] = useState(true);
@@ -41,12 +41,12 @@ export default function Resources() {
   }, [search, Resources]);
 
   useEffect(() => {
-    if(!MMMUserData) return;
-    GetResources("Video",MMMUserData?.id).then((data) => {
-      if(data.success){
-      setResources(data.data);
+    if (!MMMUserData) return;
+    GetResources("Video", MMMUserData?.id).then((data) => {
+      if (data.success) {
+        setResources(data.data);
       }
-      
+
       setLanding(false);
     });
   }, [MMMUserData]);
@@ -59,26 +59,33 @@ export default function Resources() {
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold ">
               Videos
             </h2>
+            <div className="flex px-7.5 flex-wrap md:gap-0 gap-4 pt-5.5 pb-7.5">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className=" bg-primary/8 placeholder:text-primary w-75 rounded-md px-4 py-2.5 outline-none"
+                />
+                <button className="absolute top-1/2 right-6 z-1 cursor-pointer text-primary -translate-y-1/2 transform ">
+                  <FiSearch className=" h-5 w-5  " />
+                </button>
+              </div>
+            </div>
+            {landing && (
+              <div className="flex justify-center min-h-50">
+                <LoadingSpin color="bg-primary" />
+              </div>
+            )}
 
-        <div className="flex px-7.5 flex-wrap md:gap-0 gap-4 pt-5.5 pb-7.5">
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Search..."
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          className=" bg-primary/8 placeholder:text-primary w-75 rounded-md px-4 py-2.5 outline-none"
-                        />
-                        <button className="absolute top-1/2 right-6 z-1 cursor-pointer text-primary -translate-y-1/2 transform ">
-                          <FiSearch className=" h-5 w-5  " />
-                        </button>
-                      </div>
-                      </div>
-                      {landing && <div className="flex justify-center min-h-[200px]"><LoadingSpin color="bg-primary" /></div>}
-                                   
-              <div className="grid px-7.5 grid-cols-5 gap-5 mb-12.5 ">
-      {!filteredData.length && !landing && <div className="col-span-5 text-center text-gray-500">No videos found.</div>}
-           
+            <div className="grid px-7.5 2xl:grid-cols-5 xl:grid-cols-4 sm:grid-cols-3 gap-5 mb-12.5 ">
+              {!filteredData.length && !landing && (
+                <div className="col-span-5 text-center text-gray-500">
+                  No videos found.
+                </div>
+              )}
+
               {filteredData.map((item) => (
                 <div
                   onClick={() =>

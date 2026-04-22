@@ -236,13 +236,13 @@ export default function BookingSettingsPage({
       <div className="relative">
         <button
           onClick={() => setManageSlots(false)}
-          className="px-2 py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white shadow-lg hover:scale-105 transition absolute top-12 left-10 text-2xl font-bold"
+          className="px-2 py-2 rounded-full cursor-pointer bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white shadow-lg hover:scale-105 transition absolute top-12 left-10 text-2xl font-bold"
         >
           <IoMdArrowRoundBack />
         </button>
       </div>
       <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
-        <div className="max-w-337.5 w-full bg-white rounded-[10px] shadow-xl h-fit ">
+        <div className="max-w-337.5 w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)] rounded-[10px] shadow-xl h-fit ">
           <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-6 py-5 font-semibold md:mb-11.25 mb-7.5">
             Booking Settings
             <p className="text-gray-500 text-[12px] p-0 m-0  ">
@@ -253,7 +253,7 @@ export default function BookingSettingsPage({
           <div className="flex justify-end max-w-175 mx-auto w-full pe-5">
             <button
               onClick={handleSubmit}
-              className=" px-4 cursor-pointer py-2 rounded-full bg-gradient-to-r from-teal-400 to-teal-700 text-white font-semibold shadow-lg hover:scale-105 transition"
+              className=" px-4 cursor-pointer py-2 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-semibold shadow-lg hover:scale-105 transition"
             >
               {landingData ? <LoadingSpin width={3} height={15} /> : "Save"}
             </button>
@@ -395,9 +395,9 @@ export default function BookingSettingsPage({
               );
             })}
           </div>
-          <div className="max-w-175 mx-auto w-full">
+          <div className="max-w-175 mx-auto w-full p-6">
             {/* Slot Duration */}
-            <div className="bg-white  p-6 w-full">
+            <div className="w-full">
               <h2 className="text-lg font-semibold mb-3">Slot Duration</h2>
               <select
                 value={settings.slotduration}
@@ -418,7 +418,7 @@ export default function BookingSettingsPage({
             </div>
 
             {/* Holidays */}
-            <div className="bg-white p-6 w-full">
+            <div className=" w-full">
               <h2 className="text-lg font-semibold mb-3">Holidays</h2>
 
               <div className="flex gap-2">

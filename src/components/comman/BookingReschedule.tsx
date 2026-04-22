@@ -331,7 +331,7 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
 
 
       <div className="flex-1 flex justify-center ">
-        <div className="w-full bg-white rounded-[10px] shadow-xl ">
+        <div className="w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)] rounded-[10px] shadow-xl ">
           <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-2.25 mb-2.5">
             Reschedule Booking
           </h2>
@@ -407,7 +407,7 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
 
 
               {step === 2 && (
-                <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6">
+                <div className="w-full max-w-md mx-auto  bg-primary/8 rounded-2xl shadow-lg p-6">
 
 
                   {bookingCfrm ? (
@@ -473,12 +473,12 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
                 </div>
               )}
               {!bookingCfrm && (
-                <div className="flex justify-center mt-2 gap-2">
+                <div className="flex justify-center mt-7.5 gap-2 ">
                   {step > 1 && (
                     <button
                       type="button"
                       onClick={() => setStep(step - 1)}
-                      className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
+                      className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-1.25 lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
                     >
                       Back
                     </button>
@@ -488,14 +488,14 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
                     <button
                       type="button"
                       onClick={nextStep}
-                      className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
+                      className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-1.25 lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
                     >
                       Next
                     </button>
                   )}
 
                   {step === 2 && (
-                    <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-1.25 lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                       {landingData ? (
                         <LoadingSpin width={2} height={11} />
                       ) : (

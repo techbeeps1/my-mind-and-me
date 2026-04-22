@@ -14,7 +14,7 @@ import {toastTBS} from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 
 
-export default function Home() {
+export default function Login() {
    const { setMMMUserData } = useProfile();
   const [passVisble, setPassVisble] = useState(false);
   const [email, setEmail] = useState("");

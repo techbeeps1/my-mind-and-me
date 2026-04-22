@@ -428,7 +428,7 @@ export default function Booking_a_appointment() {
           style={{ backgroundImage: "url('/banner-bg.jpg')" }}
         >
           <div className="flex-1 flex justify-center md:p-7.5 px-5 py-7.5">
-            <div className="w-full bg-white rounded-[10px] shadow-xl h-fit ">
+            <div className="w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)] rounded-[10px] shadow-xl h-fit ">
               <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-2.25 mb-2.5">
                 Book a Appointment
               </h2>
@@ -443,7 +443,6 @@ export default function Booking_a_appointment() {
                         <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
                           Select Practitioner
                         </h2>
-
                         <div className="w-full">
                           <Select
                             options={options}
@@ -483,7 +482,6 @@ export default function Booking_a_appointment() {
                           <h3 className="text-lg font-semibold mb-3 text-primary">
                             Select Date
                           </h3>
-
                           <DayPicker
                             mode="single"
                             selected={selectedDate}
@@ -540,7 +538,7 @@ export default function Booking_a_appointment() {
 
 
                   {step === 3 && (
-                    <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6">
+                    <div className="w-full max-w-md mx-auto bg-primary/8 rounded-2xl  shadow-lg p-6">
 
 
                       {bookingCfrm ? (
