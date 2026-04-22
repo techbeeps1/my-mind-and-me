@@ -135,13 +135,13 @@ export default function ReferralHistory() {
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Urgency Level
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         Preferred Modality
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8">
                         Clinical Presentation
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         Chief Complaint
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
@@ -152,9 +152,11 @@ export default function ReferralHistory() {
                       <th className="px-4 py-3 text-right bg-primary/8 whitespace-nowrap">
                         Status
                       </th>
-                      <th className=" px-4 py-3 text-left bg-primary/8 rounded-tr-lg whitespace-nowrap">
+                      {MMMUserData?.role === 'referrer' && (
+                      <th className=" px-4 py-3 text-left bg-primary/8 rounded-tr-lg ">
                         Private Notes
                       </th>
+                      )}
                     </tr>
                   </thead>
 
@@ -184,15 +186,15 @@ export default function ReferralHistory() {
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                           {item.urgency_level}
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold leading-[1.3]">
                           {item.preferred_modality == "Both"
                             ? "Psychiatric Assessment, Therapy"
                             : item.preferred_modality}
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold ">                          
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold leading-[1.3]">                          
                           <ReadMoreButton text={item.clinical_presentation} title="Clinical Presentation" limit={40} setdata={setOpenReadMore} setdataTitle={setOpenReadMoreTitle}  />
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold ">                          
+                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold leading-[1.3]">                          
                           <ReadMoreButton text={item.chief_complaint} title="Chief Complaint" limit={40} setdata={setOpenReadMore} setdataTitle={setOpenReadMoreTitle}  />
                         </td>
 
@@ -211,6 +213,7 @@ export default function ReferralHistory() {
                             </span>
                           )}
                         </td>
+                        {MMMUserData?.role === 'referrer' && (
                         <td className="px-4 py-4 text-sm text-primary font-semibold">
                           <div
                             onClick={() => {
@@ -225,6 +228,7 @@ export default function ReferralHistory() {
                             View
                           </div>
                         </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>

@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoSend } from "react-icons/io5";
 import { getConversation, SendConversation } from "@/services/api";
 
 import LoadingSpin from "./LoadingSpin";
 import { useProfile } from "@/services/ProfileContext";
 import { Patient } from "@/app/(commanpages)/referral-history/page";
-
-import { FiSearch } from "react-icons/fi";
 
 export interface BookingHistoryType {
   id: string;
@@ -24,7 +22,7 @@ type SessionModalProps = {
   data: Patient;
 };
 
-export default function PrivateNotesTable({
+export default function PrivateNotesChat({
   isOpen,
   onClose,
   data
@@ -37,22 +35,10 @@ export default function PrivateNotesTable({
   const { MMMUserData } = useProfile();
   const [medicalHistoryUpdate, setMedicalHistoryUpdate] = useState(0);
 
-  const [BookingHistory, setBookingHistory] = useState<BookingHistoryType[]>([]);
-    const [search, setSearch] = useState("");
+  const [BookingHistory, setBookingHistory] = useState<BookingHistoryType[]>(
+    [],
+  );
 
-
-  
-    const filteredData = useMemo(() => {
-      return BookingHistory.filter((item) => {
-        const matchesSearch =
-          item.notes.toLowerCase().includes(search.toLowerCase()) ||
-          item.created_at.toLowerCase().includes(search.toLowerCase()) ||
-          item.notes.toLowerCase().includes(search.toLowerCase()) 
-  
-    
-        return matchesSearch;
-      });
-    }, [search, BookingHistory]);
    
 
   useEffect(() => {
@@ -143,76 +129,77 @@ export default function PrivateNotesTable({
             </h2>
           
        
-        <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl  ">
-              {/* Search & Filter */}
-              <div className="flex justify-between flex-wrap  mb-5">
-                <div className="relative">
+              <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl">
+                <div
+                  className="bg-white rounded-lg p-4 h-[60vh] overflow-y-auto space-y-4 custom-scroll+  "
+                >
+
+                  {BookingHistory.length === 0 && (
+                    <>
+                    { loading ? (
+                       <div className="flex-1 flex justify-center items-center h-[48vh] ">
+                <LoadingSpin color="bg-primary" />
+              </div>):(
+                    <div className="text-center text-gray-400 py-10">
+                      No private notes available.
+                    </div>
+              )}</>
+                  )}
+          
+                  {BookingHistory.map((item) => {
+                    const isDoctor = item.role !== MMMUserData?.role;
+
+                    return (
+                      <>
+                        <div
+                          key={item.id}
+                          className={`flex ${isDoctor ? "justify-start" : "justify-end"}`}
+                        >
+                          <div
+                            className={`max-w-[70%] px-4 py-3 rounded-2xl shadow-sm ${
+                              isDoctor
+                                ? "bg-[#56e1e845] text-gray-800"
+                                : "bg-primary text-white"
+                            }`}
+                          >
+                            {/* Header */}
+                            <div className="text-xs opacity-70 mb-1 flex justify-between gap-2">
+                              <span>{item.user_name}</span>
+                              <span>{item.created_at}</span>
+                            </div>
+
+                            {/* Message */}
+                            <div className="text-sm leading-relaxed">
+                              {item.notes}
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })}
+                  <div ref={chatEndRef} />
+                </div>
+
+                <div className="pt-2 flex items-center gap-2">
                   <input
                     type="text"
-                    placeholder="Search..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className=" bg-primary/8 placeholder:text-primary w-75 rounded-md px-4 py-2.5 outline-none"
+                    placeholder="Type a message..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="flex-1 px-4 py-4 rounded bg-gray-100 outline-none"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSend();
+                    }}
                   />
-                  <button className="absolute top-1/2 right-6 z-1 cursor-pointer text-primary -translate-y-1/2 transform ">
-                    <FiSearch className=" h-5 w-5  " />
+
+                  <button
+                    onClick={handleSend}
+                    className="cursor-pointer p-2.5 text-center rounded-full bg-primary text-white hover:translate-x-0.5 transition"
+                  >
+                    <IoSend className="text-2xl" />
                   </button>
                 </div>
               </div>
-
-              {/* Table */}
-              <div className=" h-[65vh] overflow-y-auto rounded-lg  bg-white custom-scroll">
-                <table className="w-full ">
-                  <thead>
-                    <tr className=" text-primary text-sm font-semibold">
-                      <th className="px-4 py-3 text-left bg-primary/8">
-                       Practitioner Name
-                      </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 ">
-                        Date
-                      </th>
-                      <th className="w-1/2 px-4 py-3 text-left  bg-primary/8 rounded-tr-lg">
-                        Notes
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody className="divide-y divide-primary/8">
-                    {filteredData.length === 0 && (
-                          <tr>
-                            <td colSpan={3} className="px-4 py-4 text-center text-gray-400">
-                                        { loading ? (
-                                           <div className="flex justify-center items-center h-[48vh] ">
-                                    <LoadingSpin color="bg-primary" />
-                                  </div>):(
-                                        <div className="text-center text-gray-400 py-10">
-                                          No private notes available.
-                                        </div>
-                                  )}
-                                  </td>
-                                  </tr>
-                    )}
-
-                    {filteredData.map((item) => (
-                      <tr key={item.id}>
-                       <td className="px-4 py-4 font-bold text-sm leading-9 text-primary">
-                          {item.user_name}
-                        </td>
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
-                          <div>{item.created_at}</div>
-                 
-                                                
-                        </td>                  
-                        <td className="px-4 py-4 text-sm text-primary font-semibold">
-                       {item.notes}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
          
           </div>
         </div>
