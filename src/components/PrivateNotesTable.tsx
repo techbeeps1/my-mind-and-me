@@ -39,7 +39,7 @@ export default function PrivateNotesTable({
     [],
   );
 
-  
+   
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -206,6 +206,8 @@ export default function PrivateNotesTable({
           </div>
         </div>
       </div>
+
+      
     </>
   );
 }

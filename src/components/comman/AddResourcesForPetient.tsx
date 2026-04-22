@@ -117,7 +117,7 @@ const handleToggle = (id: string) => {
 
         {/* HEADER */}
         <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold mb-5">
-          Add Resources for Patient
+         Recommended Resources for Patient
         </h2>
            
 

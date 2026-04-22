@@ -150,7 +150,7 @@ if (formData.type === "completed") {
 
                     <option value="cancelled">Cancelled</option>
                     {Role === "practitioner" && (
-                      <option value="completed">Completed</option>
+                      <option value="completed"> Mark as Completed</option>
                     )}
                     {Role === "patient" && (
                       <option value="rescheduled">Rescheduled</option>
