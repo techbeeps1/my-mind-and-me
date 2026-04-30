@@ -7,13 +7,12 @@ import { useState } from "react";
 import {
   getSlotManageSettings,
   getSlots,
-  rescheduleBooking
+  rescheduleBooking,
 } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 
 import { BookingHistoryType } from "@/app/(commanpages)/booking-history/page";
-
 
 type DayName =
   | "Sunday"
@@ -88,12 +87,23 @@ const StepProgress = ({ step }: { step: number }) => {
   );
 };
 
-export default function BookingReschedule({ Data, setBookingUpdate }: { Data: BookingHistoryType, setBookingUpdate: React.Dispatch<React.SetStateAction<number>> }) {
-
+export default function BookingReschedule({
+  Data,
+  setBookingUpdate,
+}: {
+  Data: BookingHistoryType;
+  setBookingUpdate: React.Dispatch<React.SetStateAction<number>>;
+}) {
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [bookingCfrm, setBookingCfrm] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date(
+      new Date(Data.booking_date).setDate(
+        new Date(Data.booking_date).getDate() + 1,
+      ),
+    ),
+  );
   const [landingData, setLandingData] = useState(false);
   const [londing, setLanding] = useState(true);
   const [offweekDays, setOffweekDays] = useState<number[]>([]);
@@ -108,7 +118,6 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
     date: new Date().toISOString().split("T")[0],
     slot: "",
     fee: "",
-
   });
 
   const [dayFees, setDayFees] = useState<Record<DayName, number>>({
@@ -120,7 +129,9 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
     Friday: 0,
     Saturday: 0,
   });
-
+  const [currentMonth, setCurrentMonth] = useState<Date>(
+    selectedDate ? new Date(selectedDate) : new Date(Data.booking_date),
+  );
   function setFeesFromAPI(days: DaysObject) {
     const updatedFees: Record<DayName, number> = {
       Sunday: 0,
@@ -135,7 +146,7 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
       updatedFees[day] = Number(days[day].fee);
     });
     setDayFees(updatedFees);
-  };
+  }
 
   function getFeeByDate(dateStr: string): number {
     const date = new Date(dateStr);
@@ -152,7 +163,7 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
     const dayName = dayMap[dayIndex];
 
     return dayFees[dayName] || 0;
-  };
+  }
 
   const validateStep = (step: number, data: FormDataType) => {
     const errors: string[] = [];
@@ -170,7 +181,6 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
     return errors;
   };
 
-
   const formatDateLocal = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -185,17 +195,13 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
       return;
     }
     setStep((prev) => prev + 1);
-
   }
-
 
   const handleDateSelect = (date: Date | undefined) => {
     if (!date) return;
     setSelectedDate(date);
     const formatedDate = date ? formatDateLocal(date) : "";
-    const selectedDateStr = selectedDate
-      ? formatDateLocal(selectedDate)
-      : "";
+    const selectedDateStr = selectedDate ? formatDateLocal(selectedDate) : "";
     if (formatedDate != selectedDateStr) {
       getSlotData(formatedDate);
     }
@@ -226,14 +232,17 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
       .then((data) => {
         setLanding(false);
         if (data.success) {
-          setBlockedDates(data.holidays)
+          setBlockedDates(data.holidays);
           const offweekDays1 = getOffWeekDays(data.days);
           setOffweekDays(offweekDays1);
           setFeesFromAPI(data.days);
-          if (!data.holidays.includes(selectedDate ? formatDateLocal(selectedDate) : "")) {
-            getSlotData(selectedDate ? formatDateLocal(selectedDate) : "")
+          if (
+            !data.holidays.includes(
+              selectedDate ? formatDateLocal(selectedDate) : "",
+            )
+          ) {
+            getSlotData(selectedDate ? formatDateLocal(selectedDate) : "");
           }
-
         }
       })
       .catch((err) => {
@@ -245,36 +254,31 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
     setnotavailable("");
     const data = JSON.stringify({ date, user_id: formData.practitioner_id });
     setSlotLoading(true);
-    getSlots(data).then((data) => {
-      if (data.success) {
-        setTimeSlots(data.slots);
-        setFormData((prev) => ({
-          ...prev,
-          fee: getFeeByDate(date).toString(),
-        }));
+    getSlots(data)
+      .then((data) => {
+        if (data.success) {
+          setTimeSlots(data.slots);
+          setFormData((prev) => ({
+            ...prev,
+            fee: getFeeByDate(date).toString(),
+          }));
 
+          setSlotLoading(false);
+          if (data.slots.length === 0) {
+            setnotavailable("No slots available for the selected date.");
+          }
+        } else {
+          setnotavailable("No slots available for the selected date.");
+        }
+      })
+      .catch((err) => {
+        toastTBS.error("Error fetching slots:" + err.message);
         setSlotLoading(false);
-         if(data.slots.length === 0){
-        setnotavailable("No slots available for the selected date."); 
-
-      }
-      }else{
-          setnotavailable("No slots available for the selected date."); 
-
-      }
-
-      
-
-    }).catch((err) => {
-      toastTBS.error("Error fetching slots:" + err.message);
-      setSlotLoading(false);
-    });
-
+      });
   }
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form Data to be submitted:", formData);
 
     if (landingData) return;
     setLandingData(true);
@@ -282,8 +286,8 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
       const payload = {
         booking_id: formData.booking_id,
         new_date: formData.date,
-        new_slot: formData.slot
-      }
+        new_slot: formData.slot,
+      };
       const res = await rescheduleBooking(payload);
       if (res.success) {
         toastTBS.success("Booking updated successfully");
@@ -308,28 +312,21 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
     getData();
   });
 
-
   if (londing && step === 2) {
     return (
       <div
         className=" bg-cover bg-center bg-no-repeat min-h-screen "
-        style={{ backgroundImage: "url('/banner-bg.jpg')" }} >
+        style={{ backgroundImage: "url('/banner-bg.jpg')" }}
+      >
         <div className="flex-1 flex justify-center items-center h-[70vh]">
           <LoadingSpin />
         </div>
       </div>
-
     );
   }
 
-
-
-
-
   return (
     <>
-
-
       <div className="flex-1 flex justify-center ">
         <div className="w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)] rounded-[10px] shadow-xl ">
           <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-2.25 mb-2.5">
@@ -340,10 +337,7 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
           </div>
           <form onSubmit={handleSave}>
             <div className=" md:mb-11.25 mb-7.5 px-5">
-
               {step === 1 && (
-
-
                 <div className="mt-5">
                   <div className="flex flex-col lg:flex-row gap-4 md:p-6 p-0">
                     {/* Calendar Section */}
@@ -355,15 +349,27 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
                       <DayPicker
                         mode="single"
                         selected={selectedDate}
-                        onSelect={handleDateSelect}
+                        onSelect={(date) => {
+                          handleDateSelect(date);
+                          if (date) setCurrentMonth(date); // sync selected date → visible month
+                        }}
+                        month={currentMonth}
+                        onMonthChange={setCurrentMonth} // enables next/prev buttons
                         weekStartsOn={1}
-                        disabled={[blockedDates.map(date => new Date(date)),
-                        { dayOfWeek: offweekDays }
+                        disabled={[
+                          {
+                            before: new Date(
+                              new Date(Data.booking_date).setDate(
+                                new Date(Data.booking_date).getDate() + 1,
+                              ),
+                            ),
+                          },
+                          blockedDates.map((date) => new Date(date)),
+                          { dayOfWeek: offweekDays },
                         ]}
                         className="rounded-md border md:p-5 p-2 w-full"
                       />
                     </div>
-
 
                     {/* Time Slots Section */}
                     <div className="bg-white lg:shadow lg:rounded-xl lg:p-4 w-full lg:w-1/2">
@@ -372,7 +378,11 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
                       </h3>
                       {slotLoading ? (
                         <div className="flex justify-center items-center h-32">
-                          <LoadingSpin color="bg-primary" width={5} height={30} />
+                          <LoadingSpin
+                            color="bg-primary"
+                            width={5}
+                            height={30}
+                          />
                         </div>
                       ) : (
                         <div className="grid grid-cols-2 gap-3 lg:bg-none  lg:p-0 p-3.75 lg:rounded-0 rounded-xl">
@@ -381,43 +391,40 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
                               type="button"
                               key={index}
                               onClick={() => handleTimeSelect(slot)}
-                              className={` border border-primary text-primary cursor-pointer duration-400 rounded-lg p-2 text-sm font-semibold ${selectedTime === slot
-                                ? "bg-primary text-white"
-                                : "bg-primary/8 hover:bg-primary hover:text-white"
-                                }`}
+                              className={` border border-primary text-primary cursor-pointer duration-400 rounded-lg p-2 text-sm font-semibold ${
+                                selectedTime === slot
+                                  ? "bg-primary text-white"
+                                  : "bg-primary/8 hover:bg-primary hover:text-white"
+                              }`}
                             >
                               {slot}
                             </button>
                           ))}
                         </div>
                       )}
-   {notavailable && (<div className={` text-red-600  duration-400 rounded-lg  text-sm font-semibold `}
-                          >
-                            {notavailable}
-                          </div>
-                          )}
-                      
-                      
+                      {notavailable && (
+                        <div
+                          className={` text-red-600  duration-400 rounded-lg  text-sm font-semibold `}
+                        >
+                          {notavailable}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               )}
 
-
-
-
               {step === 2 && (
                 <div className="w-full max-w-md mx-auto  bg-primary/8 rounded-2xl shadow-lg p-6">
-
-
                   {bookingCfrm ? (
                     <>
                       <div className="flex justify-center mb-4">
                         <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-100">
-                          <span className="text-green-600 text-3xl font-bold">✓</span>
+                          <span className="text-green-600 text-3xl font-bold">
+                            ✓
+                          </span>
                         </div>
                       </div>
-
 
                       <h2 className="text-2xl font-bold text-primary mb-10 mt-10 text-center">
                         Booking Confirmed!
@@ -428,12 +435,10 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
                       </p>
                     </>
                   ) : (
-
                     <h3 className="text-xl font-bold text-primary mb-10 mt-10">
                       Booking Summary
                     </h3>
                   )}
-
 
                   {/* Content */}
                   <div className="space-y-3 text-sm text-gray-600">
@@ -453,7 +458,9 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
                     <div className="flex justify-between">
                       <span>Date</span>
                       <span className="font-semibold text-gray-800">
-                        {selectedDate ? selectedDate.toLocaleDateString() : "N/A"}
+                        {selectedDate
+                          ? selectedDate.toLocaleDateString()
+                          : "N/A"}
                       </span>
                     </div>
 
@@ -463,13 +470,7 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
                         {selectedTime || "N/A"}
                       </span>
                     </div>
-
-
-
                   </div>
-
-
-
                 </div>
               )}
               {!bookingCfrm && (
@@ -509,8 +510,6 @@ export default function BookingReschedule({ Data, setBookingUpdate }: { Data: Bo
           </form>
         </div>
       </div>
-
-
     </>
   );
 }

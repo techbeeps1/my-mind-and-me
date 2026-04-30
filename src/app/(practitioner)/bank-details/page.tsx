@@ -39,6 +39,15 @@ export default function PractitionerBankDetals() {
 
   });
 
+    const [OriginalformData, setOriginalFormData] = useState<FormDataType>({
+    user_id: MMMUserData?.id || "",
+    bank_name: "",
+    branch_number: "",
+    account_number: "",
+    beneficiary_name: "",
+
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -48,6 +57,10 @@ export default function PractitionerBankDetals() {
   };
 
 
+  function handleCancel() {
+    setFormData(OriginalformData);
+    setisEdit(true);
+  }
 
 
 
@@ -55,6 +68,7 @@ export default function PractitionerBankDetals() {
     GetBankDetails(MMMUserData?.id).then((data) => {
       setLanding(false)
       setFormData(data.data);
+      setOriginalFormData(data.data);
 
 
     }).catch((err) => {
@@ -180,7 +194,7 @@ export default function PractitionerBankDetals() {
                       <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                         {landingData ? (<LoadingSpin width={2} height={11} />) : "Save"}
                       </button>
-                      <button onClick={() => setisEdit(true)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                      <button onClick={handleCancel} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                         Cancel
                       </button>
                     </div>

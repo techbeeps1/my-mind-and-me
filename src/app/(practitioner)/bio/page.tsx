@@ -31,6 +31,12 @@ export default function PractitionerBio() {
 
   });
 
+   const [originalFormData, setOriginalFormData] = useState<FormDataType>({
+    user_id: MMMUserData?.id || "",
+    bio: "",
+
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -50,7 +56,11 @@ export default function PractitionerBio() {
         ...prev,
         bio: data.data,
       }));
-      
+      setOriginalFormData((prev) => ({
+        ...prev,
+        bio: data.data,
+      }));
+
     }).catch((err) => {
       console.error(err);
     });
@@ -58,6 +68,12 @@ export default function PractitionerBio() {
 
 
 
+ function handleCancel() {
+    setisEdit(true);
+    if (originalFormData) {
+      setFormData(originalFormData);
+    }
+  }
 
   const validateForm = (data: FormDataType): string => {
     let errors: string = "";
@@ -142,7 +158,7 @@ export default function PractitionerBio() {
                       <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                         {landingData ? (<LoadingSpin width={2} height={11} />) : "Save"}
                       </button>
-                      <button onClick={() => setisEdit(true)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                      <button onClick={handleCancel} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                         Cancel
                       </button>
                     </div>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 
 import { useProfile } from "@/services/ProfileContext";
 import { IoClose } from "react-icons/io5";
@@ -41,6 +41,9 @@ export default function SidebarDashBoard({
   const pathname = usePathname();
 
   const [openMenus, setOpenMenus] = useState<string[]>([]);
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  const itemRef = useRef<HTMLDivElement | null>(null);
 
   const referrerMenu: MenuItem[] = [
     { name: "Dashboard", path: "/dashboard", icon: <FiHome /> },
@@ -50,7 +53,7 @@ export default function SidebarDashBoard({
       path: "/referral-history",
       icon: <FiFileText />,
     },
-    { name: "Patients", path: "/patients-list" , icon: <FiUsers /> },
+    { name: "Patients", path: "/patients-list", icon: <FiUsers /> },
     { name: "Profile", path: "/my-profile", icon: <FiUser /> },
   ];
 
@@ -65,23 +68,24 @@ export default function SidebarDashBoard({
       ],
     },
     { name: "Progress", path: "/progress", icon: <FiFileText /> },
-    { name: "Resources", icon: <LuFileVideo2 />, 
-    children: [
+    {
+      name: "Resources",
+      icon: <LuFileVideo2 />,
+      children: [
         { name: "Videos", path: "/resources-videos" },
-        { name: "Reflection Questions", path: "/reflection-questions" },     
-        { name: "My Purchases", path: "/my-purchases" },     
+        { name: "Reflection Questions", path: "/reflection-questions" },
+        { name: "My Purchases", path: "/my-purchases" },
       ],
     },
     { name: "Medical History", path: "/medical-history", icon: <FiFileText /> },
-   
-   
+
     {
       name: "My Profile",
-      
+
       icon: <FiUser />,
       children: [
         { name: "My Profile", path: "/my-profile" },
-        { name: "Insurance", path: "/insurance" },     
+        { name: "Insurance", path: "/insurance" },
       ],
     },
   ];
@@ -92,19 +96,19 @@ export default function SidebarDashBoard({
     {
       name: "Bookings",
       icon: <FiFileText />,
-      path: "/booking-history"
+      path: "/booking-history",
     },
 
     { name: "Payments", path: "/payments", icon: <FiCreditCard /> },
-     {
+    {
       name: "Referral History",
       path: "/referral-history",
       icon: <FiFileText />,
     },
-    { name: "Patients", path: "/patients-list" , icon: <FiUsers /> },
+    { name: "Patients", path: "/patients-list", icon: <FiUsers /> },
     {
       name: "My Profile",
-     
+
       icon: <FiUser />,
       children: [
         { name: "My Profile", path: "/my-profile" },
@@ -145,6 +149,10 @@ export default function SidebarDashBoard({
       }
       setOpenMenus(activeMenus);
     });
+
+    setTimeout(() => {
+      setScrollPosition(document.getElementById("item12")?.offsetTop || 0);
+    }, 100);
   }, [menu, isChildActive]);
 
   const toggleMenu = (name: string) => {
@@ -172,13 +180,21 @@ export default function SidebarDashBoard({
         >
           <FiMenu size={28} className={`text-primary`} />
         </button>
-        <button onClick={() => menutrigger(true)} className="lg:hidden cursor-pointer">
+        <button
+          onClick={() => menutrigger(true)}
+          className="lg:hidden cursor-pointer"
+        >
           <IoClose size={35} className="text-primary" />
         </button>
       </div>
 
       {/* MENU */}
       <nav
+        ref={(el) => {
+          if (el) {
+            el.scrollTop = scrollPosition;
+          }
+        }}
         className="flex flex-col mt-6 space-y-2 text-primary font-bold overflow-y-auto h-[82vh] px-2  [&::-webkit-scrollbar]:w-1
   [&::-webkit-scrollbar-track]:bg-primary/20
   [&::-webkit-scrollbar-thumb]:bg-primary
@@ -192,7 +208,8 @@ export default function SidebarDashBoard({
           return (
             <div key={item.name}>
               {/* MAIN */}
-              <Link  title={collapsed ? item.name : ""}
+              <Link
+                title={collapsed ? item.name : ""}
                 href={item.path || "#"}
                 onClick={() => (item.children ? toggleMenu(item.name) : null)}
                 className={`flex items-center justify-between px-3 py-3 rounded-l-full cursor-pointer transition-all
@@ -216,18 +233,23 @@ export default function SidebarDashBoard({
               {item.children && isOpen && !collapsed && (
                 <div className="ml-10 mt-2 space-y-1">
                   {item.children.map((sub) => (
-                    <Link
-                      key={sub.path}
-                      href={sub.path}
-                      className={`block py-2.5 text-sm rounded-l-full px-3 transition
+                    <>
+                      <Link
+                        key={sub.path}
+                        href={sub.path}
+                        className={`block py-2.5 text-sm rounded-l-full px-3 transition
                       ${
                         pathname === sub.path
                           ? "bg-white font-semibold"
                           : "hover:bg-white/60"
                       }`}
-                    >
-                      {sub.name}
-                    </Link>
+                      >
+                        {sub.name}
+                      </Link>
+                      {pathname === sub.path && (
+                        <div id="item12" ref={itemRef}></div>
+                      )}
+                    </>
                   ))}
                 </div>
               )}

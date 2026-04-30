@@ -45,6 +45,9 @@ export default function MyPractitionerProfile() {
     const [ModalitiesData, setModalitiesData] = useState<string[]>([]);
     const [LanguagesData, setLanguagesData] = useState<string[]>([]);
 
+      const [OriginalSpInterestData, setOriginalSpInterestData] = useState<string[]>([ ]);
+    const [OriginalModalitiesData, setOriginalModalitiesData] = useState<string[]>([]);
+    const [OriginalLanguagesData, setOriginalLanguagesData] = useState<string[]>([]);
 
   type FormDataType = {
     user_id: string;
@@ -72,6 +75,36 @@ export default function MyPractitionerProfile() {
     special_interests: "",
     profile_image: "/profile-img.png",
   });
+      const [OriginalformData, setOriginalformData] = useState<FormDataType>({
+       user_id: MMMUserData?.id || "",
+    full_name: "",
+    phone: "",
+    gender: "",
+    dob: "",
+    license_number: "",
+    qualifications: "",
+    languages: "",
+    modalities: "",
+    special_interests: "",
+    profile_image: "/profile-img.png",
+  });
+
+  function handleCancel() {
+    setisEdit(true);
+    if (OriginalformData) {
+      setFormData(OriginalformData); // 👈 reset to old data
+      setSpInterestData(OriginalSpInterestData);
+      setModalitiesData(OriginalModalitiesData);
+      setLanguagesData(OriginalLanguagesData);
+
+
+      setPreview(
+        OriginalformData.profile_image
+          ? OriginalformData.profile_image
+          : "/profile-img.png"
+      );
+    }
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -98,7 +131,7 @@ export default function MyPractitionerProfile() {
   useEffect(() => {
     GetPractitionerProfile(MMMUserData?.id).then((data) => {
       setLanding(false)
-      console.log(data.data);
+
       setFormData(() => ({
         user_id: MMMUserData?.id || "",
         full_name: data.data.full_name || "",
@@ -113,9 +146,26 @@ export default function MyPractitionerProfile() {
         profile_image: "/profile-img.png",
       }));
       
+      setOriginalformData(() => ({
+        user_id: MMMUserData?.id || "",
+        full_name: data.data.full_name || "",
+        phone: data.data.phone || "",
+        gender: data.data.gender || "",
+        dob: data.data.dob || "",
+        license_number: data.data.license_number || "",
+        qualifications: data.data.qualifications || "",
+        languages: data.data.languages || "",
+        modalities: data.data.modalities || "",
+        special_interests: data.data.special_interests || "",
+        profile_image: data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png",
+      }));
+      
       setSpInterestData(data.data.special_interests ?? []);
       setModalitiesData(data.data.modalities ?? []);
       setLanguagesData(data.data.languages ?? []);
+      setOriginalSpInterestData(data.data.special_interests ?? []);
+      setOriginalModalitiesData(data.data.modalities ?? []);
+      setOriginalLanguagesData(data.data.languages ?? []);
        
        setPreview(data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png");
     }).catch((err) => {
@@ -301,7 +351,7 @@ const validateForm = (data: FormDataType): string => {
                       <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                         {landingData ? (<LoadingSpin width={2} height={11} />) : "Save"}
                       </button>
-                      <button onClick={() => setisEdit(true)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                      <button onClick={handleCancel} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                         Cancel
                       </button>
                     </div>
@@ -452,7 +502,7 @@ const validateForm = (data: FormDataType): string => {
                     <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                       {landingData ? (<LoadingSpin width={2} height={11} />) : "Save"}
                     </button>
-                    <button onClick={() => setisEdit(true)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <button onClick={handleCancel} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                       Cancel
                     </button>
                   </div>

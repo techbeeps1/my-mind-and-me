@@ -127,6 +127,22 @@ export default function MyDoctorProfile() {
     profile_image: "/profile-img.png",
   });
 
+
+      const [OriginalformData, setOriginalformData] = useState<FormDataType>({
+    user_id: MMMUserData?.id || "",
+    full_name: "",
+    phone: "",
+    gender: "",
+    dob: "",
+    license_number: "",
+    registration: "",
+    clinic_name: "",
+    clinic_phone: "",
+    address: "",
+    special_interest: "",
+    profile_image: "/profile-img.png",
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -155,11 +171,27 @@ export default function MyDoctorProfile() {
      referralProfile(MMMUserData?.id).then((data) => {
       setLanding(false)
       setFormData(data.data);
+      setOriginalformData(data.data);
       setPreview(data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png");
     }).catch((err) => {
       console.error(err);
     });
   }, [MMMUserData?.id]);
+
+
+  
+function handleCancel() {
+    setisEdit(true);
+    if (OriginalformData) {
+      setFormData(OriginalformData); 
+
+      setPreview(
+        OriginalformData.profile_image
+          ? imagePath + OriginalformData.profile_image
+          : "/profile-img.png"
+      );
+    }
+  }
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -270,7 +302,7 @@ if (Object.keys(errors).length > 0) {
                       <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                         { landingData ? (<LoadingSpin width={2} height={11} />) :  "Save"} 
                       </button>
-                      <button onClick={() => setisEdit(true)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                      <button onClick={handleCancel} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                        Cancel
                       </button>
                     </div>
@@ -453,7 +485,7 @@ if (Object.keys(errors).length > 0) {
                     <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                      { landingData ? (<LoadingSpin width={2} height={11} />) :  "Save"} 
                     </button>
-                    <button onClick={() => setisEdit(true)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <button onClick={handleCancel} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
                       Cancel
                     </button>
                   </div>

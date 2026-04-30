@@ -47,6 +47,19 @@ export default function MyPatientProfile() {
     profile_image: "/profile-img.png",
   });
 
+
+    const [OriginalformData, setOriginalformData] = useState<FormDataType>({
+    user_id: MMMUserData?.id || "",
+    full_name: "",
+    phone: "",
+    gender: "",
+    dob: "",
+    blood_group: "",
+    profile_image: "/profile-img.png",
+  });
+
+
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -80,6 +93,7 @@ export default function MyPatientProfile() {
       .then((data) => {
         setLanding(false);
         setFormData(data.data);
+        setOriginalformData(data.data);
         
         setPreview(data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png");
       })
@@ -124,6 +138,20 @@ export default function MyPatientProfile() {
 
   return "";
 };
+
+
+function handleCancel() {
+    setisEdit(true);
+    if (OriginalformData) {
+      setFormData(OriginalformData); // 👈 reset to old data
+
+      setPreview(
+        OriginalformData.profile_image
+          ? imagePath + OriginalformData.profile_image
+          : "/profile-img.png"
+      );
+    }
+  }
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -239,7 +267,7 @@ export default function MyPatientProfile() {
                         )}
                       </button>
                       <button
-                        onClick={() => setisEdit(true)}
+                        onClick={handleCancel}
                         className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-1.25 lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
                       >
                         Cancel

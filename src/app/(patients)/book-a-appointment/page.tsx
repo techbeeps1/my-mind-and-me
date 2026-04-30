@@ -50,6 +50,7 @@ type FormDataType = {
   date: string;
   slot: string;
   fee: string;
+  practitioner_name:string;
 };
 
 type practitionerListType = {
@@ -140,6 +141,7 @@ export default function Booking_a_appointment() {
     date: new Date().toISOString().split("T")[0],
     slot: "",
     fee: "",
+    practitioner_name:"",
 
   });
 
@@ -289,6 +291,7 @@ export default function Booking_a_appointment() {
 
   function getData() {
      setnotavailable("");
+      setTimeSlots([]);
     getSlotManageSettings(formData.practitioner_id)
       .then((data) => {
         setLanding(false);
@@ -305,6 +308,7 @@ export default function Booking_a_appointment() {
         }
         else{
             setOffweekDays([1,2,3,4,5,6,0]);
+           
             setnotavailable("Practitioner has not set availability yet. Please check back later.");
           }
       
@@ -317,7 +321,7 @@ export default function Booking_a_appointment() {
 
   const [notavailable, setnotavailable] = useState("");
   function getSlotData(date: string) {
- setnotavailable("");
+    setnotavailable("");
     const data = JSON.stringify({ date, user_id: formData.practitioner_id });
     setSlotLoading(true);
     getSlots(data).then((data) => {
@@ -329,11 +333,13 @@ export default function Booking_a_appointment() {
         }));
       if(data.slots.length === 0){
         setnotavailable("No slots available for the selected date."); 
+         setTimeSlots([]);
 
       }
 
       } else {
         setnotavailable("No slots available for the selected date.");
+           setTimeSlots([]);
       }
       setSlotLoading(false);
     }).catch((err) => {
@@ -345,7 +351,6 @@ export default function Booking_a_appointment() {
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form Data to be submitted:", formData);
 
     if (landingData) return;
     setLandingData(true);
@@ -453,6 +458,7 @@ export default function Booking_a_appointment() {
                               setFormData({
                                 ...formData,
                                 practitioner_id: selected?.value || "",
+                                practitioner_name: selected ? selected.label.split(" || ")[0] : "",
                               })
                             }
                             placeholder="Select Practitioner"
@@ -571,7 +577,7 @@ export default function Booking_a_appointment() {
                         <div className="flex justify-between">
                           <span>Practitioner Name</span>
                           <span className="font-semibold text-gray-800">
-                            {formData.practitioner_id ? "Dr. John Doe" : "N/A"}
+                            {formData.practitioner_name ? formData.practitioner_name : "N/A"}
                           </span>
                         </div>
 
