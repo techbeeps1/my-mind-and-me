@@ -5,6 +5,7 @@ import { FiSearch } from "react-icons/fi";
 
 import {  GetPaymentHistory } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
+import Pagination from "@/components/comman/Pagination";
 export interface PaymentHistoryType {
   payment_id: number;
   booking_id: string;
@@ -20,6 +21,8 @@ export interface PaymentHistoryType {
 
 export default function PaymentHistory() {
   const [landing, setLanding] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [PaymentHistory, setPaymentHistory] = useState<PaymentHistoryType[]>(
     [],
   );
@@ -59,18 +62,19 @@ export default function PaymentHistory() {
   }, [search, PaymentHistory]);
 
   useEffect(() => {
-    GetPaymentHistory(MMMUserData?.id)
+    GetPaymentHistory(MMMUserData?.id, page, 20)
       .then((data) => {
         setLanding(false);
         console.log("Patient Profile Data:", data);
         if (data.success) {
           setPaymentHistory(data.history);
+          setTotalPages(data.total_pages);
         }
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [MMMUserData?.id]);
+  }, [MMMUserData?.id, page]);
 
   if (landing) {
     return (
@@ -185,6 +189,8 @@ export default function PaymentHistory() {
                 </table>
               </div>
             </div>
+                       <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+            
           </div>
         </div>
       </WrapperBanner>

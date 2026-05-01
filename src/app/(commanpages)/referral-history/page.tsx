@@ -10,6 +10,7 @@ import { FiSearch } from "react-icons/fi";
 import { IoChatboxSharp } from "react-icons/io5";
 import ReadMoreButton from "@/components/comman/ReadMoreButton";
 import ReadMorePopup from "@/components/comman/ReadMorePopup";
+import Pagination from "@/components/comman/Pagination";
 
 export type PatientStatus = "Active" | "Inactive";
 
@@ -39,6 +40,8 @@ export default function ReferralHistory() {
   const [selectedPatient, setSelectedPatient] = useState<Patient>();
   const [openReadMore, setOpenReadMore] = useState("");
   const [openReadMoreTitle, setOpenReadMoreTitle] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const [statusFilter, setStatusFilter] = useState<PatientStatus | "All">(
     "All",
@@ -46,15 +49,18 @@ export default function ReferralHistory() {
 
   useEffect(() => {
     if (!MMMUserData) return;
-    GetReferralHistory(MMMUserData?.role, MMMUserData?.id)
+    GetReferralHistory(MMMUserData?.role, MMMUserData?.id,page,20)
       .then((data) => {
         setLanding(false);
+        if(data.success){
         setPatients(data.data);
+        setTotalPages(data.total_pages);
+        }
       })
       .catch((error) => {
         console.error("Error fetching referral history:", error);
       });
-  }, [MMMUserData]);
+  }, [MMMUserData, page]);
 
   const filteredData = useMemo(() => {
     return patients.filter((item) => {
@@ -234,9 +240,14 @@ export default function ReferralHistory() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </div>            
+           <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+
           </div>
-        </div>        
+          
+        </div>     
+        {/* Pagination */}
+
         {openModalPrivate && selectedPatient && (
           <PrivateNotesTable
             isOpen={openModalPrivate}

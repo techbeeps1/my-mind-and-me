@@ -9,6 +9,7 @@ import { FaEye } from "react-icons/fa";
 import Link from "next/link";
 import { useProfile } from "@/services/ProfileContext";
 import MedicalHistoryTable from "@/components/MedicalHistoryTable";
+import Pagination from "@/components/comman/Pagination";
 
 
 export interface PatientType {
@@ -27,6 +28,8 @@ export default function PatientsList() {
 
   const [selectedPatient, setSelectedPatient] = useState<PatientType | undefined>();
   const [BookingHistory, setBookingHistory] = useState<PatientType[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
 
 
@@ -48,18 +51,19 @@ export default function PatientsList() {
 
   useEffect(() => {
     if (!MMMUserData) return;
-    GetRelatedPatients(MMMUserData?.role, MMMUserData?.id)
+    GetRelatedPatients(MMMUserData?.role, MMMUserData?.id, page, 20)
       .then((data) => {
         setLanding(false);
         if (data.success) {
           setBookingHistory(data.data);
+          setTotalPages(data.total_pages);
         }
 
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [MMMUserData]);
+  }, [MMMUserData, page]);
 
   if (landing) {
     return (
@@ -180,7 +184,11 @@ export default function PatientsList() {
                 </table>
               </div>
             </div>
+              <Pagination page={page} setPage={setPage} totalPages={totalPages} />
           </div>
+
+                   
+          
         </div>
      {openModal && selectedPatient?.id && (<MedicalHistoryTable isOpen={openModal} onClose={() => setOpenModal(false)} id={selectedPatient?.id} />)}
     

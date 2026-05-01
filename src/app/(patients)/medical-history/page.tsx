@@ -7,6 +7,7 @@ import LoadingSpin from "@/components/LoadingSpin";
 import { useProfile } from "@/services/ProfileContext";
 import ReadMoreButton from "@/components/comman/ReadMoreButton";
 import ReadMorePopup from "@/components/comman/ReadMorePopup";
+import Pagination from "@/components/comman/Pagination";
 export interface Patient {
   id: string;
   patient_id: string;
@@ -31,7 +32,8 @@ export default function MedicalHistory() {
   const [patientsMedicalHistory, setPatientsMedicalHistory] = useState<Patient[]>([]);
   const [openReadMore, setOpenReadMore] = useState("");
   const [openReadMoreTitle, setOpenReadMoreTitle] = useState("");
-
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const filteredData = useMemo(() => {
     return patientsMedicalHistory.filter((item) => {
@@ -47,18 +49,19 @@ export default function MedicalHistory() {
 
       useEffect(() => {
        if (!MMMUserData) return;
-       Getmedicalhistory(MMMUserData?.id)
+       Getmedicalhistory(MMMUserData?.id, page, 20)
          .then((data) => {
            setLanding(false);
            if(data.status){
             setPatientsMedicalHistory(data.data);
+            setTotalPages(data.total_pages);
            }
           
          })
          .catch((err) => {
            console.error(err);
          });
-     }, [MMMUserData]);
+     }, [MMMUserData, page]);
    
  if (landing) {
     return (
@@ -143,6 +146,7 @@ export default function MedicalHistory() {
                 </table>
               </div>
             </div>
+            <Pagination page={page} setPage={setPage} totalPages={totalPages} />
           </div>
         </div>
        <ReadMorePopup setOpenReadMore={setOpenReadMore} openReadMore={openReadMore} openReadMoreTitle={openReadMoreTitle} />

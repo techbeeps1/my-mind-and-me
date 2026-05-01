@@ -102,8 +102,8 @@ export async function GetResources(type:string,userID: string ) {
 
 
 // get related-patients
-export async function GetRelatedPatients(role:string, UserId:string) {
-  const res = await fetch(`${paApiPath}/related-patients/${role}/${UserId}`);
+export async function GetRelatedPatients(role:string, UserId:string,page:number,limit:number) {
+  const res = await fetch(`${paApiPath}/related-patients/${role}/${UserId}/${page}/${limit}`);
    if (!res.ok) throw new Error("Failed to fetch patient profile");
   return res.json();
 }
@@ -130,8 +130,8 @@ export async function GetMedicalHistory(UserId:string) {
 }
 
 // booking history
-export async function GetPaymentHistory(UserId:string) {
-  const res = await fetch(`${bookingApiPath}/payment-history/${UserId}`);
+export async function GetPaymentHistory(UserId:string, page:number, limit:number) {
+  const res = await fetch(`${bookingApiPath}/payment-history/${UserId}/${page}/${limit}`);
    if (!res.ok) throw new Error("Failed to fetch payment history");
   return res.json();
 }
@@ -217,8 +217,8 @@ export async function GetBookinglistbydate(UserId:string, date:string) {
 
 
 // booking history
-export async function GetBookingHistory(UserId:string) {
-  const res = await fetch(`${bookingApiPath}/history/${UserId}`);
+export async function GetBookingHistory(UserId:string, page:number, limit:number) {
+  const res = await fetch(`${bookingApiPath}/history/${UserId}/${page}/${limit}`);
    if (!res.ok) throw new Error("Failed to fetch booking history");
   return res.json();
 }
@@ -306,8 +306,8 @@ export async function addInsurance( data:any ) {
 
 
 // patient medical-history
-export async function Getmedicalhistory(UserId:string) {
-  const res = await fetch(`${paApiPath}/medical-history/${UserId}`);
+export async function Getmedicalhistory(UserId:string, page:number, limit:number) {
+  const res = await fetch(`${paApiPath}/medical-history/${UserId}/${page}/${limit}`);
    if (!res.ok) throw new Error("Failed to fetch patient medical history");
   return res.json();
 }
@@ -411,8 +411,8 @@ export async function GetPractitionerProfile(UserId:string) {
 
 
 // get referral-history
-export async function GetReferralHistory(role:string,   userid:string) {
-  const res = await fetch(`${refApiPath}/allreferrals/${role}/${userid}`);
+export async function GetReferralHistory(role:string,   userid:string,page:number,limit:number) {
+  const res = await fetch(`${refApiPath}/allreferrals/${role}/${userid}/${page}/${limit}`);
    if (!res.ok) throw new Error("Failed to fetch referral history");
   return res.json();
 }

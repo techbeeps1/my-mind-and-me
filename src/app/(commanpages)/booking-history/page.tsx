@@ -12,6 +12,7 @@ import BookingStatusChange from "@/components/comman/BookingStatusChange";
 import ReadMorePopup from "@/components/comman/ReadMorePopup";
 import ReadMoreButton from "@/components/comman/ReadMoreButton";
 import { SiGooglemeet } from "react-icons/si";
+import Pagination from "@/components/comman/Pagination";
 export interface BookingHistoryType {
   id: string;
   practitioner_id: string;
@@ -32,6 +33,8 @@ export default function BookingHistory() {
   const [openStatusChange, setOpenStatusChange] = useState(false);
   const [openReadMore, setOpenReadMore] = useState("");
   const [openReadMoreTitle, setOpenReadMoreTitle] = useState("");
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
   const [selectedBooking, setSelectedBooking] = useState<BookingHistoryType>();
   const [BookingHistory, setBookingHistory] = useState<BookingHistoryType[]>(
     [],
@@ -73,18 +76,19 @@ export default function BookingHistory() {
   }, [search, BookingHistory]);
 
   useEffect(() => {
-    GetBookingHistory(MMMUserData?.id)
+    GetBookingHistory(MMMUserData?.id, page, 20)
       .then((data) => {
         setLanding(false);
 
         if (data.success) {
           setBookingHistory(data.history);
+          setTotalPages(data.total_pages);
         }
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [MMMUserData?.id, bookingUpdate]);
+  }, [MMMUserData?.id, bookingUpdate, page]);
 
   if (landing) {
     return (
@@ -243,6 +247,8 @@ export default function BookingHistory() {
                 </table>
               </div>
             </div>
+                       <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+            
           </div>
         </div>
         <ReadMorePopup
