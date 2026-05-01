@@ -123,8 +123,8 @@ export async function CreateMedicalNote( data:any ) {
 }
 
 //get medical history by patient id
-export async function GetMedicalHistory(UserId:string) {
-  const res = await fetch(`${paApiPath}/medical-history/${UserId}`);
+export async function GetMedicalHistory(UserId:string, page:number, limit:number) {
+  const res = await fetch(`${paApiPath}/medical-history/${UserId}/${page}/${limit}`);
    if (!res.ok) throw new Error("Failed to fetch medical history");
   return res.json();
 }

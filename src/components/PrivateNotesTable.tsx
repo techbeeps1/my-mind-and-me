@@ -9,6 +9,7 @@ import { useProfile } from "@/services/ProfileContext";
 import { Patient } from "@/app/(commanpages)/referral-history/page";
 
 import { FiSearch } from "react-icons/fi";
+import Pagination from "./comman/Pagination";
 
 export interface BookingHistoryType {
   id: string;
@@ -30,7 +31,9 @@ export default function PrivateNotesTable({
   data
 }: SessionModalProps) {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
-
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+  
   const [message, setMessage] = useState("");
   const [loading, setLanding] = useState(true);
 
@@ -68,18 +71,21 @@ export default function PrivateNotesTable({
       practitioner_id: data.practitioner_id,
       referrer_id: data.doctor_id,
       role: MMMUserData?.role ?? "practitioner",
+      page: page,
+      limit: 10,
     };
     getConversation(payload)
       .then((data) => {
         setLanding(false);
         if (data.success) {
           setBookingHistory(data.data);
+          setTotalPages(data.total_pages);
         }
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [MMMUserData, data, medicalHistoryUpdate]);
+  }, [MMMUserData, data, medicalHistoryUpdate,page]);
 
   const handleSend = async () => {
     if (!message.trim()) return;
@@ -124,12 +130,12 @@ export default function PrivateNotesTable({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 z-50 flex justify-center">
         <div
           className="absolute inset-0 bg-black/40 backdrop-blur-sm"
           onClick={onClose}
         />
-        <div className="relative">
+        <div className="relative my-12.5 overflow-x-auto custom-scroll">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 z-1 text-white cursor-pointer font-bold h-7.5 w-7.5 rounded-full bg-primary text-sm flex items-center justify-center"
@@ -137,7 +143,7 @@ export default function PrivateNotesTable({
             ✕
           </button>
 
-          <div className="s w-[70vw] bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
+          <div className=" pb-2 w-[80vw] bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-5 mb-1.5">
               Private Notes
             </h2>
@@ -161,7 +167,7 @@ export default function PrivateNotesTable({
               </div>
 
               {/* Table */}
-              <div className=" h-[65vh] overflow-y-auto rounded-lg  bg-white custom-scroll">
+              <div className="overflow-x-auto rounded-lg  bg-white">
                 <table className="w-full ">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
@@ -212,6 +218,8 @@ export default function PrivateNotesTable({
                 </table>
               </div>
             </div>
+
+              <Pagination page={page} setPage={setPage} totalPages={totalPages} />
 
          
           </div>
