@@ -25,6 +25,7 @@ export default function ResourcesVideos() {
   const { MMMUserData } = useProfile();
   const [selectedSessionFree, setSelectedSessionFree] = useState("");
   const [selectedSessionPaid, setSelectedSessionPaid] = useState("");
+  const [isUpdate, setIsUpdate] = useState(0);
   const [landing, setLanding] = useState(true);
   const [Resources, setResources] = useState<ResourcesType[]>([]);
 
@@ -49,7 +50,7 @@ export default function ResourcesVideos() {
 
       setLanding(false);
     });
-  }, [MMMUserData]);
+  }, [MMMUserData,isUpdate]);
 
   return (
     <>
@@ -132,7 +133,7 @@ export default function ResourcesVideos() {
             "",
         }}
         isOpen={selectedSessionPaid}
-        onClose={() => setSelectedSessionPaid("")}
+        onClose={() => {setSelectedSessionPaid(""); setIsUpdate((prev) => prev + 1)}}
       />
     </>
   );

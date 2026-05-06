@@ -3,11 +3,11 @@
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import "../../Datepicker.css";
-import { useEffect, useState } from "react";
-import Select from "react-select";
+import {  useState } from "react";
+
 import {
   createBooking,
-  getpractitionerList,
+
   getSlotManageSettings,
   getSlots,
   paymentStatusUpdate
@@ -17,6 +17,7 @@ import LoadingSpin from "@/components/LoadingSpin";
 import WrapperBanner from "@/components/WraperBanner";
 import DemoPaymentGateway from "@/components/DemoPaymentGateway";
 import Link from "next/link";
+import PractitionerFilter from "@/components/PractitionerFilter";
 
 
 type DayName =
@@ -53,15 +54,7 @@ type FormDataType = {
   practitioner_name:string;
 };
 
-type practitionerListType = {
-  id: string;
-  full_name: string;
-  unique_id: string;
-}
-
-
 type DaysObject = Record<DayName, DayConfig>;
-
 const dayMap: Record<DayName, number> = {
   Sunday: 0,
   Monday: 1,
@@ -116,6 +109,7 @@ interface BookingCreateDatatype {
 }
 
 export default function Booking_a_appointment() {
+  const [filteropen, setFilterOpen] = useState(false);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [bookingCfrm, setBookingCfrm] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -127,7 +121,8 @@ export default function Booking_a_appointment() {
   const [slotLoading, setSlotLoading] = useState(false);
   const [paymentGateways, setPaymentGateways] = useState(false);
   const [bookingcreatedata, setbookingcreatedata] = useState<BookingCreateDatatype>();
-  const [practitionerList, setpractitionersList] = useState<practitionerListType[]>();
+
+
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
     const data = localStorage.getItem("MMMDT");
@@ -145,24 +140,7 @@ export default function Booking_a_appointment() {
 
   });
 
-  useEffect(() => {
-    if (!MMMUserData?.id) return;
-    getpractitionerList(MMMUserData.id).then((res) => {
-      if (res.success) {
-        setpractitionersList(res.data)
-      }
-    }).catch((err) => {
-      console.error(err);
-    });
 
-  }, [MMMUserData])
-
-
-  const options =
-    practitionerList?.map((item) => ({
-      value: item.id,
-      label: `${item.full_name} || PR${item.unique_id}`,
-    })) || [];
 
   const [dayFees, setDayFees] = useState<Record<DayName, number>>({
     Sunday: 0,
@@ -444,37 +422,30 @@ export default function Booking_a_appointment() {
                 <div className=" md:mb-11.25 mb-7.5 px-5">
                   {step === 1 && (
                     <>
+                     <PractitionerFilter 
+                     isOpen={filteropen} onClose={() => setFilterOpen(false)} 
+                     afterSelect={(selected) =>
+                              setFormData({
+                                ...formData,
+                                practitioner_id: selected?.id || "",
+                                practitioner_name: selected ? selected.full_name : "",
+                              })}  />
+
                       <div className="w-full max-w-md mx-auto">
+                        
                         <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
                           Select Practitioner
                         </h2>
-                        <div className="w-full">
-                          <Select
-                            options={options}
-                            value={
-                              options?.find(opt => opt.value === formData.practitioner_id) || null
-                            }
-                            onChange={(selected) =>
-                              setFormData({
-                                ...formData,
-                                practitioner_id: selected?.value || "",
-                                practitioner_name: selected ? selected.label.split(" || ")[0] : "",
-                              })
-                            }
-                            placeholder="Select Practitioner"
-                            isSearchable
-                            styles={{
-                              control: (base, state) => ({
-                                ...base,
-                                borderColor: state.isFocused ? "#25716e" : "#e5e7eb", // focus color
-                                boxShadow: state.isFocused ? "0 0 0 1px #25716e" : "none",
-                                "&:hover": {
-                                  borderColor: state.isFocused ? "#25716e" : "#d1d5db",
-                                },
-                              }),
-                            }}
-                          />
+                        <div className="w-full" onClick={() => setFilterOpen(true)}>
+
+                          <div className="border border-gray-300 rounded-lg p-2 text-gray-500 cursor-pointer">
+                            {formData.practitioner_name
+                              ? formData.practitioner_name
+                              : "Click to select practitioner"}
+                          </div>
+
                         </div>
+                        
                       </div>
                     </>
                   )}
@@ -661,8 +632,9 @@ export default function Booking_a_appointment() {
             </div>
           </div>
         </div>
-
+       
       </WrapperBanner>
+     
     </>
   );
 }

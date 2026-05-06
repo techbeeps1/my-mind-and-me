@@ -216,7 +216,7 @@ const validateForm = (data: FormDataType): string => {
   if (!data.qualifications.trim()) {
     errors = "Qualifications are required";
     return errors;
-  }else if (data.qualifications.trim().length < 5 || data.qualifications.trim().length > 50) {
+  }else if (data.qualifications.trim().length < 2 || data.qualifications.trim().length > 50) {
     errors = "Qualifications must be between 5 and 50 characters long";
     return errors;
   }

@@ -1,28 +1,33 @@
 "use client";
 
-
 import Image from "next/image";
 import { FaRegUser, FaPhone } from "react-icons/fa6";
 import { SlCalender } from "react-icons/sl";
 
 import { useEffect, useState } from "react";
-import { GetPractitionerProfile, imagePath, PractitionerProfileEdit } from "@/services/api";
+import {
+  GetPractitionerProfile,
+  imagePath,
+  PractitionerProfileEdit,
+} from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import { useRouter } from "next/navigation";
 import TagSelector from "./TagSelector";
 import { RiImageEditFill } from "react-icons/ri";
-
-
+import { useProfile } from "@/services/ProfileContext";
 const StepProgress = ({ step }: { step: number }) => {
-  const steps = [1, 2, 3, 4,5];
+  const steps = [1, 2, 3, 4, 5];
   return (
     <div className="flex items-center justify-between w-full max-w-xl mx-auto mb-10">
       {steps.map((item, index) => {
         const isCompleted = step > item;
         const isActive = step === item;
         return (
-          <div key={item} className={`flex items-center ${index !== steps.length - 1 ? "w-full" : ""}`}>
+          <div
+            key={item}
+            className={`flex items-center ${index !== steps.length - 1 ? "w-full" : ""}`}
+          >
             <div
               className={`text-xs font-black flex items-center justify-center w-5 h-5 rounded-full border-2 transition-all
                 ${isCompleted ? "bg-primary border-primary text-white" : ""}
@@ -51,6 +56,7 @@ const StepProgress = ({ step }: { step: number }) => {
 
 export default function PractitionerProfileComplete() {
   const router = useRouter();
+    const {  setIsProfileUpdated } = useProfile();
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");
   const [landingData, setLandingData] = useState(false);
@@ -61,51 +67,38 @@ export default function PractitionerProfileComplete() {
     return data ? JSON.parse(data) : null;
   });
 
-  const SpecialInterest = [
-    "Anxiety",
-    "Depression",
-    "Trauma",
-
-  ];
-  const Modalities = [
-    "CBT",
-    "DBT",
-    "Psychodynamic",
-
-  ];
-  const Languages = [
-    "English",
-    "Hindi",
-    "Dutch",
-    "German",
-  ];
+  const SpecialInterest = ["Anxiety", "Depression", "Trauma"];
+  const Modalities = ["CBT", "DBT", "Psychodynamic"];
+  const Languages = ["English", "Hindi", "Dutch", "German"];
   const [SpInterestData, setSpInterestData] = useState<string[]>([]);
 
   const [ModalitiesData, setModalitiesData] = useState<string[]>([]);
 
   const [LanguagesData, setLanguagesData] = useState<string[]>([]);
 
-
   const [step, setStep] = useState(1);
-
 
   const validateStep = (step: number, data: FormDataType) => {
     const errors: string[] = [];
 
     if (step === 1) {
       if (!data.full_name.trim()) {
-        errors.push("Full Name is required");
+        errors.push("Full name is required");
         return errors;
-      }
-      else if (!/^[A-Za-z\s]+$/.test(data.full_name)) {
+      } else if (
+        data.full_name.trim().length < 3 ||
+        data.full_name.trim().length > 50
+      ) {
+        errors.push("Full name must be between 3 and 50 characters long");
+        return errors;
+      } else if (!/^[A-Za-z\s]+$/.test(data.full_name)) {
         errors.push("Full Name should contain only letters and spaces");
         return errors;
       }
       if (!data.phone.trim()) {
         errors.push("Phone number is required");
         return errors;
-      }
-      else if (!/^[1-9]\d{9}$/.test(data.phone)) {
+      } else if (!/^[1-9]\d{9}$/.test(data.phone)) {
         errors.push("Enter valid 10-digit phone number");
         return errors;
       }
@@ -120,42 +113,62 @@ export default function PractitionerProfileComplete() {
     }
 
     if (step === 2) {
-      if (!data.license_number.trim()){
+      if (!data.license_number.trim()) {
         errors.push("License number is required");
-           return errors;
+        return errors;
+      } else if (
+        data.license_number.trim().length < 5 ||
+        data.license_number.trim().length > 20
+      ) {
+        errors.push("License number must be between 5 and 20 characters long");
+        return errors;
       }
 
-      if (!data.qualifications.trim())
+      if (!data.qualifications.trim()) {
         errors.push("Qualifications are required");
-         return errors;
+        return errors;
+      } else if (
+        data.qualifications.trim().length < 2 ||
+        data.qualifications.trim().length > 50
+      ) {
+        errors.push("Qualifications must be between 5 and 50 characters long");
+        return errors;
+      }
+
+      return errors;
     }
-         if (step === 3) {
-       if(LanguagesData.length == 0) {
-         errors.push("Please select at least one language");
-         return errors;
-       }
+    if (step === 3) {
+      if (LanguagesData.length == 0) {
+        errors.push("Please select at least one language");
+        return errors;
+      }
     }
 
     if (step === 4) {
-    if(SpInterestData.length == 0) {
-      errors.push("Please select at least one special interest");
-      return errors;
-    }
+      if (SpInterestData.length == 0) {
+        errors.push("Please select at least one special interest");
+        return errors;
+      }
     }
     if (step === 5) {
-       if(ModalitiesData.length == 0) {
-         errors.push("Please select at least one modality");
-         return errors;
-       }
+
+      if (ModalitiesData.length == 0) {
+        errors.push("Please select at least one modality");
+        return errors;
+      }
+        if(ModalitiesData.length <= 0) {
+      errors.push("Please select at least one modality");
+       return errors;
     }
- 
+
+    }
+
     return errors;
   };
 
   function nextStep() {
     const errors = validateStep(step, formData);
     if (errors.length > 0) {
-
       errors.forEach((err) => toastTBS.error(err));
       return;
     }
@@ -175,7 +188,7 @@ export default function PractitionerProfileComplete() {
     special_interests: string;
     profile_image: string | null;
   };
- const [formData, setFormData] = useState<FormDataType>({
+  const [formData, setFormData] = useState<FormDataType>({
     user_id: MMMUserData?.id || "",
     full_name: "",
     phone: "",
@@ -189,8 +202,11 @@ export default function PractitionerProfileComplete() {
     profile_image: "/profile-img.png",
   });
 
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -202,7 +218,7 @@ export default function PractitionerProfileComplete() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setProfileImage(file)
+    setProfileImage(file);
 
     const imageUrl = URL.createObjectURL(file);
     setPreview(imageUrl);
@@ -215,20 +231,30 @@ export default function PractitionerProfileComplete() {
   }, [preview]);
 
   useEffect(() => {
-    GetPractitionerProfile(MMMUserData?.id).then((data) => {
-      setLanding(false)
-      setFormData(data.data);
-      setSpInterestData(data.data.special_interests || []);
-      setModalitiesData(data.data.modalities || []);
-      setLanguagesData(data.data.languages || []);
-      setPreview(imagePath + data.data.profile_image || "/profile-img.png");
-    }).catch((err) => {
-      console.error(err);
-    });
+    GetPractitionerProfile(MMMUserData?.id)
+      .then((data) => {
+        setLanding(false);
+        setFormData(data.data);
+        setSpInterestData(data.data.special_interests || []);
+        setModalitiesData(data.data.modalities || []);
+        setLanguagesData(data.data.languages || []);
+        setPreview( data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }, [MMMUserData?.id]);
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
+
+
     e.preventDefault();
+      const errors =  validateStep(5, formData);
+    if(errors.length > 0){
+      errors.forEach((err) => toastTBS.error(err));
+      return;
+    }
+
     const data = new FormData();
 
     Object.keys(formData).forEach((key) => {
@@ -241,13 +267,13 @@ export default function PractitionerProfileComplete() {
       }
     });
 
-       if(SpInterestData.length > 0) {
+    if (SpInterestData.length > 0) {
       data.append("special_interests", JSON.stringify(SpInterestData));
     }
-    if(ModalitiesData.length > 0) {
+    if (ModalitiesData.length > 0) {
       data.append("modalities", JSON.stringify(ModalitiesData));
     }
-    if(LanguagesData.length > 0) {
+    if (LanguagesData.length > 0) {
       data.append("languages", JSON.stringify(LanguagesData));
     }
 
@@ -260,24 +286,29 @@ export default function PractitionerProfileComplete() {
     if (landingData) return;
     setLandingData(true);
     try {
-      const res = await PractitionerProfileEdit(data)
+      const res = await PractitionerProfileEdit(data);
       if (res.status) {
 
-        toastTBS.success("Profile updated successfully");
+
+    const response = await fetch("/refresh");
+    const result = await response.json();
+    console.log(result)
+    if(result.success){
+    toastTBS.success("Profile updated successfully");
+     setIsProfileUpdated(  Date.now());
         router.push("dashboard");
 
+    }
         setTimeout(() => {
           setLandingData(false);
-
         }, 1500);
-      }
-      else {
+
+      } else {
         toastTBS.error("Failed to update profile");
         setTimeout(() => {
           setLandingData(false);
         }, 1500);
       }
-
     } catch (err) {
       console.error(err);
       toastTBS.error("An error occurred while updating profile");
@@ -286,7 +317,10 @@ export default function PractitionerProfileComplete() {
 
   if (landing) {
     return (
-      <div className=" bg-cover bg-center bg-no-repeat min-h-screen " style={{ backgroundImage: "url('/banner-bg.jpg')" }}>
+      <div
+        className=" bg-cover bg-center bg-no-repeat min-h-screen "
+        style={{ backgroundImage: "url('/banner-bg.jpg')" }}
+      >
         <div className="flex-1 flex justify-center items-center h-[70vh]">
           <LoadingSpin />
         </div>
@@ -295,7 +329,10 @@ export default function PractitionerProfileComplete() {
   }
   return (
     <>
-      <div className=" bg-cover bg-center bg-no-repeat min-h-screen " style={{ backgroundImage: "url('/banner-bg.jpg')" }}>
+      <div
+        className=" bg-cover bg-center bg-no-repeat min-h-screen "
+        style={{ backgroundImage: "url('/banner-bg.jpg')" }}
+      >
         <div className="flex-1 flex justify-center md:p-7.5 px-5 py-7.5">
           <div className="max-w-150 w-full bg-white rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-2.25 mb-2.5">
@@ -303,7 +340,7 @@ export default function PractitionerProfileComplete() {
             </h2>
             <div>
               <StepProgress step={step} />
-            </div >
+            </div>
             <form onSubmit={handleSave}>
               <div className="w-150  max-w-full mx-auto md:mb-11.25 mb-7.5 px-5">
                 {step === 1 && (
@@ -312,7 +349,6 @@ export default function PractitionerProfileComplete() {
                       Profile
                     </h2>
                     <div className="flex justify-center mb-7.5 items-center gap-4 text-white ">
-
                       <div className="flex items-center gap-2.5 relative z-0">
                         <Image
                           src={preview}
@@ -320,7 +356,7 @@ export default function PractitionerProfileComplete() {
                           height={90}
                           width={90}
                           priority
-                          className="object-cover md:h-15 md:w-15 h-10 w-10 rounded-full"
+                          className="object-cover md:h-15 md:w-15 h-10 w-10 rounded-full shadow-lg"
                         />
 
                         <label className="absolute left-10 -top-2.5 bg-primary text-white text-xs p-1 rounded-full cursor-pointer">
@@ -332,12 +368,7 @@ export default function PractitionerProfileComplete() {
                             className="hidden"
                           />
                         </label>
-
-
                       </div>
-
-
-
                     </div>
                     <div className="flex md:flex-row flex-col md:gap-5 gap-3.75 justify-between mb-5">
                       <div className="w-full">
@@ -348,7 +379,6 @@ export default function PractitionerProfileComplete() {
                         <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                           <FaRegUser className="h-[15px] w-[15px] text-primary" />
                           <input
-
                             value={formData.full_name}
                             onChange={handleChange}
                             type="text"
@@ -366,12 +396,10 @@ export default function PractitionerProfileComplete() {
                         <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                           <FaPhone className="h-[15px] w-[15px] text-primary" />
                           <input
-
                             value={formData.phone}
                             name="phone"
                             onChange={handleChange}
                             type="number"
-
                             placeholder="Phone"
                             className="w-full text-primary text-sm placeholder:text-primary leading-[20px] bg-transparent  outline-none text-sm"
                           />
@@ -384,9 +412,15 @@ export default function PractitionerProfileComplete() {
                         <label className="text-sm block font-semibold leading-6 text-primary mb-2">
                           Gender
                         </label>
-                        <select name="gender" value={formData.gender}
-                          onChange={handleChange} className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
-                          <option value="" disabled selected>Select gender</option>
+                        <select
+                          name="gender"
+                          value={formData.gender}
+                          onChange={handleChange}
+                          className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
+                        >
+                          <option value="" disabled selected>
+                            Select gender
+                          </option>
                           <option value="male">Male</option>
                           <option value="female">Female</option>
                           <option value="other">Other</option>
@@ -399,11 +433,10 @@ export default function PractitionerProfileComplete() {
                         </label>
                         <div className="flex items-center gap-[12px] bg-primary/[0.08] rounded-md px-[16px] py-[10px]">
                           <input
-
                             name="dob"
                             value={formData.dob}
                             onChange={handleChange}
-                            max={ new Date().toISOString().split("T")[0] }
+                            max={new Date().toISOString().split("T")[0]}
                             type="date"
                             placeholder="DD/MM/YYYY"
                             className="w-full text-primary text-sm placeholder:text-primary leading-[20px] bg-transparent  outline-none text-sm"
@@ -412,7 +445,8 @@ export default function PractitionerProfileComplete() {
                         </div>
                       </div>
                     </div>
-                  </>)}
+                  </>
+                )}
                 {step === 2 && (
                   <div className="mt-5">
                     <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
@@ -425,7 +459,6 @@ export default function PractitionerProfileComplete() {
                         </label>
                         <input
                           name="license_number"
-
                           value={formData.license_number}
                           onChange={handleChange}
                           type="text"
@@ -438,7 +471,6 @@ export default function PractitionerProfileComplete() {
                           Qualifications <span className="text-red-500">*</span>
                         </label>
                         <input
-
                           value={formData.qualifications}
                           onChange={handleChange}
                           type="text"
@@ -456,62 +488,81 @@ export default function PractitionerProfileComplete() {
                       Languages
                     </h2>
                     <div className="md:w-[100%] ">
-                      <TagSelector selected={LanguagesData} setSelected={setLanguagesData} options={Languages} columnCount={2} />
-
+                      <TagSelector
+                        selected={LanguagesData}
+                        setSelected={setLanguagesData}
+                        options={Languages}
+                        columnCount={2}
+                      />
                     </div>
                   </div>
                 )}
                 {step === 4 && (
-                   <div className="mt-5">
-                                   <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
-                                     Special Interest
-                                   </h2>
-                                   <div className="md:w-[100%] ">
-                                     <TagSelector selected={SpInterestData} setSelected={setSpInterestData} options={SpecialInterest} columnCount={2}  />
-                 
-                 
-                                   </div>
-                                 </div>
+                  <div className="mt-5">
+                    <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
+                      Special Interest
+                    </h2>
+                    <div className="md:w-[100%] ">
+                      <TagSelector
+                        selected={SpInterestData}
+                        setSelected={setSpInterestData}
+                        options={SpecialInterest}
+                        columnCount={2}
+                      />
+                    </div>
+                  </div>
                 )}
-{step === 5 && (
-                <div className="mt-5">
-                                  <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
-                                    Modalities
-                                  </h2>
-                                  <div className="md:w-[100%] ">
-                                    <TagSelector selected={ModalitiesData} setSelected={setModalitiesData} options={Modalities} columnCount={2} />
-                
-                                  </div>
-                                </div>
-                
-)}
+                {step === 5 && (
+                  <div className="mt-5">
+                    <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
+                      Modalities
+                    </h2>
+                    <div className="md:w-[100%] ">
+                      <TagSelector
+                        selected={ModalitiesData}
+                        setSelected={setModalitiesData}
+                        options={Modalities}
+                        columnCount={2}
+                      />
+                    </div>
+                  </div>
+                )}
                 <div className="flex justify-end mt-10 gap-2">
                   {step > 1 && (
-                    <button type="button" onClick={() => setStep(step - 1)} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <button
+                      type="button"
+                      onClick={() => setStep(step - 1)}
+                      className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
+                    >
                       Back
                     </button>
                   )}
 
                   {step < 5 && (
-                    <button type="button" onClick={nextStep} className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition"
+                    >
                       Next
                     </button>
                   )}
 
                   {step === 5 && (
                     <button className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition">
-                      {landingData ? (<LoadingSpin width={2} height={11} />) : "Save"}
+                      {landingData ? (
+                        <LoadingSpin width={2} height={11} />
+                      ) : (
+                        "Save"
+                      )}
                     </button>
                   )}
                 </div>
-
-
               </div>
             </form>
           </div>
         </div>
       </div>
-
     </>
   );
 }

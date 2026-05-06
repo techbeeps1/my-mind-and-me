@@ -36,6 +36,7 @@ type ProfileContextType = {
   setMMMUserData: (value: UserData | null) => void;
   updateUser: (data: UserData) => void;
   logoutUser: () => void;
+  setIsProfileUpdated: (value: number) => void;
  
 };
 
@@ -51,6 +52,7 @@ type ProviderProps = { children: ReactNode };
 export const ProfileProvider = ({ children }: ProviderProps) => {
   const [profile, setProfile] = useState<string>("/profile-img.png");
   const [username, setUsername] = useState<string>("");
+  const [isProfileUpdated, setIsProfileUpdated] = useState(0);
 
   const [MMMUserData, setMMMUserData] = useState<UserData | null>(() => {
     if (typeof window === "undefined") return null;
@@ -81,7 +83,7 @@ export const ProfileProvider = ({ children }: ProviderProps) => {
           console.error("Profile fetch error:", err);
         });
     }
-  }, [MMMUserData, username]);
+  }, [MMMUserData, username,isProfileUpdated]);
 
   // ------------------------
   // HELPER FUNCTIONS
@@ -109,6 +111,7 @@ const logoutUser = () => {
         setMMMUserData,
         updateUser,
         logoutUser,
+        setIsProfileUpdated,
         
       }}
     >

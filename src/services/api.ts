@@ -18,6 +18,39 @@ export const bookingApiPath = "/api/booking";
 // API paths for LOCAL
 
 
+// progress update
+export async function changeProgressStatus( { userID, resourceID }: { userID: string; resourceID: string } ) {
+  const res = await fetch(`${paApiPath}/progress`, {   
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userID, resourceID }),
+  });
+  if (!res.ok) { throw new Error("Failed to change progress status");}
+  return await res.json();
+}
+
+// Get progress
+export async function GetProgress(userID: string ) {
+  const res = await fetch(`${paApiPath}/progress/${userID}`);
+   if (!res.ok) throw new Error("Failed to fetch progress data");
+  return res.json();
+}
+
+
+//  filter get practitioners
+export async function GetPractitionerFilter( data:any ) {
+  const res = await fetch(`${prApiPath}/filter`, {   
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) { throw new Error("Failed to get practitioners");}
+  return await res.json();
+}
 // add conversation 
 export async function addResourceInProgress( data:any ) {
   const res = await fetch(`${prApiPath}/progress`, {   

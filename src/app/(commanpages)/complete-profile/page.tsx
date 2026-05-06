@@ -1,7 +1,6 @@
 "use client";
 import DoctorProfileComplete from "@/components/comman/DoctorProfileComplete";
 import PatientsProfileComplete from "@/components/comman/PatientsProfileComplete";
-
 import PractitionerProfileComplete from "@/components/comman/PractitionerProfileComplete";
 import { useState } from "react";
 

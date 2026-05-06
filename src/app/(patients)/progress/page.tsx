@@ -6,10 +6,13 @@ import { FaVideo } from "react-icons/fa";
 import { useEffect, useMemo, useState } from "react";
 import ResourceVideoPlayer from "@/components/ResourceVideoPlayer";
 import ResourcePaid from "@/components/ResourcePaid";
-import { GetResources } from "@/services/api";
+import { GetProgress } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
 import { FiSearch } from "react-icons/fi";
 import { useProfile } from "@/services/ProfileContext";
+import { IoNewspaperSharp } from "react-icons/io5";
+import ResourceReflectionQ from "@/components/ResourceReflectionQ";
+import { BiEdit } from "react-icons/bi";
 
 interface ResourcesType {
   id: string;
@@ -19,12 +22,14 @@ interface ResourcesType {
   is_paid: string;
   price: string;
   description: string;
+  status: string;
 }
 
 export default function Progress() {
-     const { MMMUserData } = useProfile();
-  const [selectedSessionFree, setSelectedSessionFree] = useState("");
-  const [selectedSessionPaid, setSelectedSessionPaid] = useState("");
+  const { MMMUserData } = useProfile();
+  const [selectedSessionFree, setSelectedSessionFree] = useState<ResourcesType>();
+  const [selectedSessionFreeRQ, setSelectedSessionFreeRQ] = useState<ResourcesType >();
+  const [selectedSessionPaid, setSelectedSessionPaid] = useState<ResourcesType >();
   const [landing, setLanding] = useState(true);
   const [Resources, setResources] = useState<ResourcesType[]>([]);
 
@@ -41,15 +46,27 @@ export default function Progress() {
   }, [search, Resources]);
 
   useEffect(() => {
-    if(!MMMUserData) return;
-    GetResources("Video",MMMUserData?.id).then((data) => {
-      if(data.success){
-      setResources(data.data);
+    if (!MMMUserData) return;
+    GetProgress(MMMUserData?.id).then((data) => {
+      console.log("Progress data:", data);
+      if (data.success) {
+        setResources(data.data);
       }
-      
+
       setLanding(false);
     });
   }, [MMMUserData]);
+
+
+function openSessionModel(item: ResourcesType){
+
+  if(item.is_paid === "Paid"){
+   setSelectedSessionPaid(item) 
+  }else{
+ return  item.type === "Video"? setSelectedSessionFree(item) : setSelectedSessionFreeRQ(item)
+  }
+  
+}
 
   return (
     <>
@@ -60,32 +77,39 @@ export default function Progress() {
               Progress
             </h2>
 
-        <div className="flex px-7.5 flex-wrap md:gap-0 gap-4 pt-5.5 pb-7.5">
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Search..."
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          className=" bg-primary/8 placeholder:text-primary w-75 rounded-md px-4 py-2.5 outline-none"
-                        />
-                        <button className="absolute top-1/2 right-6 z-1 cursor-pointer text-primary -translate-y-1/2 transform ">
-                          <FiSearch className=" h-5 w-5  " />
-                        </button>
-                      </div>
-                      </div>
-                      {landing && <div className="flex justify-center min-h-[200px]"><LoadingSpin color="bg-primary" /></div>}
-                                   
-              <div className="grid px-7.5 2xl:grid-cols-5 xl:grid-cols-4 sm:grid-cols-3 gap-5 mb-12.5 ">
-      {!filteredData.length && !landing && <div className="col-span-5 text-center text-gray-500">No videos found.</div>}
-           
+            <div className="flex px-7.5 flex-wrap md:gap-0 gap-4 pt-5.5 pb-7.5">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className=" bg-primary/8 placeholder:text-primary w-75 rounded-md px-4 py-2.5 outline-none"
+                />
+                <button className="absolute top-1/2 right-6 z-1 cursor-pointer text-primary -translate-y-1/2 transform ">
+                  <FiSearch className=" h-5 w-5  " />
+                </button>
+              </div>
+            </div>
+            {landing && (
+              <div className="flex justify-center min-h-[200px]">
+                <LoadingSpin color="bg-primary" />
+              </div>
+            )}
+
+            <div className="grid px-7.5 2xl:grid-cols-5 xl:grid-cols-4 sm:grid-cols-3 gap-5 mb-12.5 ">
+              {!filteredData.length && !landing && (
+                <div className="col-span-5 text-center text-gray-500">
+                  No videos found.
+                </div>
+              )}
+
               {filteredData.map((item) => (
                 <div
-                  onClick={() =>
-                    item.is_paid === "Paid"
-                      ? setSelectedSessionPaid(item.id)
-                      : setSelectedSessionFree(item.id)
+                  onClick={() => {
+    openSessionModel(item)
                   }
+                }
                   key={item.id}
                   className="cursor-pointer relative w- max-w-full bg-white rounded-[10px] border-2 border-primary/8 shadow-[0_0_6px_0_hsl(0deg_0%_0%/6%)] p-2.5"
                 >
@@ -95,14 +119,20 @@ export default function Progress() {
                     {item.is_paid}
                   </span>
                   <div className="bg-[#B8E1D9] rounded-[10px] h-30 flex items-center justify-center mb-2.5">
-                    <FaVideo className="text-primary w-15 h-15" />
+                    {item.type === "Video" ? (
+                      <FaVideo className="text-primary w-15 h-15" />
+                    ) : (
+                      <IoNewspaperSharp className="text-primary w-15 h-15" />
+                    )}
                   </div>
                   <h3 className="text-primary text-sm font-semibold mb-2.5">
                     {item.title}
                   </h3>
-                        <span className="px-3.25 py-1.25 text-sm rounded-[3px] bg-MintGreen/31 text-[#0EA761] font-semibold">
-                  Completed
-                </span>
+                  <span className={`relative px-3.25 py-1.25 text-sm rounded-[3px] font-semibold capitalize ${item.status === "completed" ? "bg-MintGreen/31 text-[#0EA761]" : "bg-gray-100 text-gray-800"}`}>
+                    {item.status}
+    
+                  
+                  </span>
                 </div>
               ))}
             </div>
@@ -111,24 +141,28 @@ export default function Progress() {
       </WrapperBanner>
 
       <ResourceVideoPlayer
-        isOpen={selectedSessionFree}
-        onClose={() => setSelectedSessionFree("")}
+        isOpen={selectedSessionFree?.id}
+        data={selectedSessionFree}
+        onClose={() => setSelectedSessionFree(undefined)}
       />
 
+      <ResourceReflectionQ
+              isOpen={selectedSessionFreeRQ?.id}
+              data={selectedSessionFreeRQ}
+              onClose={() => setSelectedSessionFreeRQ(undefined)}
+            />
+
       <ResourcePaid
-        key={selectedSessionPaid}
+        key={selectedSessionPaid?.id}
         data={{
-          id: selectedSessionPaid,
-          name:
-            Resources.find((item) => item.id === selectedSessionPaid)?.title ||
-            "",
-          type: "Video Session",
-          amount:
-            Resources.find((item) => item.id === selectedSessionPaid)?.price ||
-            "",
+          id: selectedSessionPaid?.id || "",
+          name:selectedSessionPaid?.title || "",
+           
+          type: selectedSessionPaid?.type || "",
+          amount: selectedSessionPaid?.price || "",
         }}
-        isOpen={selectedSessionPaid}
-        onClose={() => setSelectedSessionPaid("")}
+        isOpen={selectedSessionPaid?.id}
+        onClose={() => setSelectedSessionPaid(undefined)}
       />
     </>
   );

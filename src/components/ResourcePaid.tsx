@@ -18,14 +18,14 @@ type PaymentResponse = {
 };
 
 type SessionModalProps = {
-  key: string;
+  key: string | undefined;
   data?: {
     id: string;
     name: string;
     type: string;
     amount: string;
   };
-  isOpen: string;
+  isOpen: string | undefined;
   onClose: () => void;
 };
 

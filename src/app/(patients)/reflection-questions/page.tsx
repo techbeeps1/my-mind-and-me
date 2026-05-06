@@ -25,6 +25,7 @@ export default function ReflectionQuestions() {
   const { MMMUserData } = useProfile();
   const [selectedSessionFree, setSelectedSessionFree] = useState("");
   const [selectedSessionPaid, setSelectedSessionPaid] = useState("");
+  const [isUpdate, setIsUpdate] = useState(0);  
   const [landing, setLanding] = useState(true);
   const [Resources, setResources] = useState<ResourcesType[]>([]);
 
@@ -49,7 +50,7 @@ export default function ReflectionQuestions() {
 
       setLanding(false);
     });
-  }, [MMMUserData]);
+  }, [MMMUserData,isUpdate]);
 
   return (
     <>
@@ -131,7 +132,7 @@ export default function ReflectionQuestions() {
             "",
         }}
         isOpen={selectedSessionPaid}
-        onClose={() => setSelectedSessionPaid("")}
+        onClose={() => {setSelectedSessionPaid(""); setIsUpdate((prev) => prev + 1)}}
       />
     </>
   );

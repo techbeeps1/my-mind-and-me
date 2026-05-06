@@ -11,7 +11,7 @@ import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import { useRouter } from "next/navigation";
 import { RiImageEditFill } from "react-icons/ri";
-
+import { useProfile } from "@/services/ProfileContext";
 
 const StepProgress = ({ step }: { step: number }) => {
   const steps = [1, 2, 3, 4];
@@ -50,6 +50,7 @@ const StepProgress = ({ step }: { step: number }) => {
 
 export default function DoctorProfileComplete() {
   const router = useRouter();
+  const { setIsProfileUpdated } = useProfile();
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");
   const [landingData, setLandingData] = useState(false);
@@ -70,9 +71,18 @@ export default function DoctorProfileComplete() {
       if (!data.full_name.trim()) {
         errors.push("Full Name is required");
       }
-      else if (!/^[A-Za-z\s]+$/.test(data.full_name)) {
+      else if (
+        data.full_name.trim().length < 3 ||
+        data.full_name.trim().length > 50
+      ) {
+        errors.push("Full name must be between 3 and 50 characters long");
+        return errors;
+      } else if (!/^[A-Za-z\s]+$/.test(data.full_name)) {
         errors.push("Full Name should contain only letters and spaces");
+        return errors;
       }
+
+
       if (!data.phone.trim()) errors.push("Phone number is required");
       else if (!/^[6-9]\d{9}$/.test(data.phone))
         errors.push("Enter valid 10-digit phone number");
@@ -82,21 +92,42 @@ export default function DoctorProfileComplete() {
     }
 
     if (step === 2) {
-      if (!data.license_number.trim())
+      if (!data.license_number.trim()){
         errors.push("License number is required");
-
+      } else if (
+        data.license_number.trim().length < 5 ||
+        data.license_number.trim().length > 20
+      ) {
+        errors.push("License number must be between 5 and 20 characters long");
+        return errors;
+      }
       if (!data.registration.trim())
         errors.push("Registration number is required");
-    }
+    }else if(data.registration.trim() && (data.registration.trim().length < 5 || data.registration.trim().length > 20)){
+      errors.push("Registration number must be between 5 and 20 characters long");
+      return errors;
+     }
 
     if (step === 3) {
-      if (!data.clinic_phone.trim())
+      if (!data.clinic_phone.trim()){
         errors.push("Clinic phone is required");
-      else if (!/^[6-9]\d{9}$/.test(data.clinic_phone))
-        errors.push("Enter valid 10-digit phone number");
+        return errors;
+      }else if(data.clinic_name.trim() && (data.clinic_name.trim().length < 3 || data.clinic_name.trim().length > 50)){
+     errors.push("Clinic name must be between 3 and 50 characters long");
+     return errors;
 
-      if (!data.address.trim())
+      }
+      if (!/^[6-9]\d{9}$/.test(data.clinic_phone)){
+        errors.push("Enter valid 10-digit phone number");
+        return errors;
+      }
+      if (!data.address.trim()){
         errors.push("Address is required");
+        return errors;
+      }else if(data.address.trim().length < 10 || data.address.trim().length > 200){
+        errors.push("Address must be between 10 and 200 characters long");
+        return errors;
+      }
     }
 
     if (step === 4) {
@@ -174,7 +205,7 @@ export default function DoctorProfileComplete() {
     referralProfile(MMMUserData?.id).then((data) => {
       setLanding(false)
       setFormData(data.data);
-      setPreview(imagePath + data.data.profile_image || "/profile-img.png");
+     setPreview( data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png");
     }).catch((err) => {
       console.error(err);
     });
@@ -183,6 +214,11 @@ export default function DoctorProfileComplete() {
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData();
+    const errors = validateStep(4, formData);
+    if (errors.length > 0) {
+      errors.forEach((err) => toastTBS.error(err));
+      return;
+    }
 
     Object.keys(formData).forEach((key) => {
       const typedKey = key as keyof FormDataType;
@@ -207,8 +243,16 @@ export default function DoctorProfileComplete() {
       const res = await referralProfileEdit(data)
       if (res.status) {
 
-        toastTBS.success("Profile updated successfully");
+        
+    const response = await fetch("/refresh");
+    const result = await response.json();
+    console.log(result)
+    if(result.success){
+    toastTBS.success("Profile updated successfully");
+      setIsProfileUpdated(  Date.now());
         router.push("dashboard");
+
+    }
 
         setTimeout(() => {
           setLandingData(false);
@@ -453,6 +497,7 @@ export default function DoctorProfileComplete() {
                       </label>
                       <select name="special_interest" value={formData.special_interest}
                         onChange={handleChange} className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
+                        <option value="" disabled selected>Select special interest</option>
                         <option>Psychiatry</option>
                         <option>Neurology</option>
                       </select>

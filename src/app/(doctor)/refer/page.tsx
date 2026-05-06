@@ -1,13 +1,11 @@
 "use client";
 
 import LoadingSpin from "@/components/LoadingSpin";
+import PractitionerFilter from "@/components/PractitionerFilter";
 import WrapperBanner from "@/components/WraperBanner";
+import Select from "react-select";
 import { toastTBS } from "@/lib/toast";
-import {
-  AddReferrerFun,
-  GetAllPatient,
-  GetAllPractitioner,
-} from "@/services/api";
+import { AddReferrerFun, GetAllPatient } from "@/services/api";
 import { useEffect, useState } from "react";
 type UserPatientANDPractitioner = {
   id: string;
@@ -28,11 +26,16 @@ type Referral = {
   chief_complaint: string;
   medical_note: string;
 };
+type selectedPractitionerType = {
+  id: string;
+  full_name: string;
+};
 export default function AddReferrer() {
   const [PreferredModality, setPreferredModality] = useState("");
-  const [allPractitioners, setAllPractitioners] = useState<
-    UserPatientANDPractitioner[]
-  >([]);
+  const [selectedPractitioner, setSelectedPractitioner] =
+    useState<selectedPractitionerType>();
+  const [filteropen, setFilterOpen] = useState(false);
+
   const [allPatients, setAllPatients] = useState<UserPatientANDPractitioner[]>(
     [],
   );
@@ -120,20 +123,11 @@ export default function AddReferrer() {
     }));
   };
 
-  useEffect(() => {
-
-  }, [referralData]);
+  useEffect(() => {}, [referralData]);
   useEffect(() => {
     GetAllPatient()
       .then((data) => {
         setAllPatients(data.data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-    GetAllPractitioner()
-      .then((data) => {
-        setAllPractitioners(data.data);
       })
       .catch((err) => {
         console.error(err);
@@ -147,12 +141,15 @@ export default function AddReferrer() {
     setLoading(true);
     AddReferrerFun({ ...referralData, user_id: MMMUserData?.id })
       .then((data) => {
-      
         if (data.status) {
           toastTBS.success("Referral added successfully");
           (e.target as HTMLFormElement).reset();
           setReferralData(initialReferralData);
-        
+          setAllPatients((prev) =>
+            prev.filter((patient) => patient.id !== referralData.patient_id),
+          );
+          setSelectedPractitioner(undefined);
+
           setTimeout(() => {
             setLoading(false);
           }, 1500);
@@ -161,13 +158,16 @@ export default function AddReferrer() {
       .catch((err) => {
         console.error("Failed to add referral:", err);
         toastTBS.error("Failed to add referral");
-       
+
         setTimeout(() => {
           setLoading(false);
         }, 1500);
       });
   };
-
+  const patientOptions = allPatients?.map((patient) => ({
+    value: patient.id,
+    label: `${patient.unique_id} | ${patient.user_name}`,
+  }));
   return (
     <>
       <WrapperBanner>
@@ -182,22 +182,40 @@ export default function AddReferrer() {
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
                     Patient Selection <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    onChange={handleChange}
-                    name="patient_id"
-                    className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
-                  >
-                    <option value=""  selected>
-                      Patient Selection
-                    </option>
-                    {allPatients?.map((patient) => (
-                      <option key={patient.id} value={patient.id}>
-                        {patient.unique_id}
-                        {" | "}
-                        {patient.user_name}
-                      </option>
-                    ))}
-                  </select>
+                  <Select
+                    options={patientOptions}
+                    value={allPatients?.map((patient) => ({
+                      value: patient.id,
+                      label: `${patient.unique_id} | ${patient.user_name}`, 
+                    })).find((option) => option.value === referralData.patient_id) || null}
+
+                    onChange={(selectedOption) =>
+                      setReferralData((prev) => ({
+                        ...prev,
+                        patient_id: selectedOption?.value ?? "",
+                      }))
+                    }
+                    placeholder="Patient Selection"
+                    className="w-full  text-primary text-sm  rounded-md  leading-5  outline-none"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        backgroundColor: "#25716e14",
+                        borderRadius: "0.375rem",
+                        padding: "2px",
+                        border: "none",
+                        color: "#25716e",
+                      }),
+                        singleValue: (base) => ({
+      ...base,
+      color: "#25716e",
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: "#64748b",
+    }),
+                    }}
+                  />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -205,23 +223,27 @@ export default function AddReferrer() {
                       Preferred Practitioner{" "}
                       <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      onChange={handleChange}
-                      name="therapist_id"
-                      className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none"
-                    >
-                      <option value="" selected>
-                        Preferred Practitioner
-                      </option>
+                    <PractitionerFilter
+                      isOpen={filteropen}
+                      onClose={() => setFilterOpen(false)}
+                      afterSelect={(selected) => {
+                        if (selected) {
+                          setSelectedPractitioner(selected);
+                          setReferralData((prev) => ({
+                            ...prev!,
+                            therapist_id: selected.id,
+                          }));
+                        }
+                      }}
+                    />
 
-                      {allPractitioners?.map((practitioner) => (
-                        <option key={practitioner.id} value={practitioner.id}>
-                          {practitioner.unique_id}
-                          {" | "}
-                          {practitioner.user_name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="w-full" onClick={() => setFilterOpen(true)}>
+                      <div className="w-full  text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/[0.08] outline-none">
+                        {selectedPractitioner
+                          ? selectedPractitioner.full_name
+                          : "Select Practitioner"}
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <label className="text-sm block font-semibold leading-6 text-primary mb-2">
@@ -238,7 +260,6 @@ export default function AddReferrer() {
                       <option>Routine</option>
                       <option>Emergency</option>
                       <option>Urgent</option>
-                    
                     </select>
                   </div>
                 </div>

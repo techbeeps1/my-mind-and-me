@@ -220,22 +220,22 @@ export default function BookingHistory() {
                         <td className="px-4 py-4 text-sm text-primary font-semibold  flex items-center gap-2">
                           <div
                             onClick={() => {
-                              if (item.status == "booked") {
+                              if (item.status == "booked" || ( item.status == "rescheduled" && MMMUserData?.role === "practitioner")) {
                                 setSelectedBooking(item);
                                 setOpenStatusChange(true);
                               }
                             }}
                           >
                             <FaRegEdit
-                              className={`text-xl  ${item.status !== "booked" ? "text-gray-300 cursor-not-allowed" : "hover:text-gray-500 cursor-pointer"}`}
+                              className={`text-xl  ${(item.status == "booked" || (item.status == "rescheduled" && MMMUserData?.role === "practitioner")) ?  "hover:text-gray-500 cursor-pointer":"text-gray-300 cursor-not-allowed" }`}
                             />
                           </div>
                            
                           <Link
                             href={item.meeting_link ?? "#"}
-                            target="_blank"
+                            target={item.meeting_link ? "_blank" : "_self"}
                             rel="noopener noreferrer"
-                            className={`${item.status !== "booked" ? "text-gray-400 cursor-not-allowed bg-gray-300" : "bg-gradient-to-r from-teal-400 to-teal-700 text-white" }  hover:scale-105 transition text-md   font-semibold shadow-lg flex items-center justify-center gap-1 px-2 py-1 rounded-md text-sm`}
+                            className={`${(item.status === "booked" || item.status === "rescheduled") ?   "bg-gradient-to-r from-teal-400 to-teal-700 text-white" : "text-gray-400 cursor-not-allowed bg-gray-300"}  hover:scale-105 transition text-md   font-semibold shadow-lg flex items-center justify-center gap-1 px-2 py-1 rounded-md text-sm`}
                           >
                             <SiGooglemeet className="text-lg" /> Join
                           </Link>

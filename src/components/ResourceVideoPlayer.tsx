@@ -1,14 +1,45 @@
 "use client";
+import { changeProgressStatus } from "@/services/api";
+import { useProfile } from "@/services/ProfileContext";
+import LoadingSpin from "./LoadingSpin";
+import { useState } from "react";
 
+interface ResourcesType {
+  id: string;
+  title: string;
+  type: string;
+  url: string;
+  is_paid: string;
+  price: string;
+  description: string;
+  status?: string;
+}
 type SessionModalProps = {
-  isOpen: string;
+  isOpen: string | undefined;
+  data:ResourcesType | undefined;
   onClose: () => void;
 };
 
 export default function ResourceVideoPlayer({
   isOpen,
+  data,
   onClose,
 }: SessionModalProps) {
+
+  const { MMMUserData } = useProfile();
+
+  function handleMarkAsCompleted() {
+  changeProgressStatus({ userID: MMMUserData?.id || "", resourceID: data?.id || "" }).then((res) => {
+    if(res.success){
+      console.log("Progress Updated:", res.data);
+      onClose();
+    }else{
+      console.error("Progress Update Failed:");
+    }
+  }).catch((err) => {
+    console.error("API Error:", err);
+  });
+}
   if (!isOpen) return null;
 
   return (
@@ -41,9 +72,16 @@ export default function ResourceVideoPlayer({
         </div>
 
         {/* Title */}
+        <div className="flex justify-between ">
         <h3 className=" text-[18px] leading-7 font-semibold ">
-          Welcome to your dashboard
+          {data?.title}
         </h3>
+        {data?.status && data?.status !== "completed" && (
+        <button onClick={handleMarkAsCompleted} className="flex justify-center items-center gap-2 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer">
+          Mark as Completed <LoadingSpin width={3} height={15} color="bg-white" />
+        </button>
+)}
+        </div>
       </div>
     </div>
   );

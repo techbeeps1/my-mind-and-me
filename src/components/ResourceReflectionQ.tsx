@@ -1,14 +1,45 @@
 "use client";
 
+import { changeProgressStatus } from "@/services/api";
+import { useProfile } from "@/services/ProfileContext";
+import LoadingSpin from "./LoadingSpin";
+
+
+interface ResourcesType {
+  id: string;
+  title: string;
+  type: string;
+  url: string;
+  is_paid: string;
+  price: string;
+  description: string;
+  status?: string;
+}
 type SessionModalProps = {
-  isOpen: string;
+  isOpen: string | undefined;
+  data: ResourcesType | undefined;
   onClose: () => void;
 };
 
 export default function ResourceReflectionQ({ 
   isOpen, 
+  data,
+
   onClose 
 }: SessionModalProps) {
+const { MMMUserData } = useProfile();
+  function handleMarkAsCompleted() {
+  changeProgressStatus({ userID: MMMUserData?.id || "", resourceID: data?.id || "" }).then((res) => {
+    if(res.success){
+      console.log("Progress Updated:", res.data);
+      onClose();
+    }else{
+      console.error("Progress Update Failed:");
+    }
+  }).catch((err) => {
+    console.error("API Error:", err);
+  });
+}
 
   if (!isOpen) return null;
 
@@ -34,7 +65,14 @@ export default function ResourceReflectionQ({
         {/* Video Section */}
         <div className="rounded-xl  mb-5  ">
          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfBdW1ik8WseCyGQmACNO2JUTwp18nL-RqKoQjtRm6nO7zi8Q/viewform?embedded=true" className="w-full h-[80vh] custom-scroll" >Loading…</iframe>
-        </div>
+              </div>
+                 {data?.status && data?.status !== "completed" && (
+             <div className="flex justify-end">
+                <button onClick={handleMarkAsCompleted} className="flex justify-center items-center gap-2 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer">
+          Mark as Completed <LoadingSpin width={3} height={15} color="bg-white" />
+        </button>
+        </div>)}
+       
       </div>
     </div>
   );

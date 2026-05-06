@@ -10,12 +10,13 @@ import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import { useRouter } from "next/navigation";
 import { RiImageEditFill } from "react-icons/ri";
-
+import { useProfile } from "@/services/ProfileContext";
 
 
 
 export default function PatientsProfileComplete() {
   const router = useRouter();
+    const { setIsProfileUpdated } = useProfile();
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");
   const [landingData, setLandingData] = useState(false);
@@ -25,13 +26,6 @@ export default function PatientsProfileComplete() {
     const data = localStorage.getItem("MMMDT");
     return data ? JSON.parse(data) : null;
   });
-
-
-
-
-
-
-
 
 
   type FormDataType = {
@@ -59,7 +53,16 @@ export default function PatientsProfileComplete() {
     if (!data.full_name.trim()) {
       errors = "Full name is required";
       return errors;
-    }
+    }else if (
+        data.full_name.trim().length < 3 ||
+        data.full_name.trim().length > 50
+      ) {
+        errors = "Full name must be between 3 and 50 characters long";
+        return errors;
+      } else if (!/^[A-Za-z\s]+$/.test(data.full_name)) {
+        errors = "Full Name should contain only letters and spaces";
+        return errors;
+      }
 
     if (!data.phone.trim()) {
       errors = "Phone number is required";
@@ -118,7 +121,7 @@ export default function PatientsProfileComplete() {
       setLanding(false)
        setFormData(data.data);
 
-      setPreview(imagePath + data.data.profile_image || "/profile-img.png");
+     setPreview( data.data.profile_image ? imagePath + data.data.profile_image : "/profile-img.png");
     }).catch((err) => {
       console.error(err);
     });
@@ -158,8 +161,16 @@ export default function PatientsProfileComplete() {
       const res = await patientProfileEdit(data)
       if (res.status) {
 
-        toastTBS.success("Profile updated successfully");
+        
+    const response = await fetch("/refresh");
+    const result = await response.json();
+    console.log(result)
+    if(result.success){
+    toastTBS.success("Profile updated successfully");
+   setIsProfileUpdated(  Date.now());
         router.push("dashboard");
+
+    }
 
         setTimeout(() => {
           setLandingData(false);

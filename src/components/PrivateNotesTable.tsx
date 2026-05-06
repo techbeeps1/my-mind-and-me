@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { IoSend } from "react-icons/io5";
+
 import { getConversation, SendConversation } from "@/services/api";
 
 import LoadingSpin from "./LoadingSpin";

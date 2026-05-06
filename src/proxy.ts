@@ -9,12 +9,68 @@ export async function proxy(request: NextRequest) {
   const tokenR = request.cookies.get("MMMRT")?.value;
   const userData = JSON.parse(request.cookies.get("MMMDT")?.value || "{}");
 
-  if (url.pathname == "/login" || url.pathname == "/sign-up") {
-    return NextResponse.next();
+  if (
+    url.pathname == "/login" ||
+    url.pathname == "/sign-up" ||
+    url.pathname == "/forgot-password"
+  ) {
+    if (userData?.id) {
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    } else {
+      return NextResponse.next();
+    }
   }
 
-  if (!userData.role) {
-    //return NextResponse.redirect(new URL("/login", request.url));
+  if (url.pathname.startsWith("/refresh")) {
+    try {
+      const res = await fetch(`${AUTH_END}/refresh-token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: tokenR }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        const response = NextResponse.json({
+          success: true,
+        });
+
+        response.cookies.set("MMMAT", data.access_token, {
+          httpOnly: true,
+          secure: true,
+          path: "/",
+        });
+
+        response.cookies.set("MMMDT", JSON.stringify(data.user), {
+          httpOnly: true,
+          secure: true,
+          path: "/",
+        });
+
+        return response;
+      } else {
+        return NextResponse.json(
+          { success: false, message: "Unauthorized" },
+          { status: 401 },
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      return NextResponse.json(
+        { success: false, message: "Server error" },
+        { status: 500 },
+      );
+    }
+  }
+  if (
+    userData?.is_completed == false &&
+    !url.pathname.startsWith("/complete-profile")
+  ) {
+    return NextResponse.redirect(new URL("/complete-profile", request.url));
   }
 
   async function genToken() {
@@ -27,9 +83,15 @@ export async function proxy(request: NextRequest) {
         body: JSON.stringify({ token: tokenR }),
       });
       const data = await res.json();
+      console.log(data);
       if (data.success) {
         const response = NextResponse.next();
         response.cookies.set("MMMAT", data.access_token, {
+          httpOnly: true,
+          secure: true,
+          path: "/",
+        });
+        response.cookies.set("MMMDT", JSON.stringify(data.user), {
           httpOnly: true,
           secure: true,
           path: "/",
@@ -42,6 +104,7 @@ export async function proxy(request: NextRequest) {
     } catch (err) {
       url.pathname = "/login";
       return NextResponse.redirect(url);
+      console.log(err);
     }
   }
 
@@ -52,6 +115,7 @@ export async function proxy(request: NextRequest) {
     "/add-refer",
     "/referral-history",
     "/my-profile",
+    "/complete-profile",
   ];
 
   if (
@@ -73,9 +137,10 @@ export async function proxy(request: NextRequest) {
     "/medical-history",
     "/my-profile",
     "/progress",
+    "/complete-profile",
   ];
 
-    if (
+  if (
     role == "patients" &&
     !patients.some((route) => url.pathname.startsWith(route))
   ) {
@@ -85,7 +150,6 @@ export async function proxy(request: NextRequest) {
     "/change-password",
     "/dashboard",
     "/booking-history",
-    "/appointment-history",
     "/bank-details",
     "/bio",
     "/patients-progress",
@@ -93,10 +157,11 @@ export async function proxy(request: NextRequest) {
     "/my-profile",
     "/schedule",
     "/verification-status",
-    "/referral-history",  
+    "/referral-history",
+    "/complete-profile",
   ];
 
-    if (
+  if (
     role == "practitioner" &&
     !practitioners.some((route) => url.pathname.startsWith(route))
   ) {
@@ -123,7 +188,6 @@ export async function proxy(request: NextRequest) {
       }
     } catch (err) {
       url.pathname = "/login";
-
       return NextResponse.redirect(url);
       console.log(err);
     }
@@ -158,5 +222,9 @@ export const config = {
     "/verification-status",
     "/referral-history",
     "/orders/:path*",
+    "/refresh",
+    "/login",
+    "/sign-up",
+    "/forgot-password",
   ],
 };
