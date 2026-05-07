@@ -148,7 +148,7 @@ export default function PractitionerFilter({
     setModalitiesFilter([]);
   };
 
-  const customSelectStyle: StylesConfig<OptionType, true> = {
+  const customSelectStyle: StylesConfig<OptionType, boolean> = {
     control: (base, state) => ({
       ...base,
       fontSize: "14px",
@@ -249,9 +249,7 @@ export default function PractitionerFilter({
                       onChange={(selected: SingleValue<OptionType>) =>
                         setGenderFilter(selected)
                       }
-                      styles={
-                        customSelectStyle as StylesConfig<OptionType, false>
-                      }
+                     styles={customSelectStyle}
                       placeholder="Select Gender"
                       isClearable
                     />
