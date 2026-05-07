@@ -3,6 +3,7 @@ import { changeProgressStatus } from "@/services/api";
 import { useProfile } from "@/services/ProfileContext";
 import LoadingSpin from "./LoadingSpin";
 import { useState } from "react";
+import { toastTBS } from "@/lib/toast";
 
 interface ResourcesType {
   id: string;
@@ -27,16 +28,22 @@ export default function ResourceVideoPlayer({
 }: SessionModalProps) {
 
   const { MMMUserData } = useProfile();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   function handleMarkAsCompleted() {
+       if(isUpdating) return;
+    setIsUpdating(true);
   changeProgressStatus({ userID: MMMUserData?.id || "", resourceID: data?.id || "" }).then((res) => {
     if(res.success){
-      console.log("Progress Updated:", res.data);
+      setIsUpdating(false);
+     toastTBS.success("Progress Updated Successfully!");
       onClose();
     }else{
-      console.error("Progress Update Failed:");
+      setIsUpdating(false);
+      toastTBS.error("Progress Update Failed");
     }
   }).catch((err) => {
+    setIsUpdating(false);
     console.error("API Error:", err);
   });
 }
@@ -62,7 +69,7 @@ export default function ResourceVideoPlayer({
         {/* Video Section */}
         <div className="rounded-xl overflow-hidden mb-5">
           <video
-            src="https://www.w3schools.com/html/mov_bbb.mp4"
+            src={data?.url}
             controls
             controlsList="nodownload noplaybackrate"
             disablePictureInPicture
@@ -78,7 +85,7 @@ export default function ResourceVideoPlayer({
         </h3>
         {data?.status && data?.status !== "completed" && (
         <button onClick={handleMarkAsCompleted} className="flex justify-center items-center gap-2 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer">
-          Mark as Completed <LoadingSpin width={3} height={15} color="bg-white" />
+          Mark as Completed {isUpdating && <LoadingSpin width={3} height={15} color="bg-white" />}
         </button>
 )}
         </div>

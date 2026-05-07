@@ -40,6 +40,7 @@ export default function PractitionerFilter({
   const [selectedPractitioner, setSelectedPractitioner] =
     useState<Practitioner | null>(null);
 
+
   const [search, setSearch] = useState<string>("");
 
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
@@ -102,6 +103,7 @@ export default function PractitionerFilter({
       onClose();
     }
   }, [selectedPractitioner]);
+
 
   useEffect(() => {
     const playload = {

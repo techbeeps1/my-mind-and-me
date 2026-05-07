@@ -13,7 +13,7 @@ import { RiImageEditFill } from "react-icons/ri";
 import { useProfile } from "@/services/ProfileContext";
 export default function MyDoctorProfile() {
 
-  const { setUsername } = useProfile(); 
+  const { setUsername, setIsProfileUpdated } = useProfile(); 
   const [isEdit, setisEdit] = useState(true);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("/profile-img.png");
@@ -228,6 +228,7 @@ if (Object.keys(errors).length > 0) {
       if (res.status) {
    
         setUsername(formData.full_name);
+        setIsProfileUpdated(Date.now());
         toastTBS.success("Profile updated successfully");
         setisEdit(true);
         setTimeout(() => {

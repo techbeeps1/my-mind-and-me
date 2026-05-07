@@ -30,6 +30,7 @@ export default function Progress() {
   const [selectedSessionFree, setSelectedSessionFree] = useState<ResourcesType>();
   const [selectedSessionFreeRQ, setSelectedSessionFreeRQ] = useState<ResourcesType >();
   const [selectedSessionPaid, setSelectedSessionPaid] = useState<ResourcesType >();
+  const [isUpdating, setIsUpdating] = useState(0);
   const [landing, setLanding] = useState(true);
   const [Resources, setResources] = useState<ResourcesType[]>([]);
 
@@ -55,7 +56,7 @@ export default function Progress() {
 
       setLanding(false);
     });
-  }, [MMMUserData]);
+  }, [MMMUserData,isUpdating]);
 
 
 function openSessionModel(item: ResourcesType){
@@ -143,13 +144,13 @@ function openSessionModel(item: ResourcesType){
       <ResourceVideoPlayer
         isOpen={selectedSessionFree?.id}
         data={selectedSessionFree}
-        onClose={() => setSelectedSessionFree(undefined)}
+        onClose={() =>{ setSelectedSessionFree(undefined); setIsUpdating(Date.now())}}
       />
 
       <ResourceReflectionQ
               isOpen={selectedSessionFreeRQ?.id}
               data={selectedSessionFreeRQ}
-              onClose={() => setSelectedSessionFreeRQ(undefined)}
+              onClose={() => { setSelectedSessionFreeRQ(undefined); setIsUpdating(Date.now())}}
             />
 
       <ResourcePaid

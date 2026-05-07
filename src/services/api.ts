@@ -20,12 +20,12 @@ export const bookingApiPath = "/api/booking";
 
 // progress update
 export async function changeProgressStatus( { userID, resourceID }: { userID: string; resourceID: string } ) {
-  const res = await fetch(`${paApiPath}/progress`, {   
+  const res = await fetch(`${paApiPath}/progress/${userID}/${resourceID}`, {   
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userID, resourceID }),
+   
   });
   if (!res.ok) { throw new Error("Failed to change progress status");}
   return await res.json();

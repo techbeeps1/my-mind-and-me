@@ -3,6 +3,8 @@
 import { changeProgressStatus } from "@/services/api";
 import { useProfile } from "@/services/ProfileContext";
 import LoadingSpin from "./LoadingSpin";
+import { useState } from "react";
+import { toastTBS } from "@/lib/toast";
 
 
 interface ResourcesType {
@@ -28,15 +30,21 @@ export default function ResourceReflectionQ({
   onClose 
 }: SessionModalProps) {
 const { MMMUserData } = useProfile();
+const [isUpdating, setIsUpdating] = useState(false);
   function handleMarkAsCompleted() {
-  changeProgressStatus({ userID: MMMUserData?.id || "", resourceID: data?.id || "" }).then((res) => {
+    if(isUpdating) return;
+    setIsUpdating(true);
+     changeProgressStatus({ userID: MMMUserData?.id || "", resourceID: data?.id || "" }).then((res) => {
     if(res.success){
-      console.log("Progress Updated:", res.data);
+      setIsUpdating(false);
+     toastTBS.success("Progress Updated Successfully!");
       onClose();
     }else{
-      console.error("Progress Update Failed:");
+      setIsUpdating(false);
+      toastTBS.error("Progress Update Failed");
     }
   }).catch((err) => {
+    setIsUpdating(false);
     console.error("API Error:", err);
   });
 }
@@ -64,12 +72,12 @@ const { MMMUserData } = useProfile();
 
         {/* Video Section */}
         <div className="rounded-xl  mb-5  ">
-         <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfBdW1ik8WseCyGQmACNO2JUTwp18nL-RqKoQjtRm6nO7zi8Q/viewform?embedded=true" className="w-full h-[80vh] custom-scroll" >Loading…</iframe>
+         <iframe src={data?.url} className="w-full h-[80vh] custom-scroll" >Loading…</iframe>
               </div>
                  {data?.status && data?.status !== "completed" && (
              <div className="flex justify-end">
                 <button onClick={handleMarkAsCompleted} className="flex justify-center items-center gap-2 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer">
-          Mark as Completed <LoadingSpin width={3} height={15} color="bg-white" />
+          Mark as Completed {isUpdating && <LoadingSpin width={3} height={15} color="bg-white" />}
         </button>
         </div>)}
        
