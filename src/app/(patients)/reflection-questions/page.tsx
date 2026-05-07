@@ -23,8 +23,8 @@ interface ResourcesType {
 
 export default function ReflectionQuestions() {
   const { MMMUserData } = useProfile();
-  const [selectedSessionFree, setSelectedSessionFree] = useState("");
-  const [selectedSessionPaid, setSelectedSessionPaid] = useState("");
+  const [selectedSessionFree, setSelectedSessionFree] = useState<ResourcesType | undefined>();
+  const [selectedSessionPaid, setSelectedSessionPaid] = useState<ResourcesType | undefined>();
   const [isUpdate, setIsUpdate] = useState(0);  
   const [landing, setLanding] = useState(true);
   const [Resources, setResources] = useState<ResourcesType[]>([]);
@@ -91,8 +91,8 @@ export default function ReflectionQuestions() {
                 <div
                   onClick={() =>
                     item.is_paid === "Paid"
-                      ? setSelectedSessionPaid(item.id)
-                      : setSelectedSessionFree(item.id)
+                      ? setSelectedSessionPaid(item)
+                      : setSelectedSessionFree(item)
                   }
                   key={item.id}
                   className="cursor-pointer relative w- max-w-full bg-white rounded-[10px] border-2 border-primary/8 shadow-[0_0_6px_0_hsl(0deg_0%_0%/6%)] p-2.5"
@@ -116,23 +116,20 @@ export default function ReflectionQuestions() {
       </WrapperBanner>
 
       <ResourceReflectionQ
-        isOpen={selectedSessionFree}
-        onClose={() => setSelectedSessionFree("")}
+        isOpen={selectedSessionFree?.id}
+        data={selectedSessionFree}
+        onClose={() => setSelectedSessionFree(undefined)}
       />
       <ResourcePaid
-        key={selectedSessionPaid}
+        key={selectedSessionPaid?.id}
         data={{
-          id: selectedSessionPaid,
-          name:
-            Resources.find((item) => item.id === selectedSessionPaid)?.title ||
-            "",
+          id: selectedSessionPaid?.id ||  "",
+          name: selectedSessionPaid?.title || "",
           type: "Reflection Questions",
-          amount:
-            Resources.find((item) => item.id === selectedSessionPaid)?.price ||
-            "",
+          amount: selectedSessionPaid?.price || "",
         }}
-        isOpen={selectedSessionPaid}
-        onClose={() => {setSelectedSessionPaid(""); setIsUpdate((prev) => prev + 1)}}
+        isOpen={selectedSessionPaid?.id}
+        onClose={() => {setSelectedSessionPaid(undefined); setIsUpdate((prev) => prev + 1)}}
       />
     </>
   );

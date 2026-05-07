@@ -28,8 +28,8 @@ interface ResourcesType {
 
 export default function MyPurchases() {
   const { MMMUserData } = useProfile();
-  const [selectedSessionVideo, setSelectedSessionVideo] = useState("");
-  const [selectedSessionRQ, setSelectedSessionRQ] = useState("");
+  const [selectedSessionVideo, setSelectedSessionVideo] = useState<ResourcesType | undefined>(undefined);
+  const [selectedSessionRQ, setSelectedSessionRQ] = useState<ResourcesType | undefined>(undefined);
   const [landing, setLanding] = useState(true);
   const [Resources, setResources] = useState<ResourcesType[]>([]);
   const [search, setSearch] = useState("");
@@ -93,8 +93,8 @@ export default function MyPurchases() {
                 <div
                   onClick={() =>
                     item.type === "Video"
-                      ? setSelectedSessionVideo(item.id)
-                      : setSelectedSessionRQ(item.id)
+                      ? setSelectedSessionVideo(item)
+                      : setSelectedSessionRQ(item)
                   }
                   key={item.id}
                   className="cursor-pointer relative w- max-w-full bg-white rounded-[10px] border-2 border-primary/8 shadow-[0_0_6px_0_hsl(0deg_0%_0%/6%)] p-2.5"
@@ -123,12 +123,14 @@ export default function MyPurchases() {
         </div>
       </WrapperBanner>
       <ResourceVideoPlayer
-        isOpen={selectedSessionVideo}
-        onClose={() => setSelectedSessionVideo("")}
+        isOpen={selectedSessionVideo?.id}
+        data={selectedSessionVideo}
+        onClose={() => setSelectedSessionVideo(undefined)}
       />
       <ResourceReflectionQ
-        isOpen={selectedSessionRQ}
-        onClose={() => setSelectedSessionRQ("")}
+        isOpen={selectedSessionRQ?.id}
+        data={selectedSessionRQ}
+        onClose={() => setSelectedSessionRQ(undefined)}
       />
     </>
   );
