@@ -158,7 +158,9 @@ useEffect(() => {
             ))}
           </div>
           {loading ? (
-       <div className="flex justify-center"> <LoadingSpin color="bg-primary" /> </div> ):(
+       <div className="flex justify-center"> <LoadingSpin color="bg-primary" /> </div> 
+      ):(
+        
           <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6">
             {/* LEFT SIDE */}
             <div className="2xl:col-span-8 space-y-6">

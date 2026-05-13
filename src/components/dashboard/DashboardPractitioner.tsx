@@ -56,7 +56,7 @@ export interface Verification {
 
 export default function DashboardPractitioner() {
   const { MMMUserData } = useProfile();
-  const [Loading, setLoading] = useState(false);
+  const [Loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<DashboardResponse >();
   const [topHeader, setTopHeader] = useState([
               {
