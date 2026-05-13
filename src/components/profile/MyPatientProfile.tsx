@@ -74,7 +74,13 @@ export default function MyPatientProfile() {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    
     if (!file) return;
+    
+  if(file && !["image/jpeg", "image/png", "image/jpg", "image/gif", "image/webp"].includes(file.type)){
+    toastTBS.error("Please select a valid image file (jpeg, png, jpg, gif, webp)");
+    return;
+  }
 
     setProfileImage(file);
 

@@ -12,7 +12,6 @@ import { FiSearch } from "react-icons/fi";
 import { useProfile } from "@/services/ProfileContext";
 import { IoNewspaperSharp } from "react-icons/io5";
 import ResourceReflectionQ from "@/components/ResourceReflectionQ";
-import { BiEdit } from "react-icons/bi";
 
 interface ResourcesType {
   id: string;

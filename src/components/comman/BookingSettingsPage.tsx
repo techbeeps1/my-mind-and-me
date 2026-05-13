@@ -424,6 +424,7 @@ export default function BookingSettingsPage({
               <div className="flex gap-2">
                 <input
                   type="date"
+                   min={new Date().toISOString().split("T")[0]}
                   value={holidayInput}
                   onChange={(e) => setHolidayInput(e.target.value)}
                   className=" bg-primary/8 w-full rounded-md px-4 py-2.5  outline-none text-sm text-primary leading-5 placeholder:text-primary"

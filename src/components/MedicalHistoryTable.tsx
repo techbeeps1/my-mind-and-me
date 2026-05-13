@@ -91,7 +91,7 @@ export default function MedicalHistoryTable({
           className="absolute inset-0 bg-black/40 backdrop-blur-sm"
           onClick={onClose}
         />
-        <div className="relative my-12.5 overflow-x-auto custom-scroll">
+        <div className="relative my-12.5 overflow-x-auto overflow-y-hidden custom-scroll">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 z-1 text-white cursor-pointer font-bold h-7.5 w-7.5 rounded-full bg-primary text-sm flex items-center justify-center"

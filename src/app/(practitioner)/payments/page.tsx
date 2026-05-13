@@ -6,6 +6,7 @@ import { FiSearch } from "react-icons/fi";
 import {  GetPaymentHistory } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
 import Pagination from "@/components/comman/Pagination";
+import { LiaFileInvoiceSolid } from "react-icons/lia";
 export interface PaymentHistoryType {
   payment_id: number;
   booking_id: string;
@@ -135,6 +136,10 @@ export default function PaymentHistory() {
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Status
                       </th>
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+
+                        Action
+                      </th>
               
                     </tr>
                   </thead>
@@ -180,6 +185,12 @@ export default function PaymentHistory() {
                           >
                             {item.payment_status}
                           </span>
+                        </td>
+                        <td className="px-4 py-4">
+
+                          <button className="cursor-pointer flex items-center gap-1 bg-gradient-to-r from-cyan-500 to-teal-500 text-sm text-white px-2 py-2 rounded-[10px] hover:bg-blue-600 transition hover:scale-105">
+                           <LiaFileInvoiceSolid className="w-5 h-5" /> Invoice
+                          </button>
                         </td>
                
 

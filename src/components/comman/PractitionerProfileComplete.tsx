@@ -16,10 +16,11 @@ import { useRouter } from "next/navigation";
 import TagSelector from "./TagSelector";
 import { RiImageEditFill } from "react-icons/ri";
 import { useProfile } from "@/services/ProfileContext";
+import VerifyDocsUpload from "./VerifyDocsUpload";
 const StepProgress = ({ step }: { step: number }) => {
   const steps = [1, 2, 3, 4, 5];
   return (
-    <div className="flex items-center justify-between w-full max-w-xl mx-auto mb-10">
+    <div className="flex items-center justify-between w-full max-w-xl mx-auto my-10">
       {steps.map((item, index) => {
         const isCompleted = step > item;
         const isActive = step === item;
@@ -75,6 +76,7 @@ export default function PractitionerProfileComplete() {
   const [ModalitiesData, setModalitiesData] = useState<string[]>([]);
 
   const [LanguagesData, setLanguagesData] = useState<string[]>([]);
+  const [docsUploaded, setDocsUploaded] = useState(false);
 
   const [step, setStep] = useState(1);
 
@@ -218,6 +220,11 @@ export default function PractitionerProfileComplete() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+      if(file && !["image/jpeg", "image/png", "image/jpg", "image/gif", "image/webp"].includes(file.type)){
+    toastTBS.error("Please select a valid image file (jpeg, png, jpg, gif, webp)");
+    return;
+  }
+
     setProfileImage(file);
 
     const imageUrl = URL.createObjectURL(file);
@@ -294,9 +301,9 @@ export default function PractitionerProfileComplete() {
     const result = await response.json();
     console.log(result)
     if(result.success){
-    toastTBS.success("Profile updated successfully");
+    //toastTBS.success("Profile updated successfully");
      setIsProfileUpdated(  Date.now());
-        router.push("dashboard");
+     setDocsUploaded(true);
 
     }
         setTimeout(() => {
@@ -333,8 +340,9 @@ export default function PractitionerProfileComplete() {
         className=" bg-cover bg-center bg-no-repeat min-h-screen "
         style={{ backgroundImage: "url('/banner-bg.jpg')" }}
       >
-        <div className="flex-1 flex justify-center md:p-7.5 px-5 py-7.5">
-          <div className="max-w-150 w-full bg-white rounded-[10px] shadow-xl h-fit ">
+        {!docsUploaded ? (
+        <div className="flex-1 flex justify-center px-5 py-15">
+          <div className="max-w-200 w-full bg-white rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-2.25 mb-2.5">
               Complete Your Profile
             </h2>
@@ -342,7 +350,7 @@ export default function PractitionerProfileComplete() {
               <StepProgress step={step} />
             </div>
             <form onSubmit={handleSave}>
-              <div className="w-150  max-w-full mx-auto md:mb-11.25 mb-7.5 px-5">
+              <div className="w-180  max-w-full mx-auto md:mb-11.25 mb-7.5 px-5">
                 {step === 1 && (
                   <>
                     <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
@@ -513,6 +521,8 @@ export default function PractitionerProfileComplete() {
                   </div>
                 )}
                 {step === 5 && (
+
+                     
                   <div className="mt-5">
                     <h2 className=" w-full text-primary md:text-[25px] text-[20px] leading-9 mb-3 font-semibold">
                       Modalities
@@ -562,7 +572,14 @@ export default function PractitionerProfileComplete() {
             </form>
           </div>
         </div>
+        ):(
+       <div className="flex-1 flex justify-center md:p-7.5 px-5 py-7.5">
+        <VerifyDocsUpload callback={() => {router.push("/verification-pending"); }} />
+        </div>
+        )}
       </div>
+
+        
     </>
   );
 }

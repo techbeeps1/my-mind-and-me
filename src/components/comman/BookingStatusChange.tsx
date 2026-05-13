@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import {  useMemo, useState } from "react";
 
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
@@ -30,6 +30,24 @@ export default function BookingStatusChange({
   const [openReschedule, setOpenReschedule] = useState(false);
   const [bookingIsCompleted, setBookingIsCompleted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+
+const canCancel = useMemo(() => {
+  if (!data?.slot || !data?.booking_date) return false;
+
+  const startTime = data.slot.split(" - ")[0];
+
+  const bookingDateTime = new Date(
+    `${data.booking_date} ${startTime}`
+  );
+
+  const now = new Date();
+
+  const diffMs =
+    bookingDateTime.getTime() - now.getTime();
+
+  return diffMs >= 24 * 60 * 60 * 1000;
+}, [data]);
 
   function handleChange(
     e: React.ChangeEvent<
@@ -62,23 +80,31 @@ export default function BookingStatusChange({
       return;
     }
 
-if (formData.type === "completed") {
+    if (formData.type === "completed") {
+      if (
+        formData.medical_note.trim().length < 5 ||
+        formData.medical_note.trim().length > 250
+      ) {
+        toastTBS.error(
+          "Medical note for patient must be between 5 to 250 characters",
+        );
+        return;
+      }
 
-  if (formData.medical_note.trim().length < 5 || formData.medical_note.trim().length > 250) {
-    toastTBS.error("Medical note for patient must be between 5 to 250 characters");
-    return;
-  }
-
-  if (formData.private_note.trim().length < 5 || formData.private_note.trim().length > 250) {
-    toastTBS.error("Private note for doctor must be between 5 to 250 characters");
-    return;
-  }
-}
-    
+      if (
+        formData.private_note.trim().length < 5 ||
+        formData.private_note.trim().length > 250
+      ) {
+        toastTBS.error(
+          "Private note for doctor must be between 5 to 250 characters",
+        );
+        return;
+      }
+    }
 
     if (loading) return;
     setLoading(true);
-   
+
     changeBookingStatus({
       booking_id: data.id,
       status: formData.type,
@@ -89,17 +115,13 @@ if (formData.type === "completed") {
     })
       .then((res) => {
         if (res.success) {
-        
           if (formData.type === "completed") {
             setBookingIsCompleted(true);
-            
-          }
-          else {
+          } else {
             toastTBS.success(res.message);
             setOpenStatusChange(false);
             setBookingUpdate((prev) => prev + 1);
           }
-
         } else {
           toastTBS.error(res.message || "Failed to update booking status");
         }
@@ -114,8 +136,7 @@ if (formData.type === "completed") {
 
   return (
     <>
-    
-      {!openReschedule  && !bookingIsCompleted ? (
+      {!openReschedule && !bookingIsCompleted ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
@@ -147,8 +168,11 @@ if (formData.type === "completed") {
                     <option value="" disabled selected>
                       Select type
                     </option>
+                    {/* cancelled disabled before 24 hours of booking */}
 
-                    <option value="cancelled">Cancelled</option>
+                    <option disabled={!canCancel} value="cancelled">
+                      Cancelled
+                    </option>
                     {Role === "practitioner" && (
                       <option value="completed"> Mark as Completed</option>
                     )}
@@ -229,25 +253,19 @@ if (formData.type === "completed") {
                 {loading ? <LoadingSpin width={3} height={18} /> : "Update Now"}
               </button>
             </>
-
           </div>
         </div>
-
-
-
-      ): bookingIsCompleted ? (
-
-          <div className="fixed top-0 inset-0 z-50 flex justify-center">
-              <div
-                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-               
-              />
-              <div className="relative my-7.5 overflow-y-auto  min-w-[80%] z-50 animate-fadeIn custom-scroll">
-        
-                <AddResourcesForPetient setClose={setOpenStatusChange} patient_id={data.patient_id} setBookingUpdate={setBookingUpdate} />
-              </div>
-            </div>
-
+      ) : bookingIsCompleted ? (
+        <div className="fixed top-0 inset-0 z-50 flex justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="relative my-7.5 overflow-y-auto  min-w-[80%] z-50 animate-fadeIn custom-scroll">
+            <AddResourcesForPetient
+              setClose={setOpenStatusChange}
+              patient_id={data.patient_id}
+              setBookingUpdate={setBookingUpdate}
+            />
+          </div>
+        </div>
       ) : (
         <div className="fixed top-0 inset-0 z-50 flex justify-center">
           <div
@@ -267,7 +285,7 @@ if (formData.type === "completed") {
             />
           </div>
         </div>
-      ) }
+      )}
     </>
   );
 }

@@ -111,7 +111,7 @@ export default function Login() {
                   {/* Email */}
                   <div>
                     <label className="block text-sm font-semibold mb-2">
-                      Username or email
+                      Email
                     </label>
                     <div className="flex items-center gap-3 bg-primary/[0.08] rounded-md px-4 py-2">
                       <HiOutlineUserCircle className="h-5 w-5 text-primary" />
@@ -119,7 +119,7 @@ export default function Login() {
                         type="text"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Username or email"
+                        placeholder="Email"
                         className="w-full bg-transparent outline-none text-sm"
                       />
                     </div>

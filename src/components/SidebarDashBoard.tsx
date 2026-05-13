@@ -78,7 +78,8 @@ export default function SidebarDashBoard({
       ],
     },
     { name: "Medical History", path: "/medical-history", icon: <FiFileText /> },
-
+    { name: "Payments", path: "/payments", icon: <FiCreditCard /> },
+    { name: "Referrals", path: "/referrals", icon: <FiUsers /> },
     {
       name: "My Profile",
 
@@ -163,7 +164,7 @@ export default function SidebarDashBoard({
 
   return (
     <div
-      className={`fixed left-0 top-0 h-full z-50 transition-all duration-500
+      className={`z-51 fixed left-0 top-0 h-full z-[49] transition-all duration-500
       bg-[linear-gradient(50deg,var(--color-AquaBlue)_-95%,var(--color-white)_100%)]
       ${collapsed ? "w-15" : "w-82 lg:w-72"}
       ${ishide ? "translate-x-[-100%] lg:translate-x-0" : "translate-x-0"}`}

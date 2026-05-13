@@ -18,6 +18,37 @@ export const bookingApiPath = "/api/booking";
 // API paths for LOCAL
 
 
+// get referral- in patient 
+export async function GetReferralInPatient(  userid:string,page:number,limit:number) {
+ // const res = await fetch(`${paApiPath}/referrers/${userid}/${page}/${limit}`);
+  const res = await fetch(`${paApiPath}/referrers/${userid}`);
+   if (!res.ok) throw new Error("Failed to fetch referral ");
+  return res.json();
+}
+
+// practitioner Dashboard APIs
+export async function getPractitionerDashboard(UserId:string) {
+  const res = await fetch(`${prApiPath}/dashboard/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch practitioner dashboard data");
+  return res.json();
+}
+
+
+// referrer Dashboard APIs
+export async function getReferrerDashboard(UserId:string) {
+  const res = await fetch(`${refApiPath}/dashboard/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch referrer dashboard data");
+  return res.json();
+}
+
+// patient Dashboard APIs
+export async function getPatientDashboard(UserId:string) {
+  const res = await fetch(`${paApiPath}/dashboard/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch patient dashboard data");
+  return res.json();
+}
+
+
 // progress update
 export async function changeProgressStatus( { userID, resourceID }: { userID: string; resourceID: string } ) {
   const res = await fetch(`${paApiPath}/progress/${userID}/${resourceID}`, {   

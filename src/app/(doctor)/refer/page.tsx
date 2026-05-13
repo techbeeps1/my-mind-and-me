@@ -79,10 +79,10 @@ export default function AddReferrer() {
       toastTBS.error("Please enter clinical presentation");
       return false;
     } else if (
-      referralData.clinical_presentation.length < 5 ||
-      referralData.clinical_presentation.length > 200
+      referralData.clinical_presentation.length < 50 ||
+      referralData.clinical_presentation.length > 2000
     ) {
-      toastTBS.error("Clinical presentation must be 5–200 characters");
+      toastTBS.error("Clinical presentation must be 50–2000 characters");
       return false;
     }
 

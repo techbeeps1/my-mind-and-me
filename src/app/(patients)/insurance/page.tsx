@@ -125,21 +125,24 @@ export default function Insurance() {
                 <table className="w-full">
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
-                      <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 rounded-tl-lg ">
                         Insurance name
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8  whitespace-nowrap">
                         Policy Number
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         Coverage Details
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         Notes
                       </th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">Date</th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                      <th className="px-4 py-3 text-left bg-primary/8 ">Date</th>
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
                         Expiry date
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8 ">
+                        Status
                       </th>
                     </tr>
                   </thead>
@@ -166,21 +169,21 @@ export default function Insurance() {
                           {item.policy_number}
                         </td>
 
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
+                        <td className="px-4 py-4 leading-5 text-sm text-primary font-semibold ">
                           
                           <ReadMoreButton
                             text={item.coverage_details}
                             title="Coverage Details"
-                            limit={40}
+                            limit={50}
                             setdata={setOpenReadMore}
                             setdataTitle={setOpenReadMoreTitle}
                           />
                         </td>
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">                          
+                        <td className="px-4 py-4 leading-5 text-sm text-primary font-semibold ">                          
                           <ReadMoreButton
                             text={item.notes}
                             title="Notes"
-                            limit={40}
+                            limit={50}
                             setdata={setOpenReadMore}
                             setdataTitle={setOpenReadMoreTitle}
                           />
@@ -192,6 +195,18 @@ export default function Insurance() {
                         <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
                           {item.end_date}
                         </td>
+                          <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
+                         {new Date(item.end_date) > new Date() ? (
+                            <span className="px-2.5 py-1 text-sm font-semibold rounded-full text-green-700 bg-green-100">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 text-sm font-semibold rounded-full text-red-700 bg-red-100">
+                              Expired
+                            </span>
+                          )}
+                        </td>
+                        
                       </tr>
                     ))}
                   </tbody>

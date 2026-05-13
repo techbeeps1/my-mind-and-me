@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { AUTH_END } from "@/services/api";
+import { console } from "inspector";
+import { es } from "date-fns/locale";
 
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
@@ -37,6 +39,7 @@ export async function proxy(request: NextRequest) {
       if (data.success) {
         const response = NextResponse.json({
           success: true,
+          user:data.user,
         });
 
         response.cookies.set("MMMAT", data.access_token, {
@@ -66,11 +69,30 @@ export async function proxy(request: NextRequest) {
       );
     }
   }
+
   if (
     userData?.is_completed == false &&
     !url.pathname.startsWith("/complete-profile")
   ) {
     return NextResponse.redirect(new URL("/complete-profile", request.url));
+  }
+   if(url.pathname.startsWith("/complete-profile")) {
+    return NextResponse.next();
+  } 
+  
+  if (
+    userData?.is_verified == false &&
+    userData?.role === "practitioner" &&
+    !url.pathname.startsWith("/verification-pending")
+  ) {
+    return NextResponse.redirect(new URL("/verification-pending", request.url));
+  } 
+  
+  else if (
+    userData.is_verified !== false &&
+    url.pathname.startsWith("/verification-pending")
+  ) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   async function genToken() {
@@ -138,10 +160,11 @@ export async function proxy(request: NextRequest) {
     "/my-profile",
     "/progress",
     "/complete-profile",
+    "/referrals",
   ];
 
   if (
-    role == "patients" &&
+    role == "patient" &&
     !patients.some((route) => url.pathname.startsWith(route))
   ) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -159,6 +182,7 @@ export async function proxy(request: NextRequest) {
     "/verification-status",
     "/referral-history",
     "/complete-profile",
+    "/verification-pending",
   ];
 
   if (
@@ -226,5 +250,7 @@ export const config = {
     "/login",
     "/sign-up",
     "/forgot-password",
+    "/verification-pending",
+    "/referrals"
   ],
 };

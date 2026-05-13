@@ -1,5 +1,4 @@
 "use client";
-import WrapperBanner from "@/components/WraperBanner";
 import { useEffect, useState } from "react";
 
 import { LuEye } from "react-icons/lu";
@@ -7,8 +6,12 @@ import { LuEye } from "react-icons/lu";
 import { GetverificationDOcs, imagePath } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
 import VerifyDocsUpload from "@/components/comman/VerifyDocsUpload";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoIosWarning, IoMdArrowRoundBack } from "react-icons/io";
 import Link from "next/link";
+import HeaderDashboard from "@/components/header/HeaderDashboard";
+import { useRouter } from "next/navigation";
+import { toastTBS } from "@/lib/toast";
+
 export type PatientStatus = "Active" | "Inactive";
 
 export interface VeriDocstype {
@@ -20,8 +23,10 @@ export interface VeriDocstype {
 
 export default function VerificationStatus() {
   const [landing, setLanding] = useState(true);
+  const [ ,setMenu] = useState(true);
   const [veriDocs, setVeriDocs] = useState<VeriDocstype[]>([]);
   const [uploadModal, setUploadModal] = useState(false);
+  const router = useRouter();
 
   const [MMMUserData] = useState(() => {
     if (typeof window === "undefined") return null;
@@ -30,52 +35,84 @@ export default function VerificationStatus() {
   });
 
   useEffect(() => {
+
+
+        fetch("/refresh").then((res) => res.json()).then((result) => {
+          if(result.success && result?.user?.is_verified !== false ){
+            router.push("/dashboard");
+          }
+    
+
+        }).catch((err) => {
+          console.error("Error refreshing token:", err);
+        });
+
     GetverificationDOcs(MMMUserData?.id)
       .then((data) => {
-        if(data.status){
-setVeriDocs(data.data);
-        }
         setLanding(false);
-        
+        setVeriDocs(data.data);
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [MMMUserData?.id, uploadModal]);
+  }, [MMMUserData?.id, uploadModal,router]);
 
   if (landing) {
     return (
-      <WrapperBanner>
+  
         <div className="flex justify-center items-center h-80">
           <LoadingSpin />
         </div>
-      </WrapperBanner>
+  
     );
   }
   if (uploadModal) {
     return (
-      <WrapperBanner>
+ <div
+     className=" bg-cover bg-center bg-no-repeat min-h-screen "
+        style={{ backgroundImage: "url('/banner-bg.jpg')" }}
+      >
         <div className="relative">
           <button
             onClick={() => setUploadModal(false)}
-            className="px-2 py-2 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] cursor-pointer text-white font-semibold shadow-lg hover:scale-105 transition absolute top-10 left-10 text-2xl font-bold"
+            className="px-2 py-2 rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] cursor-pointer text-white font-semibold shadow-lg hover:scale-105 transition absolute top-10 left-30 text-2xl font-bold"
           >
             <IoMdArrowRoundBack />
           </button>
           <VerifyDocsUpload callback={()=>{}} />
         </div>
-      </WrapperBanner>
+        </div>
+
     );
   }
 
   return (
     <>
-      <WrapperBanner>
-        <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
+     <HeaderDashboard menutrigger={setMenu}/>
+     <div
+     className=" bg-cover bg-center bg-no-repeat min-h-screen "
+        style={{ backgroundImage: "url('/banner-bg.jpg')" }}
+      >
+        <div className="flex-1 flex justify-center md:p-15 px-5 py-7.5">
           <div className="max-w-337.5 w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
-            <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
+            <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold mb-2 ">
               Verification Status
             </h2>
+
+            <div className="mx-auto mb-5 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 max-w-[60%]">
+  <div className="mt-0.5 shrink-0 flex items-center justify-center rounded-lg bg-amber-200 p-1.5 text-amber-500">
+   <IoIosWarning className="h-8 w-8 text-amber-600" />
+  </div>
+
+  <div>
+    <h4 className="text-sm font-semibold text-amber-900">
+      Verification Is Pending
+    </h4>
+    <p className="text-sm text-amber-700">
+      Your documents are currently under verification. Please check back later.
+    </p>
+  </div>
+</div>
             <div className="md:px-12.5 px-1  pb-5 rounded-xl ">
               {/* Search & Filter */}
               <div className="flex justify-end flex-wrap  mb-2">
@@ -162,7 +199,8 @@ setVeriDocs(data.data);
             </div>
           </div>
         </div>
-      </WrapperBanner>
+        </div>
+
     </>
   );
 }
