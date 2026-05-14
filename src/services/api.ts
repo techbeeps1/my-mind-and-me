@@ -18,6 +18,20 @@ export const bookingApiPath = "/api/booking";
 // API paths for LOCAL
 
 
+
+// Acount deletion request
+export async function deleteAccount(  ) {
+  const res = await fetch(`${authApiPath}/delete-account`, {   
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+   
+  });
+  if (!res.ok) { throw new Error("Failed to delete account");}
+  return await res.json();
+}
+
 // get referral- in patient 
 export async function GetReferralInPatient(  userid:string,page:number,limit:number) {
  // const res = await fetch(`${paApiPath}/referrers/${userid}/${page}/${limit}`);

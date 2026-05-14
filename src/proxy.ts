@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { AUTH_END } from "@/services/api";
 import { console } from "inspector";
-import { es } from "date-fns/locale";
 
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();

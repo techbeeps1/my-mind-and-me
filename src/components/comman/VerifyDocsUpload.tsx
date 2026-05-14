@@ -290,6 +290,7 @@ export default function VerifyDocsUpload({ callback }: { callback: () => void })
                     </label>
                     <input
                       type="date"
+                      min={new Date().toISOString().split("T")[0]}
                       onChange={(e) => handleDate(e, key)}
                       className="w-full bg-primary/8 rounded-lg text-primary px-4 py-3 focus:outline-none focus:ring-2"
                     />

@@ -8,12 +8,12 @@ import { HiOutlineUserCircle } from "react-icons/hi2";
 import { CiLock } from "react-icons/ci";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authApiPath, imagePath } from "@/services/api";
+import { authApiPath } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 
 export default function Login() {
-  const { setMMMUserData, MMMUserData, profile } = useProfile();
+  const { setMMMUserData } = useProfile();
   const [passVisble, setPassVisble] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +66,7 @@ export default function Login() {
         if (data.id) {
           setMMMUserData(data);
           localStorage.setItem("MMMDT", JSON.stringify(data));
+           localStorage.setItem("MMMlastActivity", Date.now().toString());
           toastTBS.success("Login successful");
           setTimeout(() => {
             router.replace("/dashboard");

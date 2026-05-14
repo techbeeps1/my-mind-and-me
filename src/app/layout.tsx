@@ -3,6 +3,7 @@ import { Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { ProfileProvider } from "@/services/ProfileContext";
+import CheckSession from "@/components/auth/CheckSession";
 
 export const metadata: Metadata = {
   title: "MY MIND AND ME",
@@ -26,6 +27,7 @@ export default function RootLayout({
         <ProfileProvider>
           {children}
           <Toaster position="top-right" />
+          <CheckSession />
         </ProfileProvider>
       </body>
     </html>

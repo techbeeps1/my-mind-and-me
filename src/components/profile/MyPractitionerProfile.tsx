@@ -6,12 +6,17 @@ import { FaRegUser, FaPhone } from "react-icons/fa6";
 import { SlCalender } from "react-icons/sl";
 import { GoDotFill } from "react-icons/go";
 import { useEffect, useState } from "react";
-import { GetPractitionerProfile, imagePath, PractitionerProfileEdit } from "@/services/api";
+import { deleteAccount, GetPractitionerProfile, imagePath, PractitionerProfileEdit } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import TagSelector from "@/components/comman/TagSelector";
 import { RiImageEditFill } from "react-icons/ri";
+import { useRouter } from "next/navigation";
 export default function MyPractitionerProfile() {
+        const router = useRouter();
+    const [deleteChecked, setDeleteChecked] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
   const { setUsername, setIsProfileUpdated } = useProfile();
   const [isEdit, setisEdit] = useState(true);
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -89,6 +94,41 @@ export default function MyPractitionerProfile() {
     profile_image: "/profile-img.png",
   });
 
+    const handleDeleteAccount = async () => {
+    try {
+  
+      setDeleteLoading(true);
+   
+      const res = await deleteAccount();
+  
+  
+      if (res.success) {
+    toastTBS.success(
+        "Account deletion request submitted."
+      );
+      setTimeout(() => {
+       router.push("/logout");
+      }, 3000);
+
+      setShowDeleteModal(false);
+      setDeleteChecked(false);
+      }
+      if (!res.success) {
+        toastTBS.error("Failed to request account deletion");
+        return;
+      }
+  
+     
+  
+  
+    } catch (error) {
+      toastTBS.error("Failed to request account deletion");
+      console.error("Error requesting account deletion:", error);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+  
   function handleCancel() {
     setisEdit(true);
     if (OriginalformData) {
@@ -516,6 +556,85 @@ const validateForm = (data: FormDataType): string => {
 
               </div>
             </form>
+            
+<div className="w-245 mx-auto my-12 border border-red-200 rounded-xl p-5 bg-red-50">
+  <h2 className="text-red-600 md:text-[25px] text-[20px] font-semibold mb-2">
+    Account Deletion
+  </h2>
+
+  <p className="text-sm text-gray-700 leading-6">
+    You may request permanent account deletion. After requesting deletion,
+    your account will be deactivated immediately and permanently removed after
+    <span className="font-semibold text-red-600"> 30 days</span>.
+    During this recovery period.
+  </p>
+
+  {/* Checkbox */}
+  <label className="flex items-start gap-3 mt-5 cursor-pointer">
+    <input
+      type="checkbox"
+      checked={deleteChecked}
+      onChange={(e) => setDeleteChecked(e.target.checked)}
+      className="mt-1 accent-red-500"
+    />
+
+  <span className="text-sm text-gray-700">
+  I understand that my account will be scheduled for deletion and can only be recovered within 30 days by contacting support via email.
+</span>
+  </label>
+
+  {/* Button */}
+  <button
+    type="button"
+    disabled={!deleteChecked}
+    onClick={() => setShowDeleteModal(true)}
+    className={`mt-5 px-6 py-3 rounded-full font-semibold transition
+      ${
+        deleteChecked
+          ? "bg-red-500 hover:bg-red-600 text-white cursor-pointer"
+          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+      }
+    `}
+  >
+    Request Account Deletion
+  </button>
+</div>
+{showDeleteModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-5">
+    <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+      <h3 className="text-xl font-semibold text-red-600 mb-3">
+        Confirm Account Deletion
+      </h3>
+
+      <p className="text-gray-700 text-sm leading-6">
+        Are you sure you want to request account deletion?
+        <br />
+        Your account can be recovered within
+        <span className="font-semibold text-red-600">
+          {" "}30 days
+        </span>.
+        After that, it may be permanently deleted.
+      </p>
+
+      <div className="flex justify-end gap-3 mt-6">
+        <button
+          onClick={() => setShowDeleteModal(false)}
+          className="px-5 py-2 rounded-full border border-gray-300 hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleDeleteAccount}
+          disabled={deleteLoading}
+          className="px-5 py-2 rounded-full bg-red-500 text-white hover:bg-red-600"
+        >
+          {deleteLoading ? "Please wait..." : "Yes, Delete"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
           </div>
         </div>
       </WrapperBanner>

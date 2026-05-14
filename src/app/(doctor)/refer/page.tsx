@@ -6,7 +6,8 @@ import WrapperBanner from "@/components/WraperBanner";
 import Select from "react-select";
 import { toastTBS } from "@/lib/toast";
 import { AddReferrerFun, GetAllPatient } from "@/services/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
 type UserPatientANDPractitioner = {
   id: string;
   unique_id: string;
@@ -31,6 +32,10 @@ type selectedPractitionerType = {
   full_name: string;
 };
 export default function AddReferrer() {
+
+
+  // debounce timer ref
+  const debounceRef = useRef(null as unknown as NodeJS.Timeout);
   const [PreferredModality, setPreferredModality] = useState("");
   const [selectedPractitioner, setSelectedPractitioner] =
     useState<selectedPractitionerType>();
@@ -123,7 +128,7 @@ export default function AddReferrer() {
     }));
   };
 
-  useEffect(() => {}, [referralData]);
+
   useEffect(() => {
     GetAllPatient()
       .then((data) => {
@@ -168,6 +173,30 @@ export default function AddReferrer() {
     value: patient.id,
     label: `${patient.unique_id} | ${patient.user_name}`,
   }));
+
+
+  const fetchPatients = (search: string) => {
+   GetAllPatient()
+      .then((data) => {
+        setAllPatients(data.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  // Custom debounce
+  const handleSearch = (inputValue: string) => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      if (inputValue.trim()) {
+        fetchPatients(inputValue);
+      }
+    }, 500);
+  };
+
   return (
     <>
       <WrapperBanner>
@@ -182,7 +211,7 @@ export default function AddReferrer() {
                   <label className="text-sm block font-semibold leading-6 text-primary mb-2">
                     Patient Selection <span className="text-red-500">*</span>
                   </label>
-                  <Select
+                  {/* <Select
                     options={patientOptions}
                     value={allPatients?.map((patient) => ({
                       value: patient.id,
@@ -215,7 +244,48 @@ export default function AddReferrer() {
       color: "#64748b",
     }),
                     }}
-                  />
+                  /> */}
+    <Select
+      options={patientOptions}
+      value={
+        patientOptions.find(
+          (option) => option.value === referralData.patient_id
+        ) || null
+      }
+      onChange={(selectedOption) =>
+        setReferralData((prev) => ({
+          ...prev,
+          patient_id: selectedOption?.value ?? "",
+        }))
+      }
+
+      // Search input change
+      onInputChange={(inputValue) => {
+        handleSearch(inputValue);
+      }}
+
+      placeholder="Patient Selection"
+      isSearchable
+      className="w-full text-primary text-sm rounded-md leading-5 outline-none"
+      styles={{
+        control: (base) => ({
+          ...base,
+          backgroundColor: "#25716e14",
+          borderRadius: "0.375rem",
+          padding: "2px",
+          border: "none",
+          color: "#25716e",
+        }),
+        singleValue: (base) => ({
+          ...base,
+          color: "#25716e",
+        }),
+        placeholder: (base) => ({
+          ...base,
+          color: "#64748b",
+        }),
+      }}
+    />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>

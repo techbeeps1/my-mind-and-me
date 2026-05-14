@@ -22,8 +22,8 @@ export default function LogoutPage() {
         });
 
         localStorage.removeItem("MMMDT");
-        localStorage.removeItem("loginTime");
-        localStorage.removeItem("lastActivity");
+        localStorage.removeItem("MMMloginTime");
+        localStorage.removeItem("MMMlastActivity");
         logoutUser();
         toastTBS.success("Logged out successfully");
 
