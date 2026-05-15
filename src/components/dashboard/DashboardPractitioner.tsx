@@ -11,7 +11,6 @@ import {
   FiXCircle,
 } from "react-icons/fi";
 
-import { FaUserInjured } from "react-icons/fa6";
 
 import { SiGooglemeet } from "react-icons/si";
 import { FaUserAlt } from "react-icons/fa";

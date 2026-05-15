@@ -103,10 +103,15 @@ export default function SidebarDashBoard({
     { name: "Payments", path: "/payments", icon: <FiCreditCard /> },
     {
       name: "Referral History",
-      path: "/referral-history",
+      
       icon: <FiFileText />,
+         children: [
+        { name: "Upcoming Referral", path: "/upcoming-referral", },
+        { name: "Referral History", path: "/referral-history", },
+      
+      ],
     },
-    { name: "Patients", path: "/patients-list", icon: <FiUsers /> },
+    { name: "Patients", path: "/patients-list", icon: <FiUsers />  },
     {
       name: "My Profile",
 

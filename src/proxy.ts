@@ -160,6 +160,7 @@ export async function proxy(request: NextRequest) {
     "/progress",
     "/complete-profile",
     "/referrals",
+    "/payments",
   ];
 
   if (
