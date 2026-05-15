@@ -588,7 +588,7 @@ const validateForm = (data: FormDataType): string => {
     type="button"
     disabled={!deleteChecked}
     onClick={() => setShowDeleteModal(true)}
-    className={`mt-5 px-6 py-3 rounded-full font-semibold transition
+    className={`mt-5 px-6 py-3 rounded-full font-semibold transition 
       ${
         deleteChecked
           ? "bg-red-500 hover:bg-red-600 text-white cursor-pointer"
@@ -617,9 +617,9 @@ const validateForm = (data: FormDataType): string => {
       </p>
 
       <div className="flex justify-end gap-3 mt-6">
-        <button
+           <button
           onClick={() => setShowDeleteModal(false)}
-          className="px-5 py-2 rounded-full border border-gray-300 hover:bg-gray-100"
+          className="px-5 py-2 rounded-full border border-gray-300 hover:bg-gray-100 transition transition-all hover:-translate-y-1 cursor-pointer"
         >
           Cancel
         </button>
@@ -627,7 +627,7 @@ const validateForm = (data: FormDataType): string => {
         <button
           onClick={handleDeleteAccount}
           disabled={deleteLoading}
-          className="px-5 py-2 rounded-full bg-red-500 text-white hover:bg-red-600"
+          className="px-5 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition transition-all hover:-translate-y-1 cursor-pointer"
         >
           {deleteLoading ? "Please wait..." : "Yes, Delete"}
         </button>

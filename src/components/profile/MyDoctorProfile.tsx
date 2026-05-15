@@ -602,7 +602,7 @@ if (Object.keys(errors).length > 0) {
       <div className="flex justify-end gap-3 mt-6">
         <button
           onClick={() => setShowDeleteModal(false)}
-          className="px-5 py-2 rounded-full border border-gray-300 hover:bg-gray-100"
+          className="px-5 py-2 rounded-full border border-gray-300 hover:bg-gray-100 transition transition-all hover:-translate-y-1 cursor-pointer"
         >
           Cancel
         </button>
@@ -610,7 +610,7 @@ if (Object.keys(errors).length > 0) {
         <button
           onClick={handleDeleteAccount}
           disabled={deleteLoading}
-          className="px-5 py-2 rounded-full bg-red-500 text-white hover:bg-red-600"
+          className="px-5 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition transition-all hover:-translate-y-1 cursor-pointer"
         >
           {deleteLoading ? "Please wait..." : "Yes, Delete"}
         </button>

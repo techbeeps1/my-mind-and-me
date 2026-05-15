@@ -10,6 +10,7 @@ import { FiSearch } from "react-icons/fi";
 
 import Pagination from "@/components/comman/Pagination";
 import { FaUserAlt } from "react-icons/fa";
+import ConfirmModal from "@/components/comman/ConfirmModal";
 
 export type PatientStatus = "Active" | "Inactive";
 
@@ -35,8 +36,7 @@ export default function ReferralHistory() {
   const [search, setSearch] = useState("");
   const [landing, setLanding] = useState(true);
   const [patients, setPatients] = useState<Patient[]>([]);
-
-  const [selectedPatient, setSelectedPatient] = useState<Patient>();
+  const [showStatusModal, setShowStatusModal] = useState({id: "", type: ""});
 
 
   const [page, setPage] = useState(1);
@@ -181,11 +181,21 @@ export default function ReferralHistory() {
 
                         <td className="px-4 py-4">
                                 <div className="flex gap-3">
-                            <button className="cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1">
+                         <button
+                              className="cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1"
+                              onClick={() => {
+                                setShowStatusModal({id: item.patient_id, type: "accept"});
+                              }}
+                            >
                               Accept
                             </button>
 
-                            <button className="cursor-pointer bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1">
+                            <button
+                              className="cursor-pointer bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1"
+                              onClick={() => {
+                                setShowStatusModal({id: item.patient_id, type: "reject"});
+                              }}
+                            >
                               Reject
                             </button>
                           </div>
@@ -202,7 +212,13 @@ export default function ReferralHistory() {
           </div>
           
         </div>     
-
+ <ConfirmModal
+        isOpen={!!showStatusModal.id}
+        onClose={() => setShowStatusModal({id: "", type: ""})}
+        type={showStatusModal.type}
+        userId={showStatusModal.id}
+        callback={() => {}}
+      />
        
       </WrapperBanner>
     </>

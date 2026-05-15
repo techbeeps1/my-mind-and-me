@@ -202,14 +202,15 @@ getPatientDashboard(MMMUserData?.id).then(data => {
                                       </div>
                                     </div>
                                   </div>
+                                  {session.meeting_link && (
                                   <Link
-                                    href={session?.time ?? "#"}
+                                    href={session?.meeting_link ?? "#"}
                                     target={"_blank"}
                                     rel="noopener noreferrer"
                                     className={`bg-gradient-to-r from-teal-400 to-teal-700 text-white  hover:scale-105 transition text-md   font-semibold shadow-lg flex items-center justify-center gap-1 px-2 py-1 rounded-md text-sm`}
                                   >
                                     <SiGooglemeet className="text-lg" /> Join
-                                  </Link>
+                                  </Link> )}
                                 </div>
                               </div>
                             ))}

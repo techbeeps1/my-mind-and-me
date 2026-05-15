@@ -11,15 +11,13 @@ import {
   FiXCircle,
 } from "react-icons/fi";
 
-
 import { SiGooglemeet } from "react-icons/si";
 import { FaUserAlt } from "react-icons/fa";
 import { useProfile } from "@/services/ProfileContext";
 import { useEffect, useState } from "react";
 import LoadingSpin from "../LoadingSpin";
 import { getPractitionerDashboard } from "@/services/api";
-
-
+import ConfirmModal from "../comman/ConfirmModal";
 
 export interface DashboardResponse {
   incomingReferrals: number;
@@ -27,6 +25,10 @@ export interface DashboardResponse {
   referrals: Referral[];
   upcomingSessions: UpcomingSession[];
   verification: Verification[];
+ thisWeek: string,
+ thisMonth: string,
+ totalEarning: string
+   
 }
 
 export interface Referral {
@@ -34,7 +36,7 @@ export interface Referral {
   patient: string;
   therepist: string;
   date: string;
-  priority: string
+  priority: string;
 }
 
 export interface UpcomingSession {
@@ -52,77 +54,70 @@ export interface Verification {
   expiry_date: string;
 }
 
-
 export default function DashboardPractitioner() {
   const { MMMUserData } = useProfile();
   const [Loading, setLoading] = useState(true);
-  const [dashboardData, setDashboardData] = useState<DashboardResponse >();
+  const [showStatusModal, setShowStatusModal] = useState({id: "", type: ""});
+  const [dashboardData, setDashboardData] = useState<DashboardResponse>();
   const [topHeader, setTopHeader] = useState([
-              {
-                title: "Incoming Referrals",
-                value: "0",
-                icon: <FiUserPlus size={26} />,
-                gradient: "from-cyan-500 to-blue-600",
-              },      
-              {
-                title: "Upcoming Sessions",
-                value: "0",
-                icon: <FiCalendar size={26} />,
-                gradient: "from-orange-400 to-pink-500",
-              },
-              {
-                title: "Earnings",
-                value: "R 0",
-                icon: <span className="text-3xl font-bold">R</span>,
-                gradient: "from-emerald-400 to-teal-500",
-              },
-            ])
-
- 
-
- 
-
-
-  const earnings = [
     {
-      title: "This Week",
-      amount: "4,250",
+      title: "Incoming Referrals",
+      value: "0",
+      icon: <FiUserPlus size={26} />,
+      gradient: "from-cyan-500 to-blue-600",
     },
     {
-      title: "This Month",
-      amount: "16,840",
+      title: "Upcoming Sessions",
+      value: "0",
+      icon: <FiCalendar size={26} />,
+      gradient: "from-orange-400 to-pink-500",
     },
-  ];
+    {
+      title: "Earnings",
+      value: "R 0",
+      icon: <span className="text-3xl font-bold">R</span>,
+      gradient: "from-emerald-400 to-teal-500",
+    },
+  ]);
 
 
 
-useEffect(() => {
-  // Fetch referrer dashboard data from API
-  if (!MMMUserData?.id) return;
-  getPractitionerDashboard(MMMUserData?.id).then(data => {
-    setDashboardData(data.data);
-        setTopHeader(prev => prev.map((card, index) => {
-      switch (index) {
-        case 0:
-          return { ...card, value: data.data.incomingReferrals.toString() };
-        case 1:
-          return { ...card, value: data.data.totalUpcomingSessions.toString() };
-        default:
-          return card;
-      }
-    }));
+  useEffect(() => {
+    // Fetch referrer dashboard data from API
+    if (!MMMUserData?.id) return;
+    getPractitionerDashboard(MMMUserData?.id)
+      .then((data) => {
+        setDashboardData(data.data);
+        setTopHeader((prev) =>
+          prev.map((card, index) => {
+            switch (index) {
+              case 0:
+                return {
+                  ...card,
+                  value: data.data.incomingReferrals.toString(),
+                };
+              case 1:
+                return {
+                  ...card,
+                  value: data.data.totalUpcomingSessions.toString(),
+                };
+              case 2:
+                return {
+                  ...card,
+                  value: `R ${data.data.totalEarning}`,
+                };
+              default:
+                return card;
+            }
+          }),
+        );
 
-    setLoading(false);
-
-}).catch(error => {
-  console.error("Error fetching referrer dashboard data:", error);
-
-});
-
-
-},[MMMUserData])
-  
-
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching referrer dashboard data:", error);
+      });
+  }, [MMMUserData]);
 
   return (
     <div className="min-h-screen">
@@ -165,9 +160,9 @@ useEffect(() => {
               <LoadingSpin color="bg-primary" />{" "}
             </div>
           ) : (
-            <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
               {/* LEFT SIDE */}
-              <div className="2xl:col-span-8 space-y-6">
+              <div className="xl:col-span-8 space-y-6">
                 {/* INCOMING REFERRALS */}
                 <div className="bg-white rounded-[20px] p-7 shadow-lg border border-slate-100">
                   <div className="flex items-center justify-between mb-7">
@@ -181,11 +176,12 @@ useEffect(() => {
                       </p>
                     </div>
 
-         
-                           <Link href="/referral-history" className="flex items-center gap-2 bg-slate-100 text-primary px-2 py-1 rounded-xl text-sm font-semibold hover:-translate-y-1 transition-all">
-                                  
-                                       View All
-                                        </Link>
+                    <Link
+                      href="/upcoming-referrals"
+                      className="flex items-center gap-2 bg-slate-100 text-primary px-2 py-1 rounded-xl text-sm font-semibold hover:-translate-y-1 transition-all"
+                    >
+                      View All
+                    </Link>
                   </div>
 
                   <div className="space-y-5">
@@ -218,7 +214,9 @@ useEffect(() => {
                                   className={`px-3 py-1 rounded-full text-xs font-semibold ${
                                     referral.priority === "Emergency"
                                       ? "bg-red-100 text-red-700"
-                                      :  referral.priority === "Urgent" ?  "bg-amber-100 text-amber-700": "bg-emerald-100 text-emerald-700" 
+                                      : referral.priority === "Urgent"
+                                        ? "bg-amber-100 text-amber-700"
+                                        : "bg-emerald-100 text-emerald-700"
                                   }`}
                                 >
                                   {referral.priority}
@@ -228,11 +226,21 @@ useEffect(() => {
                           </div>
 
                           <div className="flex gap-3">
-                            <button className="cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1">
+                            <button
+                              className="cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1"
+                              onClick={() => {
+                                setShowStatusModal({id: referral.id, type: "accept"});
+                              }}
+                            >
                               Accept
                             </button>
 
-                            <button className="cursor-pointer bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1">
+                            <button
+                              className="cursor-pointer bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1"
+                              onClick={() => {
+                                setShowStatusModal({id: referral.id, type: "reject"});
+                              }}
+                            >
                               Reject
                             </button>
                           </div>
@@ -254,10 +262,12 @@ useEffect(() => {
                         All scheduled sessions for Upcoming Days.
                       </p>
                     </div>
-                                    <Link href="/booking-history" className="flex items-center gap-2 bg-slate-100 text-primary px-2 py-1 rounded-xl text-sm font-semibold hover:-translate-y-1 transition-all">
-      
-                                       View All
-                                        </Link>
+                    <Link
+                      href="/booking-history"
+                      className="flex items-center gap-2 bg-slate-100 text-primary px-2 py-1 rounded-xl text-sm font-semibold hover:-translate-y-1 transition-all"
+                    >
+                      View All
+                    </Link>
                   </div>
 
                   <div className="space-y-4">
@@ -266,7 +276,7 @@ useEffect(() => {
                         key={session.id}
                         className="group rounded-[16px] border border-slate-100 p-4 hover:shadow-lg transition-all hover:-translate-y-1 transition-all"
                       >
-                        <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-center justify-between gap-4">
                           <div className="flex gap-4">
                             <div
                               className={`h-13 w-13 rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500 `}
@@ -305,7 +315,7 @@ useEffect(() => {
               </div>
 
               {/* RIGHT SIDE */}
-              <div className="2xl:col-span-4 space-y-6">
+              <div className="xl:col-span-4 space-y-6">
                 {/* EARNINGS */}
                 <div className="bg-white rounded-[20px] p-7 shadow-lg border border-slate-100">
                   <div className="flex items-center justify-between mb-7">
@@ -320,29 +330,46 @@ useEffect(() => {
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-5">
-                    {earnings.map((item, index) => (
+                  <div className="grid 2xl:grid-cols-2 gap-5">
+                  
                       <div
-                        key={index}
+                    
                         className="relative overflow-hidden rounded-[20px] p-4 bg-gradient-to-br from-cyan-500 to-teal-500 text-white shadow-lg hover:-translate-y-1 transition-all"
                       >
                         <div className="absolute right-0 top-0 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
 
                         <div className="relative z-10">
                           <div className="flex items-center justify-between">
-                            <p className="text-sm opacity-90">{item.title}</p>
+                            <p className="text-sm opacity-90">This Week</p>
 
                             <FiTrendingUp className="text-2xl" />
                           </div>
 
                           <h2 className="text-2xl text-center font-black mt-1">
-                            R{item.amount}
+                            R {dashboardData?.thisWeek || "0"}
                           </h2>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                      <div
+                    
+                        className="relative overflow-hidden rounded-[20px] p-4 bg-gradient-to-br from-cyan-500 to-teal-500 text-white shadow-lg hover:-translate-y-1 transition-all"
+                      >
+                        <div className="absolute right-0 top-0 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
 
+                        <div className="relative z-10">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm opacity-90">This Month</p>
+
+                            <FiTrendingUp className="text-2xl" />
+                          </div>
+
+                          <h2 className="text-2xl text-center font-black mt-1">
+                            R {dashboardData?.thisMonth || "0"}
+                          </h2>
+                        </div>
+                      </div>
+                 
+                  </div>
                 </div>
 
                 {/* VERIFICATION */}
@@ -356,12 +383,13 @@ useEffect(() => {
                       <p className="text-slate-500 mt-1 text-sm">
                         Compliance and credential verification.
                       </p>
-                      
                     </div>
-                          <Link href="/verification-status" className="flex items-center gap-2 bg-slate-100 text-primary px-2 py-1 rounded-xl text-sm font-semibold hover:-translate-y-1 transition-all">
-                                  
-                                       View All
-                                        </Link>
+                    <Link
+                      href="/verification-status"
+                      className="flex items-center gap-2 bg-slate-100 text-primary px-2 py-1 rounded-xl text-sm font-semibold hover:-translate-y-1 transition-all"
+                    >
+                      View All
+                    </Link>
                   </div>
 
                   <div className="space-y-5">
@@ -416,6 +444,13 @@ useEffect(() => {
           )}
         </div>
       </main>
+      <ConfirmModal
+        isOpen={!!showStatusModal.id}
+        onClose={() => setShowStatusModal({id: "", type: ""})}
+        type={showStatusModal.type}
+        userId={showStatusModal.id}
+        callback={() => {}}
+      />
     </div>
   );
 }
