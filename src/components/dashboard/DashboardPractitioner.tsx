@@ -16,8 +16,9 @@ import { FaUserAlt } from "react-icons/fa";
 import { useProfile } from "@/services/ProfileContext";
 import { useEffect, useState } from "react";
 import LoadingSpin from "../LoadingSpin";
-import { getPractitionerDashboard } from "@/services/api";
+import { getPractitionerDashboard, imagePath } from "@/services/api";
 import ConfirmModal from "../comman/ConfirmModal";
+import Image from "next/image";
 
 export interface DashboardResponse {
   incomingReferrals: number;
@@ -34,9 +35,10 @@ export interface DashboardResponse {
 export interface Referral {
   id: string;
   patient: string;
-  therepist: string;
+  practitioner: string;
   date: string;
   priority: string;
+  patient_image: string;
 }
 
 export interface UpcomingSession {
@@ -45,6 +47,7 @@ export interface UpcomingSession {
   time: string;
   patient: string;
   meeting_link: string;
+  patient_image: string;
 }
 
 export interface Verification {
@@ -192,9 +195,18 @@ export default function DashboardPractitioner() {
                       >
                         <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
                           <div className="flex items-center gap-5">
+                            {referral.patient_image ? (
+                              <Image className="h-13 w-13 object-cover rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500"
+                                src={imagePath + referral.patient_image}
+                                width={52}
+                                height={52}
+                                alt="Patient Image"
+                              />
+                            ):(
+ 
                             <div className="h-13 w-13 rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500">
                               <FaUserAlt />
-                            </div>
+                            </div> )}
 
                             <div>
                               <h3 className="text-sm font-bold text-slate-900">
@@ -203,7 +215,7 @@ export default function DashboardPractitioner() {
 
                               <div className="flex items-center gap-3 mt-2 flex-wrap">
                                 <span className="text-slate-700 px-3 py-1 rounded-full text-xs font-semibold">
-                                  Refer by : {referral.therepist}
+                                  Refer by : {referral.practitioner}
                                 </span>
 
                                 <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold">
@@ -278,11 +290,19 @@ export default function DashboardPractitioner() {
                       >
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex gap-4">
+                             {session.patient_image ? (
+                              <Image className="h-13 w-13 object-cover rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500"
+                                src={imagePath + session.patient_image}
+                                width={52}
+                                height={52}
+                                alt="Patient Image"
+                              />
+                            ):(
                             <div
                               className={`h-13 w-13 rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500 `}
                             >
                               <FaUserAlt />
-                            </div>
+                            </div> )}
 
                             <div>
                               <h3 className="font-bold text-slate-900 text-sm">
@@ -345,7 +365,7 @@ export default function DashboardPractitioner() {
                             <FiTrendingUp className="text-2xl" />
                           </div>
 
-                          <h2 className="text-2xl text-center font-black mt-1">
+                          <h2 className="text-2xl text-left font-black mt-1">
                             R {dashboardData?.thisWeek || "0"}
                           </h2>
                         </div>
@@ -363,7 +383,7 @@ export default function DashboardPractitioner() {
                             <FiTrendingUp className="text-2xl" />
                           </div>
 
-                          <h2 className="text-2xl text-center font-black mt-1">
+                          <h2 className="text-2xl text-left font-black mt-1">
                             R {dashboardData?.thisMonth || "0"}
                           </h2>
                         </div>

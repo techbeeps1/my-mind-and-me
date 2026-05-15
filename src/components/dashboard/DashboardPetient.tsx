@@ -12,9 +12,10 @@ import { FaUserAlt } from "react-icons/fa";
 import Link from "next/link";
 import { SiGooglemeet } from "react-icons/si";
 import { useEffect, useState } from "react";
-import { getPatientDashboard } from "@/services/api";
+import { getPatientDashboard, imagePath } from "@/services/api";
 import { useProfile } from "@/services/ProfileContext";
 import LoadingSpin from "../LoadingSpin";
+import Image from "next/image";
 interface DashboardData {
   totalUpcomingSessions: number;
   progressGoals: number;
@@ -31,6 +32,7 @@ interface UpcomingSession {
   date: string;
   time: string;
   practitioner: string;
+  practitioner_image: string | null;
   meeting_link: string;
 }
 
@@ -179,11 +181,19 @@ getPatientDashboard(MMMUserData?.id).then(data => {
                               >
                                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                                   <div className="flex items-center gap-5">
+                                    {session.practitioner_image ? (
+                                                                  <Image className="h-13 w-13 object-cover rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500"
+                                                                    src={imagePath + session.practitioner_image}
+                                                                    width={52}
+                                                                    height={52}
+                                                                    alt="Patient Image"
+                                                                  />
+                                                                ):(
                                     <div
                                       className={`h-13 w-13 rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500 `}
                                     >
                                       <FaUserAlt />
-                                    </div>
+                                    </div> )}
 
                                     <div>
                                       <h3 className="text-md font-bold text-slate-900">

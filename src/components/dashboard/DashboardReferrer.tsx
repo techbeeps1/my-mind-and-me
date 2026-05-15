@@ -14,12 +14,14 @@ import Link from "next/link";
 import LoadingSpin from "../LoadingSpin";
 import { useProfile } from "@/services/ProfileContext";
 import { useEffect, useState } from "react";
-import { getReferrerDashboard } from "@/services/api";
+import { getReferrerDashboard, imagePath } from "@/services/api";
+import Image from "next/image";
 
 export interface Referral {
   id: string;
   patient: string;
   practitioner: string;
+  patient_image: string | null;
   date: string;
   status: string;
   urgency: string;
@@ -193,9 +195,17 @@ useEffect(() => {
                     >
                       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5 w-full">
                         <div className="flex items-center gap-5">
+                          {referral.patient_image ? (
+                                                        <Image className="h-13 w-13 object-cover rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500"
+                                                          src={imagePath + referral.patient_image}
+                                                          width={52}
+                                                          height={52}
+                                                          alt="Patient Image"
+                                                        />
+                                                      ):(
                           <div className="h-16 w-16 rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500">
                             <FaUserInjured />
-                          </div>
+                          </div> )}
 
                           <div>
                             <h3 className="text-sm font-bold text-slate-900">

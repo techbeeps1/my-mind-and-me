@@ -126,6 +126,7 @@ export default function ReferralHistory() {
                   <option value="pending">Pending</option>
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
+                  <option value="Rejected">Rejected</option>
                 </select>
               </div>
 

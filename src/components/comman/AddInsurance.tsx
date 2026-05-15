@@ -97,7 +97,7 @@ const validateForm = (data: FormDataType): string => {
     return "End date is required";
   }
   if (new Date(data.start_date) > new Date(data.end_date)) {
-    return "Start date cannot be later than end date";
+    return "Please select a valid date range.";
   }
 
  

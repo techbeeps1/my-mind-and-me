@@ -32,7 +32,7 @@ if (!openReadMore) return null;
                       <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl ">
   
                         <div className="overflow-x-auto rounded-lg  bg-white">
-                          <div className="w-full text-left py-4 text-sm text-primary font-semibold px-4">
+                          <div className="w-full text-left py-4 text-sm text-primary font-semibold px-4 break-all">
                             {openReadMore}
                           </div>
                         </div>
