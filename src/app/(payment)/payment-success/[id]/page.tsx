@@ -165,7 +165,6 @@ export default async function SuccessPage({ params }: Props) {
 
                 <div className="border-t border-gray-200" />
 
-                {/* Payment Method */}
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2 text-gray-500">
                     <BiCreditCard className="w-5 h-5" />
