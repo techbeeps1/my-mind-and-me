@@ -336,10 +336,8 @@ export default function Booking_a_appointment() {
     try {
       const res = await createBooking(formData);
       if (res.success) {
-          toastTBS.success("Booking created successfully");
         setPaymentGateways(true);
         setbookingcreatedata(res)
-        //router.push("dashboard");
         setTimeout(() => {
           setLandingData(false);
         }, 1500);
