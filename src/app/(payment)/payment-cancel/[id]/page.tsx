@@ -138,7 +138,7 @@ export default async function CancelPage({ params }: Props) {
               </p>
 
               <h2 className="text-[36px] font-bold text-gray-900">
-                ₹
+                R
                 {session?.amount_total
                   ? (session.amount_total / 100).toFixed(2)
                   : "0.00"}

@@ -141,7 +141,7 @@ export default async function SuccessPage({ params }: Props) {
                   <p className="text-sm text-gray-400 mb-1">Amount Paid</p>
 
                   <h2 className="text-[36px] font-bold text-gray-900">
-                    ₹
+                    R
                     {session?.amount_total
                       ? (session.amount_total / 100).toFixed(2)
                       : "0.00"}

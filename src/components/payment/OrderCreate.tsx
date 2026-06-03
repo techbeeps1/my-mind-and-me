@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 //import { CreateOrder } from "@/app/utils/api";
 
@@ -36,16 +36,12 @@ export default function OrderCreate({
   const [isAgreed, setIsAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    console.log("BookingCreateData:", BookingCreateData);
-    console.log("Selected Data:", data);
-  }, []);
   async function processToPay() {
     if (!isAgreed) {
       toast.error("Please accept Terms & Conditions first.");
       return;
     }
-
+    if(loading) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/payment/create-session`, {
@@ -59,37 +55,20 @@ export default function OrderCreate({
 
       const data = await res.json();
       if (data.success) {
-        window.location.href = data.url;
+
+         router.push(data.url);
       } else {
+        setLoading(false);
         toast.error("Failed to create checkout session. Try again.");
       }
 
-      // ✅ Update Status
-      // const responseStatus = await updateOrderStatus(
-      //   response.data.order_uid,
-      //   {
-      //     payment_meta: {
-      //       paymentMethod: "COD",
-      //       paymentStatus: "pending",
-      //       paymentDate: new Date().toISOString(),
-      //       amount: dataSelect?.priceCents || "0",
-      //       transactionId: "",
-      //       gateway: "COD",
-      //       notes: "",
-      //     },
-      //     status: "in_process",
-      //   }
-      // );
-
-      // if (responseStatus?.data?.status === "in_process") {
-      //   toast.success("Order created successfully!");
-      //   window.location.reload();
-      // }
+  
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong. Try again.");
-    } finally {
       setLoading(false);
+    } finally {
+      
     }
   }
 
