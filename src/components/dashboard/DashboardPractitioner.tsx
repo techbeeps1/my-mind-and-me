@@ -62,6 +62,7 @@ export default function DashboardPractitioner() {
   const [Loading, setLoading] = useState(true);
   const [showStatusModal, setShowStatusModal] = useState({id: "", type: ""});
   const [dashboardData, setDashboardData] = useState<DashboardResponse>();
+  const [dashboardUpdate, setDashboardUpdate] = useState(0);
   const [topHeader, setTopHeader] = useState([
     {
       title: "Incoming Referrals",
@@ -120,7 +121,7 @@ export default function DashboardPractitioner() {
       .catch((error) => {
         console.error("Error fetching referrer dashboard data:", error);
       });
-  }, [MMMUserData]);
+  }, [MMMUserData, dashboardUpdate]);
 
   return (
     <div className="min-h-screen">
@@ -241,7 +242,7 @@ export default function DashboardPractitioner() {
                             <button
                               className="cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1"
                               onClick={() => {
-                                setShowStatusModal({id: referral.id, type: "accept"});
+                                setShowStatusModal({id: referral.id, type: "accepted"});
                               }}
                             >
                               Accept
@@ -250,7 +251,7 @@ export default function DashboardPractitioner() {
                             <button
                               className="cursor-pointer bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1"
                               onClick={() => {
-                                setShowStatusModal({id: referral.id, type: "reject"});
+                                setShowStatusModal({id: referral.id, type: "rejected"});
                               }}
                             >
                               Reject
@@ -259,6 +260,11 @@ export default function DashboardPractitioner() {
                         </div>
                       </div>
                     ))}
+
+                    {dashboardData?.referrals.length === 0 && (
+                      <div className="text-center py-10">
+                        <p className="text-slate-500">No incoming referrals.</p>
+                      </div>  )}
                   </div>
                 </div>
 
@@ -330,6 +336,11 @@ export default function DashboardPractitioner() {
                         </div>
                       </div>
                     ))}
+
+                    {dashboardData?.upcomingSessions.length === 0 && (
+                      <div className="text-center py-10">
+                        <p className="text-slate-500">No upcoming sessions.</p>
+                      </div> )}
                   </div>
                 </div>
               </div>
@@ -469,7 +480,7 @@ export default function DashboardPractitioner() {
         onClose={() => setShowStatusModal({id: "", type: ""})}
         type={showStatusModal.type}
         userId={showStatusModal.id}
-        callback={() => {}}
+        callback={() => setDashboardUpdate((prev) => prev + 1)}
       />
     </div>
   );

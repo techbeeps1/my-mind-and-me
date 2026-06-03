@@ -7,17 +7,18 @@ import {  useState } from "react";
 
 import {
   createBooking,
-
   getSlotManageSettings,
   getSlots,
-  paymentStatusUpdate
+ 
 } from "@/services/api";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import WrapperBanner from "@/components/WraperBanner";
-import DemoPaymentGateway from "@/components/DemoPaymentGateway";
+
 import Link from "next/link";
 import PractitionerFilter from "@/components/PractitionerFilter";
+import OrderCreate from "@/components/payment/OrderCreate";
+
 
 
 type DayName =
@@ -104,7 +105,7 @@ const StepProgress = ({ step }: { step: number }) => {
 };
 
 interface BookingCreateDatatype {
-  id: number;
+  id: string;
   success: boolean;
 }
 
@@ -335,7 +336,7 @@ export default function Booking_a_appointment() {
     try {
       const res = await createBooking(formData);
       if (res.success) {
-        //  toastTBS.success("Booking created successfully");
+          toastTBS.success("Booking created successfully");
         setPaymentGateways(true);
         setbookingcreatedata(res)
         //router.push("dashboard");
@@ -353,21 +354,6 @@ export default function Booking_a_appointment() {
       toastTBS.error("An error occurred while creating booking");
     }
   };
-
-  function paymentstatus(data: PaymentResponse) {
-    if (data.status === "success") {
-      setBookingCfrm(true);
-      setPaymentGateways(false)
-      const payload = {
-        booking_id: bookingcreatedata?.id ?? 0,
-        status: "booked",
-        reason: ""
-      }
-      paymentStatusUpdate(payload).then((res) => {
-        console.log(res)
-      })
-    }
-  }
 
   if (londing && step === 2) {
     return (
@@ -389,11 +375,18 @@ export default function Booking_a_appointment() {
     return (
       <WrapperBanner>
         <div
-          className=" bg-cover bg-center bg-no-repeat min-h-screen "
+          className="bg-cover bg-center bg-no-repeat min-h-screen "
           style={{ backgroundImage: "url('/banner-bg.jpg')" }}
         >
-          <div className="flex-1 flex justify-center items-center h-[70vh]">
-            <DemoPaymentGateway data={formData} callback={paymentstatus} />
+          <div className="flex-1 flex justify-center md:p-7.5 px-5 py-7.5">
+       <div className="w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)] rounded-[10px] shadow-xl h-fit ">
+              <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-2.25 mb-2.5">
+                Payment Summary
+              </h2>
+            {bookingcreatedata?.success && (
+              <OrderCreate closeModal={() => setPaymentGateways(false)} BookingCreateData={bookingcreatedata} data={formData} />
+            )}
+            </div>
           </div>
         </div>
       </WrapperBanner>
@@ -407,7 +400,7 @@ export default function Booking_a_appointment() {
     <>
       <WrapperBanner>
         <div
-          className=" bg-cover bg-center bg-no-repeat"
+          className="bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/banner-bg.jpg')" }}
         >
           <div className="flex-1 flex justify-center md:p-7.5 px-5 py-7.5">

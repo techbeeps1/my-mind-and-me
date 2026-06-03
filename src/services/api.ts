@@ -18,6 +18,28 @@ export const bookingApiPath = "/api/booking";
 // API paths for LOCAL
 
 
+// booking status change
+
+
+// upcoming referrals status update
+export async function updateReferralStatus( { userID, status }: { userID: string; status: string } ) {
+  const res = await fetch(`${refApiPath}/status/${userID}/${status}`, {   
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+   
+  });
+  if (!res.ok) { throw new Error("Failed to change progress status");}
+  return await res.json();
+}
+
+// get upcoming referrals
+export async function GetUpcomingReferrals(userid:string,page:number,limit:number) {
+  const res = await fetch(`${refApiPath}/pendingreferrals/${userid}/${page}/${limit}`);
+   if (!res.ok) throw new Error("Failed to fetch referral ");
+  return res.json();
+}
 
 // Acount deletion request
 export async function deleteAccount(  ) {
@@ -151,7 +173,7 @@ export async function resourcePaymentStatusUpdate( data:any ) {
 
 // create resource order
 export async function CreatePurchaseResource( data:any ) {
-  const res = await fetch(`${paApiPath}/resources/payment`, {   
+  const res = await fetch(`/api/payment/create-session`, {   
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -161,6 +183,8 @@ export async function CreatePurchaseResource( data:any ) {
   if (!res.ok) { throw new Error("Failed to create purchase resource");}
   return await res.json();
 }
+
+
 
 
 // get my purchases
@@ -238,8 +262,8 @@ export async function isGoogleConnect(UserId:string) {
 
 
 // booking status change
-export async function paymentStatusUpdate( data:any ) {
-  const res = await fetch(`${bookingApiPath}/update`, {   
+export async function BookingPaymentStatus( data:any ) {
+  const res = await fetch(`${bookingApiPath}/payment-status`, {   
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

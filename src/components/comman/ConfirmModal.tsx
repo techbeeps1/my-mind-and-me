@@ -1,4 +1,7 @@
-type ModalType = "delete" | "accept" | "reject" | "default";
+import { toastTBS } from "@/lib/toast";
+import { updateReferralStatus } from "@/services/api";
+
+type ModalType = "delete" | "accepted" | "rejected" | "default";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -28,7 +31,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       buttonColor: "bg-red-500 hover:bg-red-600",
     },
 
-    accept: {
+    accepted: {
       title: "Accept Request",
       message: "Are you sure you want to accept this?",
       buttonText: "Accept",
@@ -36,7 +39,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       buttonColor: "bg-emerald-600 hover:bg-emerald-600",
     },
 
-    reject: {
+    rejected: {
       title: "Reject Request",
       message: "Are you sure you want to reject this?",
       buttonText: "Reject",
@@ -56,7 +59,33 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   const selected = config[type as ModalType] || config.default;
 
   const handleConfirm = () => {
-    callback(userId);
+
+
+     updateReferralStatus({ userID: userId  as string , status:  type }).then((res) => {
+
+      if(res.success){
+        if(type === "accepted"){
+          toastTBS.success("Referral Accepted Successfully");
+
+        }else if(type === "rejected"){
+          toastTBS.success("Referral Rejected Successfully");
+        }
+    
+      }else{
+        toastTBS.error("Failed to update referral status:");
+     
+      }
+      onClose();
+      callback(userId);
+
+     }).catch((err) => {
+      console.error("Error updating referral status:", err);
+      onClose();
+      callback(userId);
+     });
+     
+
+
   };
 
   return (

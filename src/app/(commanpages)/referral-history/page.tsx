@@ -12,7 +12,13 @@ import ReadMoreButton from "@/components/comman/ReadMoreButton";
 import ReadMorePopup from "@/components/comman/ReadMorePopup";
 import Pagination from "@/components/comman/Pagination";
 
-export type PatientStatus = "Active" | "Inactive";
+
+
+type PatientStatus =
+  | 'accepted'
+  | 'rejected'
+  | 'in_progress'
+  | 'completed';
 
 export interface Patient {
   history_id: string;
@@ -29,7 +35,12 @@ export interface Patient {
   patient_id: string;
 }
 
-
+const statusColors: Record<PatientStatus, string> = {
+  accepted: "bg-green-100 text-green-800 border border-green-800/50",
+  rejected: "bg-red-100 text-red-800 border border-red-800/50",
+  in_progress: "bg-yellow-100 text-yellow-800 border border-yellow-800/50",
+  completed: "bg-blue-100 text-blue-800 border border-blue-800/50",
+};
 
 export default function ReferralHistory() {
   const { MMMUserData } = useProfile();
@@ -42,7 +53,7 @@ export default function ReferralHistory() {
   const [openReadMoreTitle, setOpenReadMoreTitle] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
+  
   const [statusFilter, setStatusFilter] = useState<PatientStatus | "All">(
     "All",
   );
@@ -123,10 +134,11 @@ export default function ReferralHistory() {
                   className="text-primary text-sm px-4 py-2.5 rounded-md  leading-5 bg-primary/8 outline-none"
                 >
                   <option value="All">All Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                  <option value="Rejected">Rejected</option>
+         
+                  <option value="accepted">Accepted</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                  <option value="rejected">Rejected</option>
                 </select>
               </div>
 
@@ -171,7 +183,7 @@ export default function ReferralHistory() {
                     {filteredData.length === 0 && (
                       <tr>
                         <td
-                          colSpan={4}
+                          colSpan={9}
                           className="text-center py-6 text-sm text-gray-400"
                         >
                           No records found
@@ -210,15 +222,11 @@ export default function ReferralHistory() {
                         </td>
 
                         <td className="px-4 py-4 text-right">
-                          {item.status === "Active" ? (
-                            <span className="px-4.25 py-1.25 text-sm font-semibold text-primary bg-primary/8 rounded-[3px]">
-                              Active
-                            </span>
-                          ) : (
-                            <span className="px-4.25 py-1.25 text-sm font-semibold text-[#B80600] bg-[#B80600]/8 rounded-[3px] capitalize">
+                        
+                            <span className={`text-sm capitalize px-2 py-1 rounded-full ${statusColors[item.status] || 'bg-gray-100 text-gray-800'} `}>
                               {item.status}
                             </span>
-                          )}
+                        
                         </td>
                         {MMMUserData?.role === 'referrer' && (
                         <td className="px-4 py-4 text-sm text-primary font-semibold">

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 
-import { changeBookingStatus, CreateMedicalNote } from "@/services/api";
+import { CreateMedicalNote } from "@/services/api";
 import { useProfile } from "@/services/ProfileContext";
 
 export default function MedicalHistoryPopup({ setMedicalHistoryUpdate,setOpenStatusChange,id }: {setMedicalHistoryUpdate:React.Dispatch<React.SetStateAction<number>>, setOpenStatusChange: React.Dispatch<React.SetStateAction<boolean>>, id: string }) {

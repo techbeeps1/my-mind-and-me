@@ -10,8 +10,6 @@ export default function CheckSession() {
     //  const MAX_SESSION_MS = 12 * 60 * 60 * 1000; // 12 hours
     const INACTIVITY_MS = 30 * 60 * 1000; // FOR TESTING: 10 minutes
     const logout = () => {
-
-     // if(router.) return;
       router.replace("/logout");
     };
 
@@ -19,7 +17,6 @@ export default function CheckSession() {
       const lastActivity = localStorage.getItem("MMMlastActivity");
       const MMMDT = localStorage.getItem("MMMDT");
 
-      console.log("Checking session...");
       const now = Date.now();
 
       if (MMMDT && lastActivity && now - Number(lastActivity) > INACTIVITY_MS) {

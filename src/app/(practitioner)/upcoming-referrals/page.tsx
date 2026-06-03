@@ -2,7 +2,7 @@
 import LoadingSpin from "@/components/LoadingSpin";
 
 import WrapperBanner from "@/components/WraperBanner";
-import { GetReferralHistory } from "@/services/api";
+import { GetUpcomingReferrals, imagePath } from "@/services/api";
 import { useProfile } from "@/services/ProfileContext";
 
 import { useEffect, useMemo, useState } from "react";
@@ -11,22 +11,19 @@ import { FiSearch } from "react-icons/fi";
 import Pagination from "@/components/comman/Pagination";
 import { FaUserAlt } from "react-icons/fa";
 import ConfirmModal from "@/components/comman/ConfirmModal";
+import Image from "next/image";
 
 export type PatientStatus = "Active" | "Inactive";
 
 export interface Patient {
-  history_id: string;
+  id: string;
   urgency_level: string;
   preferred_modality: string;
-  clinical_presentation: string;
-  chief_complaint: string;
-  status: PatientStatus;
   created_at: string;
   patient_name: string;
   doctor_name: string;
-  doctor_id: string;
-  practitioner_id: string;
-  patient_id: string;
+  profile_image: string;
+  
 }
 
 
@@ -36,6 +33,7 @@ export default function ReferralHistory() {
   const [search, setSearch] = useState("");
   const [landing, setLanding] = useState(true);
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [dashboardUpdate, setDashboardUpdate] = useState(0);
   const [showStatusModal, setShowStatusModal] = useState({id: "", type: ""});
 
 
@@ -44,18 +42,21 @@ export default function ReferralHistory() {
 
   useEffect(() => {
     if (!MMMUserData) return;
-    GetReferralHistory(MMMUserData?.role, MMMUserData?.id,page,20)
+    GetUpcomingReferrals(MMMUserData?.id,page,20)
       .then((data) => {
         setLanding(false);
         if(data.success){
         setPatients(data.data);
         setTotalPages(data.total_pages);
+        }else{
+          setPatients([]);
+          setTotalPages(1);
         }
       })
       .catch((error) => {
         console.error("Error fetching referral history:", error);
       });
-  }, [MMMUserData, page]);
+  }, [MMMUserData, page, dashboardUpdate]);
 
   const filteredData = useMemo(() => {
     return patients.filter((item) => {
@@ -64,10 +65,7 @@ export default function ReferralHistory() {
         item.doctor_name.toLowerCase().includes(search.toLowerCase()) ||
         item.urgency_level.toLowerCase().includes(search.toLowerCase()) ||
         item.preferred_modality.toLowerCase().includes(search.toLowerCase()) ||
-        item.clinical_presentation
-          .toLowerCase()
-          .includes(search.toLowerCase()) ||
-        item.chief_complaint.toLowerCase().includes(search.toLowerCase()) ||
+
         item.created_at.toLowerCase().includes(search.toLowerCase());
 
   
@@ -151,11 +149,20 @@ export default function ReferralHistory() {
                     )}
 
                     {filteredData.map((item) => (
-                      <tr key={item.patient_id}>
+                      <tr key={item.id}>
                         <td className="px-4 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-2"> <div className="h-13 w-13 rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500">
-                                                        <FaUserAlt />
-                                                      </div>
+                              <div className="flex items-center gap-2">
+                                
+                                 {item.profile_image ? (
+                                                              <Image className="h-13 w-13 object-cover rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500"
+                                                                src={imagePath + item.profile_image}
+                                                                width={52}
+                                                                height={52}
+                                                                alt="Patient Image"
+                                                              />
+                                                            ):( <div className="h-13 w-13 rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500">
+                                                        <FaUserAlt /> 
+                                                      </div> )}
                           <span className="font-bold text-sm leading-9 text-primary">
                             {item.patient_name}
                           </span>
@@ -184,7 +191,7 @@ export default function ReferralHistory() {
                          <button
                               className="cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1"
                               onClick={() => {
-                                setShowStatusModal({id: item.patient_id, type: "accept"});
+                                setShowStatusModal({id: item.id, type: "accepted"});
                               }}
                             >
                               Accept
@@ -193,7 +200,7 @@ export default function ReferralHistory() {
                             <button
                               className="cursor-pointer bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded-xl font-semibold transition transition-all hover:-translate-y-1"
                               onClick={() => {
-                                setShowStatusModal({id: item.patient_id, type: "reject"});
+                                setShowStatusModal({id: item.id, type: "rejected"});
                               }}
                             >
                               Reject
@@ -217,7 +224,7 @@ export default function ReferralHistory() {
         onClose={() => setShowStatusModal({id: "", type: ""})}
         type={showStatusModal.type}
         userId={showStatusModal.id}
-        callback={() => {}}
+       callback={() => setDashboardUpdate((prev) => prev + 1)}
       />
        
       </WrapperBanner>
