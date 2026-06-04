@@ -262,9 +262,13 @@ const token = request.cookies.get("MMMAT")?.value;
 
 
 
-  const browser = await puppeteer.launch({
+const executablePath = await chromium.executablePath();
+
+console.log("Executable Path:", executablePath);
+
+const browser = await puppeteer.launch({
   args: chromium.args,
-  executablePath: await chromium.executablePath(),
+  executablePath,
   headless: true,
 });
 
