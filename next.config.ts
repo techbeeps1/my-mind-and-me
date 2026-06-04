@@ -14,6 +14,12 @@ const nextConfig = {
     "@sparticuz/chromium",
     "puppeteer-core",
   ],
+
+  outputFileTracingIncludes: {
+    "/api/invoice/[id]": [
+      "./node_modules/@sparticuz/chromium/bin/**/*",
+    ],
+  },
 };
 
 module.exports = nextConfig;
