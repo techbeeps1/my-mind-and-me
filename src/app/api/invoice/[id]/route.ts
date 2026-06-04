@@ -2,7 +2,7 @@ import { BOOKING_END } from "@/services/api";
 import puppeteer from "puppeteer";
 import { NextRequest } from "next/server";
 
-export async function GET(request: NextRequest,{ params }: { params: { id: string } },
+export async function GET(request: NextRequest,  { params }: { params: Promise<{ id: string }> },
 ) {
 const token = request.cookies.get("MMMAT")?.value;
  const paramsData = await params;
