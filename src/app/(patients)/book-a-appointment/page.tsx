@@ -15,7 +15,7 @@ import { toastTBS } from "@/lib/toast";
 import LoadingSpin from "@/components/LoadingSpin";
 import WrapperBanner from "@/components/WraperBanner";
 
-import Link from "next/link";
+
 import PractitionerFilter from "@/components/PractitionerFilter";
 import OrderCreate from "@/components/payment/OrderCreate";
 
@@ -37,14 +37,7 @@ type DayConfig = {
   enabled: boolean;
 };
 
-type PaymentResponse = {
-  txnId: string;
-  date: string;
-  method: string;
-  status: string;
-  amount: string;
 
-};
 type FormDataType = {
   patient_id: string;
   practitioner_id: string;
@@ -112,7 +105,7 @@ interface BookingCreateDatatype {
 export default function Booking_a_appointment() {
   const [filteropen, setFilterOpen] = useState(false);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
-  const [bookingCfrm, setBookingCfrm] = useState(false);
+
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [landingData, setLandingData] = useState(false);
@@ -509,30 +502,11 @@ export default function Booking_a_appointment() {
                     <div className="w-full max-w-md mx-auto bg-primary/8 rounded-2xl  shadow-lg p-6">
 
 
-                      {bookingCfrm ? (
-                        <>
-                          <div className="flex justify-center mb-4">
-                            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-100">
-                              <span className="text-green-600 text-3xl font-bold">✓</span>
-                            </div>
-                          </div>
-
-
-                          <h2 className="text-2xl font-bold text-primary mb-2 text-center">
-                            Booking Confirmed!
-                          </h2>
-
-                          <p className="text-gray-500 text-sm mb-5 text-center">
-                            Your appointment has been successfully booked.
-                          </p>
-                        </>
-                      ) : (
 
                         <h3 className="text-xl font-bold text-primary mb-5">
                           Booking Summary
                         </h3>
-                      )}
-
+                
 
                       {/* Content */}
                       <div className="space-y-3 text-sm text-gray-600">
@@ -579,7 +553,7 @@ export default function Booking_a_appointment() {
                       </div>
                     </div>
                   )}
-                  {!bookingCfrm ? (
+               
                     <div className="flex justify-center mt-10 gap-2">
                       {step > 1 && (
                         <button
@@ -611,13 +585,7 @@ export default function Booking_a_appointment() {
                         </button>
                       )}
                     </div>
-                  ) : (
-                    <div className="flex justify-center mt-5 gap-2">
-                      <Link className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition" href="/dashboard">Dashboard</Link>
-
-                      <Link className="lg:py-3 py-1.25 flex items-center lg:gap-2.5 gap-[5px] lg:px-6.5 px-3.75 duration-500 cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-AquaBlue)_0%,var(--color-primary)_100%)] text-white font-bold lg:text-lg md:tex-base text-sm lg:leading-6 leding-3 hover:opacity-90 transition" href="/booking-history">Booking History</Link>
-                    </div>
-                  )}
+                  
                 </div>
               </form>
             </div>

@@ -160,6 +160,12 @@ export default function VerifyDocsUpload({ callback }: { callback: () => void })
     mps: null,
     cpd: null,
   });
+const [DocNumber, setDocNumber] = useState({
+  hpcsa: "",
+  bhf: "",
+  mps: "",
+  cpd: "",
+});
 
   const handleDate = (e: ChangeEvent<HTMLInputElement>, key: FileKey) => {
     setExDate((prev) => ({
@@ -168,6 +174,13 @@ export default function VerifyDocsUpload({ callback }: { callback: () => void })
     }));
   };
 
+
+    const handleDocNumber = (e: ChangeEvent<HTMLInputElement>, key: FileKey) => {
+    setDocNumber((prev) => ({
+      ...prev,
+      [key]: e.target.value,
+    }));
+  };
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -175,16 +188,30 @@ export default function VerifyDocsUpload({ callback }: { callback: () => void })
     for (const key of Object.keys(files)) {
       const fileKey = key as FileKey;
 
-      if (files[fileKey] && !exDate[fileKey]) {
+     
+
+      if (files[fileKey] && !DocNumber[fileKey]) {
+        toastTBS.error(
+          `Please enter document number for ${fileKey.toUpperCase()}`,
+        );
+        return;
+      }else if (files[fileKey] && DocNumber[fileKey] && (DocNumber[fileKey]!.length < 6 || DocNumber[fileKey]!.length > 12)) {
+        toastTBS.error('Document number must be between 6 and 12 characters');
+        return;
+
+      }
+
+       if (files[fileKey] && !exDate[fileKey]) {
         toastTBS.error(
           `Please select expiry date for ${fileKey.toUpperCase()}`,
         );
         return;
       }
-      if (!files[fileKey] && exDate[fileKey]) {
+            if (!files[fileKey] && exDate[fileKey]) {
         toastTBS.error(`Please upload document for ${fileKey.toUpperCase()}`);
         return;
       }
+      
     }
 
     // ✅ File validation again (safety)
@@ -222,6 +249,13 @@ export default function VerifyDocsUpload({ callback }: { callback: () => void })
         formData.append(`${dateKey}_expiry`, exDate[dateKey]!);
       }
     });
+
+     Object.keys(DocNumber).forEach((key) => {
+      const docNumberKey = key as FileKey;
+      if (DocNumber[docNumberKey]) {
+        formData.append(`${docNumberKey}_docNumber`, DocNumber[docNumberKey]!);
+      }
+    });
     if ([...formData.entries()].length <= 0) {
       toastTBS.error("Please upload at least one document.");
       return;
@@ -252,7 +286,13 @@ export default function VerifyDocsUpload({ callback }: { callback: () => void })
             mps: null,
             cpd: null,
           });
-           callback();
+          setDocNumber({
+            hpcsa: "",
+            bhf: "",
+            mps: "",
+            cpd: "",
+          });
+          callback();
           e.currentTarget.reset();
           
         }
@@ -269,7 +309,7 @@ export default function VerifyDocsUpload({ callback }: { callback: () => void })
 
         <div className="w-245 max-w-full mx-auto md:mb-11.25 mb-7.5 px-5">
           <form onSubmit={handleSubmit}>
-            <div className="max-w-135 mx-auto space-y-8">
+            <div className="max-w-175 mx-auto space-y-8">
               {(["hpcsa", "bhf", "mps", "cpd"] as FileKey[]).map((key) => (
                 <div
                   key={key}
@@ -286,10 +326,24 @@ export default function VerifyDocsUpload({ callback }: { callback: () => void })
 
                   <div className="w-full">
                     <label className="block text-sm font-semibold text-primary mb-2">
+                       Document Number
+                    </label>
+                    <input
+                      type="text"
+                      min={new Date().toISOString().split("T")[0]}
+                      value={DocNumber[key]}
+                      onChange={(e) => handleDocNumber(e, key)}
+                      placeholder="ABC123456"
+                      className="w-full bg-primary/8 rounded-lg text-primary px-4 py-3 focus:outline-none focus:ring-2"
+                    />
+                  </div>
+                                    <div className="w-full">
+                    <label className="block text-sm font-semibold text-primary mb-2">
                       Expiry Date
                     </label>
                     <input
                       type="date"
+                      value={exDate[key] || ""}
                       min={new Date().toISOString().split("T")[0]}
                       onChange={(e) => handleDate(e, key)}
                       className="w-full bg-primary/8 rounded-lg text-primary px-4 py-3 focus:outline-none focus:ring-2"

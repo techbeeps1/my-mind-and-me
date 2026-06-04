@@ -19,6 +19,8 @@ export interface VeriDocstype {
   status: string;
   name: string;
   expiry_date: string;
+  doc_number: string;
+
 }
 
 export default function VerificationStatus() {
@@ -134,6 +136,9 @@ export default function VerificationStatus() {
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Expiry Date
                       </th>
+                        <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                        Document Number
+                      </th>
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Status
                       </th>
@@ -164,6 +169,9 @@ export default function VerificationStatus() {
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
                           <div>{item.expiry_date}</div>
+                        </td>
+                         <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
+                          <div>{item.doc_number}</div>
                         </td>
 
                         <td className="px-4 py-4 text-left">

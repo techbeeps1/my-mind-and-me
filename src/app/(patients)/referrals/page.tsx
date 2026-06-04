@@ -109,9 +109,8 @@ export default function ReferralHistory() {
                 >
                   <option value="All">All Status</option>
                   <option value="pending">Pending</option>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                  <option value="Rejected">Rejected</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="rejected">Rejected</option>
                 </select>
               </div>
 
@@ -138,7 +137,7 @@ export default function ReferralHistory() {
                     {filteredData.length === 0 && (
                       <tr>
                         <td
-                          colSpan={4}
+                          colSpan={7}
                           className="text-center py-6 text-sm text-gray-400"
                         >
                           No records found
@@ -165,9 +164,13 @@ export default function ReferralHistory() {
                  
 
                         <td className="px-4 py-4 text-right">
-                          {item.status === "Active" ? (
-                            <span className="px-4.25 py-1.25 text-sm font-semibold text-primary bg-primary/8 rounded-[3px]">
-                              Active
+                          {item.status === "accepted" ? (
+                            <span className="px-4.25 py-1.25 text-sm font-semibold text-green-900 bg-green-100 rounded-[3px]">
+                              Accepted
+                            </span>
+                          ) : item.status === "pending" ? (
+                            <span className="px-4.25 py-1.25 text-sm font-semibold text-yellow-900 bg-yellow-100 rounded-[3px] capitalize">
+                              {item.status}
                             </span>
                           ) : (
                             <span className="px-4.25 py-1.25 text-sm font-semibold text-[#B80600] bg-[#B80600]/8 rounded-[3px] capitalize">

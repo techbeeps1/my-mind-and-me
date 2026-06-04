@@ -7,7 +7,10 @@ import {  GetPaymentHistory } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
 import Pagination from "@/components/comman/Pagination";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
+import { useProfile } from "@/services/ProfileContext";
+
 export interface PaymentHistoryType {
+  booking_uuid  : string;
   payment_id: number;
   booking_id: string;
   fee: string;
@@ -22,17 +25,14 @@ export interface PaymentHistoryType {
 
 export default function PaymentHistory() {
   const [landing, setLanding] = useState(true);
+  const { MMMUserData } = useProfile();
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [PaymentHistory, setPaymentHistory] = useState<PaymentHistoryType[]>(
     [],
   );
 
-  const [MMMUserData] = useState(() => {
-    if (typeof window === "undefined") return null;
-    const data = localStorage.getItem("MMMDT");
-    return data ? JSON.parse(data) : null;
-  });
+
 
   const statusColors: { [key: string]: string } = {
     confirmed: "text-green-800 border border-green-800/50 bg-green-100",
@@ -63,6 +63,7 @@ export default function PaymentHistory() {
   }, [search, PaymentHistory]);
 
   useEffect(() => {
+    if (!MMMUserData?.id) return;
     GetPaymentHistory(MMMUserData?.id, page, 20)
       .then((data) => {
         setLanding(false);
@@ -85,6 +86,12 @@ export default function PaymentHistory() {
         </div>
       </WrapperBanner>
     );
+  }
+
+
+ function generateInvoice (paymentId: string) {
+    
+  window.open(`/api/invoice/${paymentId}`, "_self");
   }
 
   return (
@@ -129,9 +136,11 @@ export default function PaymentHistory() {
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
                         Platform Fee
                       </th>
+                      {MMMUserData?.role === "practitioner" && (
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
                         Payout Amount
                       </th>
+                      )}
 
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Status
@@ -175,9 +184,11 @@ export default function PaymentHistory() {
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                         {"R "}{item.platform_fee}
                         </td>
+                          {MMMUserData?.role === "practitioner" && (
                           <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                           {"R "}{item.practitioner_payout}
                         </td>
+                          )}
 
                         <td className={`px-4 py-4 text-sm font-semibold capitalize `}>
                           <span
@@ -188,7 +199,7 @@ export default function PaymentHistory() {
                         </td>
                         <td className="px-4 py-4">
 
-                          <button className="cursor-pointer flex items-center gap-1 bg-gradient-to-r from-cyan-500 to-teal-500 text-sm text-white px-2 py-2 rounded-[10px] hover:bg-blue-600 transition hover:scale-105">
+                          <button onClick={() =>{ if(item.payment_status==='confirmed'){generateInvoice(item.booking_uuid)}}} className={`flex items-center gap-1  text-sm text-white px-2 py-2 rounded-[10px] ${item.payment_status === 'confirmed' ? 'cursor-pointer bg-gradient-to-r from-cyan-500 to-teal-500 hover:bg-blue-600 transition hover:scale-105' : 'bg-gray-400 cursor-not-allowed'} `}>
                            <LiaFileInvoiceSolid className="w-5 h-5" /> Invoice
                           </button>
                         </td>

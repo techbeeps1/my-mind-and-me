@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
-    const token = req.cookies.get("ATXAT")?.value;
+    const token = req.cookies.get("MMMAT")?.value;
     const body = await req.json();
 
     let data;

@@ -16,6 +16,7 @@ export interface VeriDocstype {
   status: string;
   name: string;
   expiry_date: string;
+  doc_number: string;
 }
 
 export default function VerificationStatus() {
@@ -98,6 +99,9 @@ setVeriDocs(data.data);
                         Expiry Date
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                        Document Number
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Status
                       </th>
                       <th className="px-4 py-3 text-right bg-primary/8 rounded-tr-lg whitespace-nowrap">
@@ -128,7 +132,9 @@ setVeriDocs(data.data);
                         <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
                           <div>{item.expiry_date}</div>
                         </td>
-
+                         <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
+                          <div>{item.doc_number}</div>
+                        </td>
                         <td className="px-4 py-4 text-left">
                     
                           <span className={`px-4.25 py-1.25 text-sm font-semibold rounded-[3px] ${(item.status === "Expired" || item.status === "Rejected") ? " text-[#B80600] bg-[#B80600]/8" : item.status==="Verified" ?"text-primary bg-primary/8" :"text-amber-700 bg-amber-100" }`}>
