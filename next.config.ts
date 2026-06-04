@@ -10,14 +10,16 @@ const nextConfig = {
       },
     ],
   },
+
   serverExternalPackages: [
     "@sparticuz/chromium",
     "puppeteer-core",
   ],
 
   outputFileTracingIncludes: {
-    "/api/invoice/[id]": [
-      "./node_modules/@sparticuz/chromium/bin/**/*",
+    "/*": [
+      "./node_modules/@sparticuz/chromium/**/*",
+      "./node_modules/puppeteer-core/**/*",
     ],
   },
 };
