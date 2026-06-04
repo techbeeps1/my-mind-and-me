@@ -1,5 +1,6 @@
 import { BOOKING_END } from "@/services/api";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest,  { params }: { params: Promise<{ id: string }> },
@@ -260,9 +261,12 @@ const token = request.cookies.get("MMMAT")?.value;
   `;
 
 
+
   const browser = await puppeteer.launch({
-    headless: true,
-  });
+  args: chromium.args,
+  executablePath: await chromium.executablePath(),
+  headless: true,
+});
 
   const page = await browser.newPage();
   await page.setContent(html);
