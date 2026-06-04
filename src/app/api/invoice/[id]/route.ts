@@ -3,18 +3,6 @@ import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 import { NextRequest } from "next/server";
 
-import fs from "fs";
-
-console.log(
-  "Chromium package exists:",
-  fs.existsSync("/var/task/node_modules/@sparticuz/chromium")
-);
-
-console.log(
-  "Chromium bin exists:",
-  fs.existsSync("/var/task/node_modules/@sparticuz/chromium/bin")
-);
-
 
 export async function GET(request: NextRequest,  { params }: { params: Promise<{ id: string }> },
 ) {
@@ -278,13 +266,13 @@ const token = request.cookies.get("MMMAT")?.value;
 
 
 const executablePath = await chromium.executablePath();
-
-console.log("Executable Path:", executablePath);
-console.log("VERCEL:", process.env.VERCEL);
+const isVercel = !!process.env.VERCEL;
 
 const browser = await puppeteer.launch({
-  args: chromium.args,
-  executablePath,
+  executablePath: isVercel
+    ? executablePath
+    : `C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe`,
+  args: isVercel ? chromium.args : [],
   headless: true,
 });
   const page = await browser.newPage();
