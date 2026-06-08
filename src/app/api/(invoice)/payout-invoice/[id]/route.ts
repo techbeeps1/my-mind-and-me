@@ -220,13 +220,19 @@ Appointments Included in Payout
 
 <tbody>
 
-${data?.sessions?.map((item: any) => `
+${data?.sessions?.map((item: {
+  bookingId: string;
+  patientName: string;
+  date: string;
+  service: string;
+  amount: number;
+}) => `
 <tr>
-  <td>#${item?.bookingId}</td>
-  <td>${item?.patientName}</td>
-  <td>${item?.date}</td>
-  <td>${item?.service}</td>
-  <td>R ${item?.amount}</td>
+  <td>#${item.bookingId}</td>
+  <td>${item.patientName}</td>
+  <td>${item.date}</td>
+  <td>${item.service}</td>
+  <td>R ${item.amount}</td>
 </tr>
 `).join('')}
 
