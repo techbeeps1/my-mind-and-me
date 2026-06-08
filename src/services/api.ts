@@ -18,7 +18,13 @@ export const bookingApiPath = "/api/booking";
 // API paths for LOCAL
 
 
-// booking status change
+
+// get last appointment practitioner by patient id
+export async function getLastAppointmentPractitioner(UserId:string) {
+  const res = await fetch(`${paApiPath}/last-booking/${UserId}`);
+   if (!res.ok) throw new Error("Failed to fetch last appointment practitioner");
+  return res.json();
+}
 
 
 // upcoming referrals status update

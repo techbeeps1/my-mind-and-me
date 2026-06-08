@@ -100,7 +100,11 @@ export default function SidebarDashBoard({
       path: "/booking-history",
     },
 
-    { name: "Payments", path: "/payments", icon: <FiCreditCard /> },
+    { name: "Payments", path: "/payments", icon: <FiCreditCard /> , children: [
+        { name: "Payment History", path: "/payments", },
+        { name: "Payout History", path: "/payout-history", },
+      
+      ],},
     {
       name: "Referrals",
       

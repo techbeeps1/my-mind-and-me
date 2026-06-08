@@ -293,7 +293,7 @@ const browser = await puppeteer.launch({
   return new Response(pdfBuffer, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": 'attachment; filename="invoice.pdf"',
+      "Content-Disposition": `attachment; filename="invoice ${resData.invoiceId??''}.pdf"`,
     },
   });
 }

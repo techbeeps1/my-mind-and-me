@@ -23,7 +23,7 @@ export interface PaymentHistoryType {
   practitioner_id: string;
 }
 
-export default function PaymentHistory() {
+export default function PayoutHistory() {
   const [landing, setLanding] = useState(true);
   const { MMMUserData } = useProfile();
   const [page, setPage] = useState(1);
@@ -100,7 +100,7 @@ export default function PaymentHistory() {
         <div className="flex-1 flex justify-start md:p-7.5 px-5 py-7.5">
           <div className="w-full bg-[linear-gradient(11deg,var(--color-AquaBlue)_-80%,var(--color-white)_34%)]  rounded-[10px] shadow-xl h-fit ">
             <h2 className="text-center rounded-t-[10px] bg-[linear-gradient(90deg,#56e1e845_70%,var(--color-background)_100%)]  w-full text-primary md:text-[25px] text-[20px] leading-9 py-3 font-semibold md:mb-11.25 mb-7.5">
-              Payments
+              Payout History
             </h2>
 
             <div className="md:px-12.5 px-5 md:pb-12.5 pb-5 rounded-xl ">
@@ -136,20 +136,20 @@ export default function PaymentHistory() {
                          { MMMUserData?.role === "practitioner" &&  <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
                         Platform Fee
                       </th>}
-                      {MMMUserData?.role === "practitioner" && (
+                     
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
                         Payout Amount
                       </th>
-                      )}
+                      
 
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Status
                       </th>
-                      {MMMUserData?.role !== "practitioner" && <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                     <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
 
                         Action
                       </th>
-}
+
               
                     </tr>
                   </thead>
@@ -182,10 +182,10 @@ export default function PaymentHistory() {
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                          {"R "}{item.fee}
                         </td>
-                      { MMMUserData?.role === "practitioner" &&  <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
+                     <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                         {"R "}{item.platform_fee}
                         </td>
-}
+
                           {MMMUserData?.role === "practitioner" && (
                           <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                           {"R "}{item.practitioner_payout}
@@ -199,14 +199,14 @@ export default function PaymentHistory() {
                             {item.payment_status}
                           </span>
                         </td>
-                         {MMMUserData?.role !== "practitioner" && 
+                  
                         <td className="px-4 py-4">
 
                           <button onClick={() =>{ if(item.payment_status==='confirmed'){generateInvoice(item.booking_uuid)}}} className={`flex items-center gap-1  text-sm text-white px-2 py-2 rounded-[10px] ${item.payment_status === 'confirmed' ? 'cursor-pointer bg-gradient-to-r from-cyan-500 to-teal-500 hover:bg-blue-600 transition hover:scale-105' : 'bg-gray-400 cursor-not-allowed'} `}>
                            <LiaFileInvoiceSolid className="w-5 h-5" /> Invoice
                           </button>
                         </td>
-}
+
                
 
                       </tr>

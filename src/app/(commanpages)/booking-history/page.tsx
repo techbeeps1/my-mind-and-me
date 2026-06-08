@@ -159,6 +159,9 @@ export default function BookingHistory() {
                       <th className="px-4 py-3 text-left bg-primary/8 ">
                         Status
                       </th>
+                       <th className="px-4 py-3 text-left bg-primary/8 ">
+                        Type
+                      </th>
                       <th className="px-4 py-3 text-left bg-primary/8 ">
                         Reason
                       </th>
@@ -208,6 +211,9 @@ export default function BookingHistory() {
                             {item.status}
                           </span>
                         </td>
+                        <td className="px-4 py-4 text-sm text-primary font-semibold capitalize ">
+                          {item.appointment_type.replaceAll("-", " ")}
+                        </td> 
                         <td className="px-4 py-4 text-sm text-primary font-semibold capitalize ">
                           <ReadMoreButton
                             text={item.reason}
