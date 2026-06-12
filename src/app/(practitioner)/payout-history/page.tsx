@@ -3,24 +3,19 @@ import WrapperBanner from "@/components/WraperBanner";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
-import {  GetPaymentHistory } from "@/services/api";
+import {  GetPayoutHistory } from "@/services/api";
 import LoadingSpin from "@/components/LoadingSpin";
 import Pagination from "@/components/comman/Pagination";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import { useProfile } from "@/services/ProfileContext";
 
-export interface PaymentHistoryType {
-  booking_uuid  : string;
-  payment_id: number;
-  booking_id: string;
-  fee: string;
-  platform_fee: string;
-  payment_status: string;
-  practitioner_payout: string;
-  date: string;
-  time: string;
-  patient_id: string;
-  practitioner_id: string;
+export interface PayoutHistoryType {
+  uuid: string;
+payout_id: string;
+transfer_id: string;
+total_amount: string;
+payout_status: string;
+payout_updated_at: string;
 }
 
 export default function PayoutHistory() {
@@ -28,7 +23,7 @@ export default function PayoutHistory() {
   const { MMMUserData } = useProfile();
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [PaymentHistory, setPaymentHistory] = useState<PaymentHistoryType[]>(
+  const [PayoutHistory, setPayoutHistory] = useState<PayoutHistoryType[]>(
     [],
   );
 
@@ -45,31 +40,29 @@ export default function PayoutHistory() {
   const [search, setSearch] = useState("");
 
   const filteredData = useMemo(() => {
-    return PaymentHistory.filter((item) => {
+    return PayoutHistory.filter((item) => {
       const matchesSearch =
-        item.payment_id
+        item.payout_id
           .toString()
           .toLowerCase()
           .includes(search.toLowerCase()) ||
-        item.booking_id.toString().toLowerCase().includes(search.toLowerCase()) ||
-        item.fee.toLowerCase().includes(search.toLowerCase()) ||
-        item.payment_status.toLowerCase().includes(search.toLowerCase()) ||
-        item.practitioner_payout.toLowerCase().includes(search.toLowerCase()) ||
-        item.date.toLowerCase().includes(search.toLowerCase()) ||
-        item.time.toLowerCase().includes(search.toLowerCase());
+        item.transfer_id.toString().toLowerCase().includes(search.toLowerCase()) ||
+        item.total_amount.toLowerCase().includes(search.toLowerCase()) ||
+        item.payout_status.toLowerCase().includes(search.toLowerCase()) ||
+        item.payout_updated_at.toLowerCase().includes(search.toLowerCase());
 
       return matchesSearch;
     });
-  }, [search, PaymentHistory]);
+  }, [search, PayoutHistory]);
 
   useEffect(() => {
     if (!MMMUserData?.id) return;
-    GetPaymentHistory(MMMUserData?.id, page, 20)
+    GetPayoutHistory(MMMUserData?.id, page, 20)
       .then((data) => {
         setLanding(false);
         console.log("Patient Profile Data:", data);
         if (data.success) {
-          setPaymentHistory(data.history);
+          setPayoutHistory(data.payouts);
           setTotalPages(data.total_pages);
         }
       })
@@ -89,9 +82,9 @@ export default function PayoutHistory() {
   }
 
 
- function generateInvoice (paymentId: string) {
+ function generateInvoice (PayoutId: string) {
     
-  window.open(`/api/invoice/${paymentId}`, "_self");
+  window.open(`/api/payout-invoice/${PayoutId}`, "_self");
   }
 
   return (
@@ -126,22 +119,17 @@ export default function PayoutHistory() {
                   <thead>
                     <tr className=" text-primary text-sm font-semibold">
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
-                        Booking ID
+                        Payout ID
+                      </th>
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                        Transfer ID
                       </th>
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">Date</th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">Time</th>
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
-                        Total
-                      </th>
-                         { MMMUserData?.role === "practitioner" &&  <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
-                        Platform Fee
-                      </th>}
-                     
+                                 
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
                         Payout Amount
                       </th>
                       
-
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Status
                       </th>
@@ -166,43 +154,37 @@ export default function PayoutHistory() {
                       </tr>
                     )}
 
-                    {filteredData.map((item) => (
-                      <tr key={item.payment_id}>
+                    {filteredData.map((item,index) => (
+                      <tr key={item.payout_id}>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
-                          #{item.booking_id}{" "}
+                          #{index+1001}{" "}
                         </td>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
-                          {item.date}{" "}
+                          {item.transfer_id}{" "}
                         </td>
 
                         <td className="px-4 py-4 text-sm text-primary font-semibold whitespace-nowrap">
-                          {item.time}{" "}
+                          {item.payout_updated_at}
                         </td>
 
-                        <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
-                         {"R "}{item.fee}
-                        </td>
+
                      <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
-                        {"R "}{item.platform_fee}
+                        {"R "}{item.total_amount}
                         </td>
 
-                          {MMMUserData?.role === "practitioner" && (
-                          <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
-                          {"R "}{item.practitioner_payout}
-                        </td>
-                          )}
+                
 
                         <td className={`px-4 py-4 text-sm font-semibold capitalize `}>
                           <span
-                            className={`${statusColors[item.payment_status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}
+                            className={`${statusColors[item.payout_status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}
                           >
-                            {item.payment_status}
+                            {item.payout_status}
                           </span>
                         </td>
                   
                         <td className="px-4 py-4">
 
-                          <button onClick={() =>{ if(item.payment_status==='confirmed'){generateInvoice(item.booking_uuid)}}} className={`flex items-center gap-1  text-sm text-white px-2 py-2 rounded-[10px] ${item.payment_status === 'confirmed' ? 'cursor-pointer bg-gradient-to-r from-cyan-500 to-teal-500 hover:bg-blue-600 transition hover:scale-105' : 'bg-gray-400 cursor-not-allowed'} `}>
+                          <button onClick={() =>{ if(item.payout_status==='completed'){generateInvoice(item.uuid)}}} className={`flex items-center gap-1  text-sm text-white px-2 py-2 rounded-[10px] ${item.payout_status === 'completed' ? 'cursor-pointer bg-gradient-to-r from-cyan-500 to-teal-500 hover:bg-blue-600 transition hover:scale-105' : 'bg-gray-400 cursor-not-allowed'} `}>
                            <LiaFileInvoiceSolid className="w-5 h-5" /> Invoice
                           </button>
                         </td>

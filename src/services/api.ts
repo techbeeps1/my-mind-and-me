@@ -19,6 +19,19 @@ export const bookingApiPath = "/api/booking";
 
 
 
+// delete bank account
+export async function deleteBankAccount( userId:string ) {
+  const res = await fetch(`${prApiPath}/bank-details/delete/${userId}`, {   
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+   
+  });
+  if (!res.ok) { throw new Error("Failed to delete account");}
+  return await res.json();
+}
+
 // get last appointment practitioner by patient id
 export async function getLastAppointmentPractitioner(UserId:string) {
   const res = await fetch(`${paApiPath}/last-booking/${UserId}`);
@@ -244,6 +257,12 @@ export async function GetPaymentHistory(UserId:string, page:number, limit:number
   return res.json();
 }
 
+// booking history
+export async function GetPayoutHistory(UserId:string, page:number, limit:number) {
+  const res = await fetch(`${bookingApiPath}/view-payout/${UserId}/${page}/${limit}`);
+   if (!res.ok) throw new Error("Failed to fetch payout history");
+  return res.json();
+}
 
 export async function GetProfile( role:string, UserId:string ) {
   const res = await fetch(`${authApiPath}/profile?role=${role}&id=${UserId}`);

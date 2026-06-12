@@ -316,7 +316,7 @@ export default function PractitionerFilter({
                   <div className="flex items-end absolute top-3 right-3">
                     <div
                       onClick={clearFilters}
-                      className="px-2 py-1 rounded-2xl bg-primary text-white text-sm hover:bg-primary/90 transition"
+                      className="cursor-pointer px-2 py-1 rounded-2xl bg-primary text-white text-sm hover:bg-primary/90 transition"
                     >
                       Reset
                     </div>

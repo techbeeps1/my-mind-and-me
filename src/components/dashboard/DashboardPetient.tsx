@@ -39,6 +39,7 @@ interface UpcomingSession {
 interface Practitioner {
   name: string;
   qualifications: string;
+  profile_image: string | null;
 }
 
 interface Resource {
@@ -275,12 +276,20 @@ getPatientDashboard(MMMUserData?.id).then(data => {
                                 key={index}
                                 className="flex items-center gap-4 p-2 rounded-[10px] border border-slate-100 hover:bg-slate-50 transition hover:-translate-y-1 transition-all"
                               >
+                                  {person.profile_image ? (
+                                                                  <Image className="h-13 w-13 object-cover rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500"
+                                                                    src={imagePath + person.profile_image}
+                                                                    width={100}
+                                                                    height={100}
+                                                                    alt="Patient Image"
+                                                                  />
+                                                                ):(
                                 <div
                                   className={`h-13 w-13 rounded-2xl flex items-center justify-center text-white text-2xl bg-gradient-to-r from-cyan-500 to-teal-500 `}
                                 >
                                   <FaUserAlt />
                                 </div>
-
+                                                                )}
                                 <div className="flex-1">
                                   <h3 className="font-bold text-slate-900 text-sm">
                                     {person.name}

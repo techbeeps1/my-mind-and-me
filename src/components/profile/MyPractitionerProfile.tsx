@@ -235,7 +235,8 @@ const validateForm = (data: FormDataType): string => {
   if (!data.phone.trim()) {
     errors = "Phone number is required";
     return errors;
-  } else if (!/^[1-9]\d{9}$/.test(data.phone)) {
+  }
+ else if (!/^(?:0\d{9}|27\d{9}|\+27\d{9})$/.test(data.phone)) {
     errors = "Enter valid 10 digit phone number";
     return errors;
   }

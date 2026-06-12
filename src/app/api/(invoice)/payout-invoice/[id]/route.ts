@@ -15,7 +15,7 @@ const token = request.cookies.get("MMMAT")?.value;
     return new Response("Missing appointment ID", { status: 400 });
   }
 
-  const res = await fetch(`${BOOKING_END}/invoice/${paramsData.id}` ,{
+  const res = await fetch(`${BOOKING_END}/view-invoices/${paramsData.id}` ,{
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -24,10 +24,11 @@ const token = request.cookies.get("MMMAT")?.value;
   });
   const data = await res.json();
 
+
  if(!data.success){
     return new Response("Failed to fetch invoice data", { status: 500 });
   }
-
+ 
 
   const html = `
   <html>
@@ -67,21 +68,18 @@ body{
 }
 
 .card{
-  border:1px solid #ddd;
   background:#f8fafc;
   padding:15px;
   border-radius:8px;
+  width: fit-content;
 }
 
 .info-grid{
-  display:flex;
+ 
   gap:20px;
   margin-bottom:20px;
 }
 
-.info-grid .card{
-  flex:1;
-}
 
 .card h3{
   color:#25716e;
@@ -176,7 +174,7 @@ table .first-tr {
   <div class="invoice-title">
     <h2>PAYOUT INVOICE</h2>
 
-    <p><b>Payout ID:</b> ${data.payoutId}</p>
+    <p><b>Payout ID:</b> #${data.payoutId}</p>
     <p><b>Date:</b> ${data.payoutDate}</p>
   </div>
 
@@ -188,18 +186,9 @@ table .first-tr {
     <h3>Practitioner Information</h3>
 
     <p><b>Name:</b> ${data.practitionerName}</p>
-    <p><b>Practitioner ID:</b> ${data.practitionerId}</p>
+    <p><b>Practitioner ID:</b> PR${data.practitionerId}</p>
     <p><b>HPCSA:</b> ${data.hpcsaNumber}</p>
   </div>
-
-  <div class="card">
-    <h3>Payout Period</h3>
-
-    <p><b>From:</b> ${data.fromDate}</p>
-    <p><b>To:</b> ${data.toDate}</p>
-    <p><b>Total Sessions:</b> ${data.totalSessions}</p>
-  </div>
-
 </div>
 
 <h3 class="section-title">
@@ -213,7 +202,7 @@ Appointments Included in Payout
   <th>Booking ID</th>
   <th>Patient</th>
   <th>Session Date</th>
-  <th>Service</th>
+
   <th>Amount</th>
 </tr>
 </thead>
@@ -221,18 +210,16 @@ Appointments Included in Payout
 <tbody>
 
 ${data?.sessions?.map((item: {
-  bookingId: string;
+  booking_id: string;
   patientName: string;
   date: string;
-  service: string;
-  amount: number;
+  booking_fee: number;
 }) => `
 <tr>
-  <td>#${item.bookingId}</td>
+  <td>#${item.booking_id}</td>
   <td>${item.patientName}</td>
   <td>${item.date}</td>
-  <td>${item.service}</td>
-  <td>R ${item.amount}</td>
+  <td>R ${item.booking_fee}</td>
 </tr>
 `).join('')}
 
@@ -258,10 +245,6 @@ ${data?.sessions?.map((item: {
       <span>- R ${data.platformFee}</span>
     </div>
 
-    <div class="summary-row">
-      <span>Adjustments</span>
-      <span>R ${data.adjustments}</span>
-    </div>
 
     <div class="summary-row total">
       <span>Net Payout</span>
@@ -276,8 +259,8 @@ ${data?.sessions?.map((item: {
   <h3>Bank Transfer Details</h3>
 
   <p><b>Transaction ID:</b> ${data.transactionId}</p>
-  <p><b>Payout Reference:</b> ${data.reference}</p>
-  <p><b>Paid On:</b> ${data.paidOn}</p>
+ 
+  <p><b>Paid On:</b> ${data.payoutDate}</p>
 </div>
 
 <div class="footer">
