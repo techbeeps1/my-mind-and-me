@@ -200,7 +200,7 @@ const token = request.cookies.get("MMMAT")?.value;
       <td><b>Time</b></td>
       <td>${resData.slot??''}</td>
       <td><b>Type</b></td>
-      <td>${resData.type??''}</td>
+      <td>${resData.type.replaceAll("-", " ")??''}</td>
     </tr>
   </table>
 

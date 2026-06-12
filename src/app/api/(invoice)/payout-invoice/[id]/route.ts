@@ -186,7 +186,7 @@ table .first-tr {
     <h3>Practitioner Information</h3>
 
     <p><b>Name:</b> ${data.practitionerName}</p>
-    <p><b>Practitioner ID:</b> PR${data.practitionerId}</p>
+    <p><b>Practitioner ID:</b> PR-${data.practitionerId}</p>
     <p><b>HPCSA:</b> ${data.hpcsaNumber}</p>
   </div>
 </div>
