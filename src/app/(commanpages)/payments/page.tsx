@@ -14,9 +14,7 @@ export interface PaymentHistoryType {
   payment_id: number;
   booking_id: string;
   fee: string;
-  platform_fee: string;
   payment_status: string;
-  practitioner_payout: string;
   date: string;
   time: string;
   patient_id: string;
@@ -54,7 +52,7 @@ export default function PaymentHistory() {
         item.booking_id.toString().toLowerCase().includes(search.toLowerCase()) ||
         item.fee.toLowerCase().includes(search.toLowerCase()) ||
         item.payment_status.toLowerCase().includes(search.toLowerCase()) ||
-        item.practitioner_payout.toLowerCase().includes(search.toLowerCase()) ||
+       
         item.date.toLowerCase().includes(search.toLowerCase()) ||
         item.time.toLowerCase().includes(search.toLowerCase());
 
@@ -133,14 +131,7 @@ export default function PaymentHistory() {
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Total
                       </th>
-                         { MMMUserData?.role === "practitioner" &&  <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
-                        Platform Fee
-                      </th>}
-                      {MMMUserData?.role === "practitioner" && (
-                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap ">
-                        Payout Amount
-                      </th>
-                      )}
+                        
 
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Status
@@ -182,15 +173,8 @@ export default function PaymentHistory() {
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                          {"R "}{item.fee}
                         </td>
-                      { MMMUserData?.role === "practitioner" &&  <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
-                        {"R "}{item.platform_fee}
-                        </td>
-}
-                          {MMMUserData?.role === "practitioner" && (
-                          <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
-                          {"R "}{item.practitioner_payout}
-                        </td>
-                          )}
+                
+
 
                         <td className={`px-4 py-4 text-sm font-semibold capitalize `}>
                           <span

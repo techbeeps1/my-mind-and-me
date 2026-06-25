@@ -154,10 +154,10 @@ export default function PayoutHistory() {
                       </tr>
                     )}
 
-                    {filteredData.map((item,index) => (
+                    {filteredData.map((item) => (
                       <tr key={item.payout_id}>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
-                          #{index+1001}{" "}
+                          #{item.payout_id}{" "}
                         </td>
                         <td className="px-4 py-4 font-bold text-sm leading-9 text-primary whitespace-nowrap">
                           {item.transfer_id}{" "}

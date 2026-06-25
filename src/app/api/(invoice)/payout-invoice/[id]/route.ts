@@ -2,6 +2,7 @@ import { BOOKING_END } from "@/services/api";
 import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 import { NextRequest } from "next/server";
+import { platform } from "os";
 
 
 export async function GET(request: NextRequest,  { params }: { params: Promise<{ id: string }> },
@@ -23,6 +24,9 @@ const token = request.cookies.get("MMMAT")?.value;
     },
   });
   const data = await res.json();
+
+  const platformFeePercentage = ((data?.platformFee / data.grossAmount) * 100).toFixed(2);
+const vatPercentage = ((data?.vat / data.platformFee) * 100).toFixed(2);
 
 
  if(!data.success){
@@ -241,14 +245,20 @@ ${data?.sessions?.map((item: {
     </div>
 
     <div class="summary-row">
-      <span>Platform Fee</span>
+      <span>Platform Fee ${platformFeePercentage}%</span>
       <span>- R ${data.platformFee}</span>
     </div>
+
+      <div class="summary-row">
+      <span>VAT ${vatPercentage}%</span>
+      <span>- R ${data.vat}</span>
+    </div>
+
 
 
     <div class="summary-row total">
       <span>Net Payout</span>
-      <span>R ${data.netPayout}</span>
+      <span>R ${data.total_payout}</span>
     </div>
 
   </div>
