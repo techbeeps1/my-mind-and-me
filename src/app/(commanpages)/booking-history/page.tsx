@@ -48,7 +48,7 @@ export default function BookingHistory() {
   });
 
   const statusColors: { [key: string]: string } = {
-    completed: "text-green-800 border border-green-800/50 bg-green-100",
+    completed: "text-purple-800 border border-purple-800/50 bg-purple-100",
     cancelled: "text-red-800 border border-red-800/50 bg-red-100",
     pending: "text-yellow-800 border border-yellow-800/50 bg-yellow-100",
     rescheduled: "text-blue-800 border border-blue-800/50 bg-blue-100",

@@ -216,7 +216,7 @@ export default function ChangePassword() {
           <button
             onClick={submitChangePassword}
             disabled={loading}
-            className="w-full py-3 rounded-full text-white font-bold bg-gradient-to-r from-cyan-400 to-teal-600 hover:opacity-90 transition"
+            className="cursor-pointer w-full py-3 rounded-full text-white font-bold bg-gradient-to-r from-cyan-400 to-teal-600 hover:opacity-90 transition"
           >
             {loading ? "Updating..." : "Change Password"}
           </button>

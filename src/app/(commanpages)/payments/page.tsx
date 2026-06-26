@@ -19,6 +19,8 @@ export interface PaymentHistoryType {
   time: string;
   patient_id: string;
   practitioner_id: string;
+  transaction_id: string;
+  booking_status: string;
 }
 
 export default function PaymentHistory() {
@@ -30,7 +32,13 @@ export default function PaymentHistory() {
     [],
   );
 
-
+  const bookingColors: { [key: string]: string } = {
+    completed: "text-green-800 border border-green-800/50 bg-green-100",
+    cancelled: "text-red-800 border border-red-800/50 bg-red-100",
+    booked: "text-pink-900 border border-pink-800 bg-pink-300",
+    rescheduled: "text-blue-800 border border-blue-800/50 bg-blue-100",
+    hold: "text-yellow-800 border border-yellow-800/50 bg-yellow-100",
+  };
 
   const statusColors: { [key: string]: string } = {
     confirmed: "text-green-800 border border-green-800/50 bg-green-100",
@@ -131,10 +139,18 @@ export default function PaymentHistory() {
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Total
                       </th>
-                        
-
+                      {MMMUserData?.role !== "practitioner" && 
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                        Transaction ID
+                      </th>
+                      }
+                      
                       <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
                         Status
+                      </th>
+                      
+                      <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
+                        Appointment Status
                       </th>
                       {MMMUserData?.role !== "practitioner" && <th className="px-4 py-3 text-left bg-primary/8 whitespace-nowrap">
 
@@ -173,8 +189,12 @@ export default function PaymentHistory() {
                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
                          {"R "}{item.fee}
                         </td>
+                        {MMMUserData?.role !== "practitioner" && 
+                         <td className="px-4 py-4 leading-9 text-sm text-primary font-semibold whitespace-nowrap">
+                         {item.transaction_id}
+                        </td>
                 
-
+                        }
 
                         <td className={`px-4 py-4 text-sm font-semibold capitalize `}>
                           <span
@@ -183,10 +203,20 @@ export default function PaymentHistory() {
                             {item.payment_status}
                           </span>
                         </td>
+
+                        
+                        <td className={`px-4 py-4 text-sm font-semibold capitalize `}>
+                          <span
+                            className={`${bookingColors[item.booking_status] || "bg-gray-100 text-gray-800"}  px-2 py-1 rounded-full`}
+                          >
+                            {item.booking_status}
+                          </span>
+                        </td>
+
                          {MMMUserData?.role !== "practitioner" && 
                         <td className="px-4 py-4">
 
-                          <button onClick={() =>{ if(item.payment_status==='confirmed'){generateInvoice(item.booking_uuid)}}} className={`flex items-center gap-1  text-sm text-white px-2 py-2 rounded-[10px] ${item.payment_status === 'confirmed' ? 'cursor-pointer bg-gradient-to-r from-cyan-500 to-teal-500 hover:bg-blue-600 transition hover:scale-105' : 'bg-gray-400 cursor-not-allowed'} `}>
+                          <button onClick={() =>{ if(item.payment_status==='confirmed' && item.booking_status === 'completed'){generateInvoice(item.booking_uuid)}}} className={`flex items-center gap-1  text-sm text-white px-2 py-2 rounded-[10px] ${item.payment_status === 'confirmed' && item.booking_status === 'completed' ? 'cursor-pointer bg-gradient-to-r from-cyan-500 to-teal-500 hover:bg-blue-600 transition hover:scale-105' : 'bg-gray-400 cursor-not-allowed'} `}>
                            <LiaFileInvoiceSolid className="w-5 h-5" /> Invoice
                           </button>
                         </td>
