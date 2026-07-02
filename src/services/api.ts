@@ -17,7 +17,37 @@ export const prApiPath = "/api/practitioner";
 export const bookingApiPath = "/api/booking";
 // API paths for LOCAL
 
+// get Notifications
+export async function getNotifications(UserId:string,page:number) {
+  const res = await fetch(`${bookingApiPath}/notifications/${UserId}/${page}`);
+   if (!res.ok) throw new Error("Failed to fetch notifications");
+  return res.json();
+}
 
+// delete all notifications
+export async function deleteAllNotifications(UserId:string) {
+  const res = await fetch(`${bookingApiPath}/markallasread/${UserId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) { throw new Error("Failed to delete all notifications");}
+  return await res.json();
+}
+
+// delete notification
+export async function deleteNotification(notificationId:string) {
+  const res = await fetch(`${bookingApiPath}/read-notifications/${notificationId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+   
+  });
+  if (!res.ok) { throw new Error("Failed to delete notification");}
+  return await res.json();
+}
 
 // delete bank account
 export async function deleteBankAccount( userId:string ) {
